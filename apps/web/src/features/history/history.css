@@ -133,3 +133,28 @@
 .history-filter-reset {
   margin-block-start: var(--space-2);
 }
+
+.history-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.history-actions a {
+  text-decoration: none;
+}
+
+.history-delete {
+  color: var(--color-danger);
+}
+
+.history-confirm,
+.history-undo {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}

@@ -1,7 +1,11 @@
 import type { getHistory, HistoryFilters } from '@money-level/application';
 import { Button } from '@money-level/ui-kit';
+import type { Deletion } from './delete-entry.js';
 
-export type HistoryNavigationState = { historyFilters?: HistoryFilters } | null;
+export type HistoryNavigationState = {
+  historyFilters?: HistoryFilters;
+  undo?: Deletion;
+} | null;
 type Options = Pick<
   Awaited<ReturnType<typeof getHistory>>,
   'accounts' | 'categories'

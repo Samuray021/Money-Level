@@ -1,5 +1,9 @@
 import { expect, test } from 'vitest';
-import { parseCurrencyAmount, parseRubAmount } from './index.js';
+import {
+  currencyAmountForInput,
+  parseCurrencyAmount,
+  parseRubAmount,
+} from './index.js';
 
 test.each([
   ['450', '45000'],
@@ -35,4 +39,21 @@ test('respects the selected currency precision and accepts signed starting balan
     parseCurrencyAmount('-0', 'RUB', { allowNegative: true, allowZero: true }),
   ).toBe('0');
   expect(() => parseCurrencyAmount('25,01', 'JPY')).toThrow(RangeError);
+});
+
+test('currency edit values round-trip through the decimal parser without grouping or loss', () => {
+  const options = { allowNegative: true, allowZero: true };
+  for (const [amount, currency] of [
+    ['-1', 'RUB'],
+    ['0', 'JPY'],
+    ['9007199254740993', 'KWD'],
+  ] as const) {
+    expect(
+      parseCurrencyAmount(
+        currencyAmountForInput(amount, currency),
+        currency,
+        options,
+      ),
+    ).toBe(amount);
+  }
 });

@@ -7,6 +7,7 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
 import { MoneyAmount } from '../../components/money-amount.js';
+import { EntryActions, UndoDeletion } from './delete-entry.js';
 import { HistoryFilterForm } from './history-filters.js';
 import type { HistoryNavigationState } from './history-filters.js';
 import './history.css';
@@ -100,6 +101,9 @@ export function History() {
   return (
     <section className="history-page">
       <h1>История</h1>
+      {previous?.undo && (
+        <UndoDeletion key={previous.undo.deletedAt} deletion={previous.undo} />
+      )}
       <HistoryFilterForm
         filters={filters}
         options={state.status === 'ready' ? state.value : undefined}
@@ -224,6 +228,7 @@ export function HistoryDetail() {
           )}
         </dl>
       </article>
+      <EntryActions id={transaction.id} />
     </section>
   );
 }

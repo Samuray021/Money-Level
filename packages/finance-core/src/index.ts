@@ -1,6 +1,7 @@
 export {
   addMinorUnits,
   compareMinorUnits,
+  currencyAmountForInput,
   parseRubAmount,
   parseCurrencyAmount,
   subtractMinorUnits,

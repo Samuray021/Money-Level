@@ -46,15 +46,30 @@ export function parseCurrencyAmount(
   currency: CurrencyCode,
   options: AmountOptions = {},
 ): MinorUnits {
-  const formatter = new Intl.NumberFormat('ru-RU', {
-    currency: currencyCodeSchema.parse(currency),
-    style: 'currency',
-  });
-  return parseDecimalAmount(
-    input,
-    formatter.resolvedOptions().maximumFractionDigits ?? 0,
-    options,
+  return parseDecimalAmount(input, currencyScale(currency), options);
+}
+
+function currencyScale(currency: CurrencyCode): number {
+  return (
+    new Intl.NumberFormat('ru-RU', {
+      currency: currencyCodeSchema.parse(currency),
+      style: 'currency',
+    }).resolvedOptions().maximumFractionDigits ?? 0
   );
+}
+
+export function currencyAmountForInput(
+  amount: MinorUnits,
+  currency: CurrencyCode,
+): string {
+  const value = toMinorBigInt(amount);
+  const scale = currencyScale(currency);
+  const sign = value < 0n ? '-' : '';
+  const digits = (value < 0n ? -value : value)
+    .toString()
+    .padStart(scale + 1, '0');
+  if (scale === 0) return sign + digits;
+  return sign + digits.slice(0, -scale) + ',' + digits.slice(-scale);
 }
 
 function toMinorBigInt(amount: MinorUnits): bigint {
