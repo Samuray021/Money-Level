@@ -7,3 +7,5 @@ export {
 export { formatMoney } from './format-money.js';
 export { accountSchema } from './account.js';
 export type { Account } from './account.js';
+export { createOpeningEntry, openingEntrySchema } from './opening-entry.js';
+export type { OpeningEntry } from './opening-entry.js';
