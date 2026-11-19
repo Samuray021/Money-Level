@@ -57,7 +57,11 @@ importers:
 
   packages/analytics: {}
 
-  packages/application: {}
+  packages/application:
+    dependencies:
+      '@money-level/finance-core':
+        specifier: workspace:*
+        version: link:../finance-core
 
   packages/budgets: {}
 
