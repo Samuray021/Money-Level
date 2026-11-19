@@ -1,6 +1,6 @@
 import type { Transaction } from '@money-level/finance-core';
 import { expect, test } from 'vitest';
-import { compareHistoryEntries } from './history.js';
+import { compareHistoryEntries, filterHistoryEntries } from './history.js';
 
 const common = {
   kind: 'opening',
@@ -28,3 +28,45 @@ test('history entries break date ties by creation instant and then UUID', () => 
     'e',
   ]);
 });
+
+test('history applies type, either transfer account, category, calendar range and note together', () => {
+  const expense: Transaction = {
+    ...common,
+    kind: 'expense',
+    id: 'e1',
+    categoryId: 'food',
+    note: 'Вечером КОФЕ',
+  };
+  const entries: Transaction[] = [
+    commonWithId('opening'),
+    expense,
+    { ...expense, id: 'e2', note: 'еда' },
+    { ...expense, id: 'e3', categoryId: 'shopping' },
+    { ...expense, id: 'e4', transactionDate: '2026-11-18' },
+    { ...common, id: 't', kind: 'transfer', toAccountId: 'cash' },
+    { ...expense, id: 'e5', deletedAt: common.updatedAt },
+  ];
+  expect(
+    filterHistoryEntries(entries, {
+      kind: 'expense',
+      accountId: 'account',
+      categoryId: 'food',
+      from: '2026-11-19',
+      to: '2026-11-19',
+      note: 'кофе',
+    }),
+  ).toEqual([expense]);
+  expect(
+    filterHistoryEntries(entries, { accountId: 'cash' }).map(({ id }) => id),
+  ).toEqual(['t']);
+  expect(
+    filterHistoryEntries(entries, { kind: 'opening' }).map(({ id }) => id),
+  ).toEqual(['opening']);
+  expect(
+    filterHistoryEntries(entries, { from: '2026-11-20', to: '2026-11-19' }),
+  ).toEqual([]);
+});
+
+function commonWithId(id: string): Transaction {
+  return { ...common, id };
+}

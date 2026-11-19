@@ -1,12 +1,14 @@
 import { getHistory, getHistoryDetail } from '@money-level/application';
-import type { HistoryEntry } from '@money-level/application';
+import type { HistoryEntry, HistoryFilters } from '@money-level/application';
 import type { TransactionKind } from '@money-level/contracts';
 import { Button } from '@money-level/ui-kit';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
 import { MoneyAmount } from '../../components/money-amount.js';
+import { HistoryFilterForm } from './history-filters.js';
+import type { HistoryNavigationState } from './history-filters.js';
 import './history.css';
 
 const dateFormat = new Intl.DateTimeFormat('ru-RU', {
@@ -48,10 +50,10 @@ function TransactionAmount({ transaction }: Pick<HistoryEntry, 'transaction'>) {
 
 function HistoryRow({
   entry,
-  search,
+  filters,
 }: {
   entry: HistoryEntry;
-  search: string;
+  filters: HistoryFilters;
 }) {
   const { transaction, account, destination, category } = entry;
   const title = titles[transaction.kind];
@@ -62,7 +64,11 @@ function HistoryRow({
       : accountName;
   return (
     <li>
-      <Link className="history-row" to={'/history/' + transaction.id + search}>
+      <Link
+        className="history-row"
+        to={'/history/' + transaction.id}
+        state={{ historyFilters: filters }}
+      >
         <span className="history-row-label">
           <strong>{category?.name ?? title}</strong>
           <span>
@@ -78,15 +84,27 @@ function HistoryRow({
 
 export function History() {
   const { commands } = useJournal();
-  const { search } = useLocation();
+  const location = useLocation();
+  const previous = location.state as HistoryNavigationState;
+  const [filters, setFilters] = useState<HistoryFilters>(
+    previous?.historyFilters ?? {},
+  );
   const read = useCallback(
-    () => getHistory(commands.storage),
-    [commands.storage],
+    () => getHistory(commands.storage, filters),
+    [commands.storage, filters],
   );
   const { state, retry } = useJournalQuery(read);
+  const invalidRange =
+    !!filters.from && !!filters.to && filters.from > filters.to;
+  const active = Object.values(filters).some(Boolean);
   return (
     <section className="history-page">
       <h1>История</h1>
+      <HistoryFilterForm
+        filters={filters}
+        options={state.status === 'ready' ? state.value : undefined}
+        onChange={setFilters}
+      />
       {state.status === 'loading' ? (
         <p role="status">Загружаем операции…</p>
       ) : state.status === 'error' ? (
@@ -96,10 +114,18 @@ export function History() {
             Повторить
           </Button>
         </>
-      ) : state.value.length === 0 ? (
-        <p className="form-intro">Пока нет доходов, расходов и переводов.</p>
+      ) : invalidRange ? (
+        <p className="form-error" role="alert">
+          Дата начала должна быть раньше даты окончания или совпадать с ней.
+        </p>
+      ) : state.value.days.length === 0 ? (
+        <p className="form-intro">
+          {active
+            ? 'По этим фильтрам операций нет.'
+            : 'Пока нет доходов, расходов и переводов.'}
+        </p>
       ) : (
-        state.value.map(({ date, totals, entries }) => (
+        state.value.days.map(({ date, totals, entries }) => (
           <section className="history-day" key={date}>
             <header className="history-day-header">
               <h2>{formatDay(date)}</h2>
@@ -113,7 +139,7 @@ export function History() {
                 <HistoryRow
                   entry={entry}
                   key={entry.transaction.id}
-                  search={search}
+                  filters={filters}
                 />
               ))}
             </ul>
@@ -127,13 +153,18 @@ export function History() {
 export function HistoryDetail() {
   const { commands, profile } = useJournal();
   const { id } = useParams();
-  const { search } = useLocation();
+  const location = useLocation();
+  const previous = location.state as HistoryNavigationState;
   const read = useCallback(
     () => getHistoryDetail(commands.storage, id),
     [commands.storage, id],
   );
   const { state, retry } = useJournalQuery(read);
-  const back = <Link to={'/history' + search}>К истории</Link>;
+  const back = (
+    <Link to="/history" state={previous}>
+      К истории
+    </Link>
+  );
 
   if (state.status === 'loading')
     return <p role="status">Загружаем операцию…</p>;

@@ -108,3 +108,28 @@
   margin: 0;
   white-space: pre-wrap;
 }
+
+.history-filters {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.history-filters summary {
+  min-block-size: var(--control-height);
+  padding-block: var(--space-2);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.history-filter-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: var(--space-3);
+  padding-block-end: var(--space-2);
+}
+
+.history-filter-reset {
+  margin-block-start: var(--space-2);
+}

@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-041`.
-**Подтверждённо завершено:** `43 / 100` задач.
+**Текущее задание:** `ML-042`.
+**Подтверждённо завершено:** `44 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -61,7 +61,8 @@
 | ML-037 | DONE | PASS lint, format:check, typecheck, test (76), build | `96dbf79` | 2026-11-19. web/application: доход за три основных действия, проверка суммы, безопасный повтор, стартовые категории; Chromium и обновление во второй вкладке. |
 | ML-038 | DONE | PASS lint, format:check, typecheck, test (76), build | `8eae2b8` | 2026-11-19. web: общий ввод дохода и расхода, категория «Другое» и проверка трёх действий Chromium 320 px. |
 | ML-039 | DONE | PASS lint, format:check, typecheck, test (76), build | `85828cc` | 2026-11-19. web/application: общий ввод и выбор разных счетов; Chromium проверил смену счёта, проводку и неизменный общий баланс. |
-| ML-040 | DONE | PASS lint, format:check, typecheck, test (77), build | ML-040 | 2026-11-19. web и application: группы, дневные итоги, стабильная сортировка и карточка. Chromium подтвердил ввод, историю, деталь и скрытие суммы. |
+| ML-040 | DONE | PASS lint, format:check, typecheck, test (77), build | `b4fccbc` | 2026-11-19. web и application: группы, дневные итоги, стабильная сортировка и карточка. Chromium подтвердил ввод, историю, деталь и скрытие суммы. |
+| ML-041 | DONE | PASS lint, format:check, typecheck, test (78), build | ML-041 | 2026-11-19. web/application: комбинированная фильтрация и пустые состояния, Chromium проверил возврат в отфильтрованную историю без заметок в URL. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

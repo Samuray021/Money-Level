@@ -1,6 +1,6 @@
 import { summarizeCashFlow } from '@money-level/analytics';
 import type { PeriodTotals } from '@money-level/analytics';
-import { uuidSchema } from '@money-level/contracts';
+import { isoDateSchema, uuidSchema } from '@money-level/contracts';
 import type { ISODate } from '@money-level/contracts';
 import type { Account, Category, Transaction } from '@money-level/finance-core';
 import type { UnitOfWork } from './journal-repository.js';
@@ -29,7 +29,58 @@ export function compareHistoryEntries(
   );
 }
 
-export function getHistory(storage: UnitOfWork): Promise<HistoryDay[]> {
+export interface HistoryFilters {
+  kind?: string;
+  accountId?: string;
+  categoryId?: string;
+  from?: string;
+  to?: string;
+  note?: string;
+}
+
+export function filterHistoryEntries(
+  transactions: readonly Transaction[],
+  filters: HistoryFilters,
+): Transaction[] {
+  const note = filters.note?.trim().normalize('NFC').toLocaleLowerCase('ru-RU');
+  const from = filters.from ? isoDateSchema.parse(filters.from) : undefined;
+  const to = filters.to ? isoDateSchema.parse(filters.to) : undefined;
+  if (from && to && from > to) return [];
+
+  return transactions.filter((transaction) => {
+    if (transaction.deletedAt) return false;
+    if (
+      filters.kind
+        ? transaction.kind !== filters.kind
+        : transaction.kind === 'opening' || transaction.kind === 'adjustment'
+    )
+      return false;
+    if (
+      filters.accountId &&
+      transaction.accountId !== filters.accountId &&
+      (transaction.kind !== 'transfer' ||
+        transaction.toAccountId !== filters.accountId)
+    )
+      return false;
+    if (
+      filters.categoryId &&
+      ((transaction.kind !== 'income' && transaction.kind !== 'expense') ||
+        transaction.categoryId !== filters.categoryId)
+    )
+      return false;
+    if (from && transaction.transactionDate < from) return false;
+    if (to && transaction.transactionDate > to) return false;
+    return (
+      !note ||
+      !!transaction.note
+        ?.normalize('NFC')
+        .toLocaleLowerCase('ru-RU')
+        .includes(note)
+    );
+  });
+}
+
+export function getHistory(storage: UnitOfWork, filters: HistoryFilters = {}) {
   return storage.read(async (journal) => {
     const accounts = new Map(
       (await journal.accounts.list()).map((account) => [account.id, account]),
@@ -40,14 +91,10 @@ export function getHistory(storage: UnitOfWork): Promise<HistoryDay[]> {
         category,
       ]),
     );
-    const transactions = (await journal.transactions.list())
-      .filter(
-        (entry) =>
-          !entry.deletedAt &&
-          entry.kind !== 'opening' &&
-          entry.kind !== 'adjustment',
-      )
-      .sort(compareHistoryEntries);
+    const transactions = filterHistoryEntries(
+      await journal.transactions.list(),
+      filters,
+    ).sort(compareHistoryEntries);
     const days = new Map<ISODate, HistoryEntry[]>();
     for (const transaction of transactions) {
       let entries = days.get(transaction.transactionDate);
@@ -68,11 +115,17 @@ export function getHistory(storage: UnitOfWork): Promise<HistoryDay[]> {
             : undefined,
       });
     }
-    return Array.from(days, ([date, entries]) => ({
-      date,
-      entries,
-      totals: summarizeCashFlow(entries.map(({ transaction }) => transaction)),
-    }));
+    return {
+      accounts: [...accounts.values()],
+      categories: [...categories.values()],
+      days: Array.from(days, ([date, entries]): HistoryDay => ({
+        date,
+        entries,
+        totals: summarizeCashFlow(
+          entries.map(({ transaction }) => transaction),
+        ),
+      })),
+    };
   });
 }
 
