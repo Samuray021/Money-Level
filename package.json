@@ -8,6 +8,10 @@
     "node": ">=24"
   },
   "scripts": {
-    "check:boundaries": "node tools/check-workspace.mjs"
+    "check:boundaries": "node tools/check-workspace.mjs",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.browser.json"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
   }
 }
