@@ -1,3 +1,4 @@
+import { Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { PrivacyToggle } from '../components/privacy-toggle.js';
 import './app-frame.css';
@@ -15,6 +16,17 @@ export function AppFrame({
 }: {
   showNavigation?: boolean;
 }) {
+  const [online, setOnline] = useState(() => navigator.onLine);
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine);
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    return () => {
+      window.removeEventListener('online', update);
+      window.removeEventListener('offline', update);
+    };
+  }, []);
+
   return (
     <div
       className={showNavigation ? 'app-frame' : 'app-frame app-frame--setup'}
@@ -33,8 +45,15 @@ export function AppFrame({
         </Link>
         {showNavigation && <PrivacyToggle />}
       </header>
+      {!online && (
+        <p className="app-offline" role="status">
+          Офлайн · изменения сохраняются на устройстве
+        </p>
+      )}
       <main className="app-main" id="main-content" tabIndex={-1}>
-        <Outlet />
+        <Suspense fallback={<p role="status">Загружаем раздел…</p>}>
+          <Outlet />
+        </Suspense>
       </main>
       {showNavigation && (
         <nav className="tab-bar" aria-label="Основное меню">

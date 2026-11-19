@@ -1,16 +1,30 @@
+import { lazy } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppFrame } from './app-frame.js';
 
 import { Dashboard } from '../features/dashboard/dashboard.js';
 import { TransactionEntry } from '../features/transactions/transaction-entry.js';
-import { EditEntry } from '../features/history/edit-entry.js';
 import { History, HistoryDetail } from '../features/history/history.js';
-import { ManageAccounts } from '../features/profile/manage-accounts.js';
-import { ManageCategories } from '../features/profile/manage-categories.js';
 import { Profile } from '../features/profile/profile.js';
 import { Onboarding } from '../features/onboarding/onboarding.js';
 import { useJournal } from './journal-context.js';
 import { JournalProvider } from './journal-provider.js';
+
+const EditEntry = lazy(() =>
+  import('../features/history/edit-entry.js').then((section) => ({
+    default: section.EditEntry,
+  })),
+);
+const ManageAccounts = lazy(() =>
+  import('../features/profile/manage-accounts.js').then((section) => ({
+    default: section.ManageAccounts,
+  })),
+);
+const ManageCategories = lazy(() =>
+  import('../features/profile/manage-categories.js').then((section) => ({
+    default: section.ManageCategories,
+  })),
+);
 
 function AppRoutes() {
   const { profile } = useJournal();
