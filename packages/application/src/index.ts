@@ -35,3 +35,5 @@ export { setBalanceHidden } from './onboarding.js';
 
 export { ensureStarterCategories } from './starter-categories.js';
 export { getTransactionChoices } from './transaction-choices.js';
+
+export type { EntryKind } from './transaction-choices.js';

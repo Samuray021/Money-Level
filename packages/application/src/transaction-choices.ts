@@ -1,9 +1,11 @@
 import type { CategoryType } from '@money-level/contracts';
 import { normalizeCategoryName } from '@money-level/finance-core';
 import type { Transaction } from '@money-level/finance-core';
+export type EntryKind = CategoryType | 'transfer';
+
 import type { UnitOfWork } from './journal-repository.js';
 
-export function getTransactionChoices(storage: UnitOfWork, kind: CategoryType) {
+export function getTransactionChoices(storage: UnitOfWork, kind: EntryKind) {
   return storage.read(async (journal) => {
     const profile = await journal.settings.get('profile');
     if (!profile?.onboardingCompleted)

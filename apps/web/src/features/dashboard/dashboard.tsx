@@ -97,6 +97,12 @@ export function Dashboard() {
       <div className="dashboard-actions">
         <Link
           className="ml-button ml-button--secondary"
+          to="/transactions/transfer"
+        >
+          Перевод
+        </Link>
+        <Link
+          className="ml-button ml-button--secondary"
           to="/transactions/expense"
         >
           <span aria-hidden="true">−</span> Расход
