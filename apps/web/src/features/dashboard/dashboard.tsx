@@ -1,9 +1,9 @@
 import { getDashboardSummary } from '@money-level/application';
-import { formatMoney } from '@money-level/finance-core';
 import { Button } from '@money-level/ui-kit';
 import { useCallback } from 'react';
 import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
+import { MoneyAmount } from '../../components/money-amount.js';
 import './dashboard.css';
 
 const monthLabel = new Intl.DateTimeFormat('ru-RU', {
@@ -32,12 +32,11 @@ export function Dashboard() {
   }
 
   const value = state.value;
-  const money = (amount: string) => formatMoney(amount, value.currency);
   return (
     <section className="balance-panel" aria-labelledby="balance-title">
       <h1 id="balance-title">Общий баланс</h1>
       <p className="balance-total money-value" data-testid="total-balance">
-        {money(value.totalMinor)}
+        <MoneyAmount amount={value.totalMinor} currency={value.currency} />
       </p>
 
       <div className="balance-breakdown">
@@ -48,13 +47,19 @@ export function Dashboard() {
           <div>
             <dt>Доходы</dt>
             <dd className="money-value balance-income" data-testid="income">
-              {money(value.incomeMinor)}
+              <MoneyAmount
+                amount={value.incomeMinor}
+                currency={value.currency}
+              />
             </dd>
           </div>
           <div>
             <dt>Расходы</dt>
             <dd className="money-value" data-testid="expenses">
-              {money(value.expenseMinor)}
+              <MoneyAmount
+                amount={value.expenseMinor}
+                currency={value.currency}
+              />
             </dd>
           </div>
         </dl>
@@ -63,13 +68,21 @@ export function Dashboard() {
         <div>
           <dt>Доступно к тратам</dt>
           <dd className="money-value" data-testid="available">
-            {money(value.availableMinor)}
+            <MoneyAmount
+              amount={value.availableMinor}
+              currency={value.currency}
+            />
           </dd>
         </div>
         {value.reservedMinor !== '0' && (
           <div>
             <dt>В целях</dt>
-            <dd className="money-value">{money(value.reservedMinor)}</dd>
+            <dd className="money-value">
+              <MoneyAmount
+                amount={value.reservedMinor}
+                currency={value.currency}
+              />
+            </dd>
           </div>
         )}
       </dl>

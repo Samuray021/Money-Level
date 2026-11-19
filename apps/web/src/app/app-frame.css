@@ -128,3 +128,25 @@
 .app-frame--setup .app-main {
   padding-block-end: var(--space-6);
 }
+
+.privacy-control {
+  display: grid;
+  justify-items: end;
+  padding-inline-start: var(--space-2);
+}
+
+.privacy-toggle {
+  padding-inline: var(--space-3);
+  font-size: var(--text-small);
+}
+
+.privacy-toggle[aria-pressed='true'] {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.privacy-error {
+  color: var(--color-danger);
+  font-size: var(--text-small);
+  text-align: end;
+}

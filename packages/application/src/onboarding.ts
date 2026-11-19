@@ -127,3 +127,21 @@ export function finishOnboarding(
     return completed;
   });
 }
+
+export function setBalanceHidden(
+  storage: JournalCommandContext['storage'],
+  hidden: boolean,
+): Promise<ProfileSettings> {
+  return storage.write(async ({ settings }) => {
+    const profile = await settings.get('profile');
+    if (!profile?.onboardingCompleted)
+      throw new RangeError('The profile setup is incomplete.');
+    if (profile.balanceHidden === hidden) return profile;
+    const updated = profileSettingsSchema.parse({
+      ...profile,
+      balanceHidden: hidden,
+    });
+    await settings.put(updated);
+    return updated;
+  });
+}

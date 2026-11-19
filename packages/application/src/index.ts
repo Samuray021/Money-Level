@@ -30,3 +30,5 @@ export { releaseFromGoal, reserveToGoal } from './goal-reservations.js';
 export type { GoalReservationInput } from './goal-reservations.js';
 
 export { getDashboardSummary } from './dashboard.js';
+
+export { setBalanceHidden } from './onboarding.js';

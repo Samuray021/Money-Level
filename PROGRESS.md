@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-036`.
-**Подтверждённо завершено:** `38 / 100` задач.
+**Текущее задание:** `ML-037`.
+**Подтверждённо завершено:** `39 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -56,7 +56,8 @@
 | ML-053 | DONE | PASS lint, format:check, typecheck, test (72), build | `77e6223` | 2026-11-19. goals: цель и знаковые дельты отдельного журнала, валидация суммы и даты. Требуется для ML-035. |
 | ML-054 | DONE | PASS lint, format:check, typecheck, test (74), build | `17f3334` | 2026-11-19. goals, application и IndexedDB v6: атомарные резервы, ограничения, TC-FIN-001/004, правка арифметики ТЗ. Зависимость ML-035. |
 | ML-055 | DONE | PASS lint, format:check, typecheck, test (75), build | `ec77abf` | 2026-11-19. goals и application: единый селектор остатка, тест оверрезерва и проверка архивации. Зависимость ML-035. |
-| ML-035 | DONE | PASS lint, format:check, typecheck, test (76), build | ML-035 | 2026-11-19. web и application: общий баланс, доходы, расходы и резервы из снимка базы. Chromium 320 px подтвердил сохранённый баланс и нулевой доход после opening. |
+| ML-035 | DONE | PASS lint, format:check, typecheck, test (76), build | `6f53202` | 2026-11-19. web и application: общий баланс, доходы, расходы и резервы из снимка базы. Chromium 320 px подтвердил сохранённый баланс и нулевой доход после opening. |
+| ML-036 | DONE | PASS lint, format:check, typecheck, test (76), build | ML-036 | 2026-11-19. web/contracts/application: скрытие виджетов без сырых сумм в DOM, переключатель с фокусом, сохранение и синхронизация между вкладками Chromium. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

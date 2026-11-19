@@ -21,6 +21,7 @@ export const profileSettingsSchema = z.strictObject({
   baseCurrency: currencyCodeSchema,
   firstAccountId: uuidSchema,
   onboardingCompleted: z.boolean(),
+  balanceHidden: z.boolean().default(false),
   humorMode: z.enum(['off', 'neutral', 'roast', 'chaos']).default('roast'),
   humorFrequency: humorFrequencySchema.default('usual'),
   profanityEnabled: z.boolean().default(false),

@@ -1,4 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
+import { PrivacyToggle } from '../components/privacy-toggle.js';
 import './app-frame.css';
 
 const tabs = [
@@ -30,6 +31,7 @@ export function AppFrame({
             MONEY<span className="wordmark-accent">LEVEL</span>
           </span>
         </Link>
+        {showNavigation && <PrivacyToggle />}
       </header>
       <main className="app-main" id="main-content" tabIndex={-1}>
         <Outlet />
