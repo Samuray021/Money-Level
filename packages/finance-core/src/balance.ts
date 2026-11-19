@@ -1,4 +1,5 @@
 import type { MinorUnits, UUID } from '@money-level/contracts';
+import type { Account } from './account.js';
 import { addMinorUnits, subtractMinorUnits } from './money.js';
 import type { Transaction } from './transaction.js';
 
@@ -35,4 +36,35 @@ export function reduceAccountBalance(
     (entry) => entry.accountId === accountId,
   );
   return posting ? addMinorUnits(balance, posting.deltaMinor) : balance;
+}
+
+export function selectAccountBalance(
+  transactions: readonly Transaction[],
+  accountId: UUID,
+): MinorUnits {
+  return transactions.reduce(
+    (balance, transaction) =>
+      reduceAccountBalance(balance, transaction, accountId),
+    '0',
+  );
+}
+
+export function selectTotalBalance(
+  accounts: readonly Account[],
+  transactions: readonly Transaction[],
+): MinorUnits {
+  const accountIds = new Set(
+    accounts
+      .filter((account) => account.deletedAt === undefined)
+      .map((account) => account.id),
+  );
+  let total: MinorUnits = '0';
+  for (const transaction of transactions) {
+    for (const posting of getBalancePostings(transaction)) {
+      if (accountIds.has(posting.accountId)) {
+        total = addMinorUnits(total, posting.deltaMinor);
+      }
+    }
+  }
+  return total;
 }

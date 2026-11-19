@@ -19,4 +19,9 @@ export type { Category } from './category.js';
 export { transactionSchema } from './transaction.js';
 export type { Transaction } from './transaction.js';
 export { assertTransactionReferences } from './transaction-references.js';
-export { getBalancePostings, reduceAccountBalance } from './balance.js';
+export {
+  getBalancePostings,
+  reduceAccountBalance,
+  selectAccountBalance,
+  selectTotalBalance,
+} from './balance.js';
