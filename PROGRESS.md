@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-057`.
-**Подтверждённо завершено:** `63 / 100` задач.
+**Текущее задание:** `ML-058`.
+**Подтверждённо завершено:** `64 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -81,7 +81,8 @@
 | ML-081 | DONE | PASS lint, format:check, typecheck, test (88), build | `1cea322` | 2026-11-19. application: CSV UTF-8 BOM, стабильные поля, ISO-даты, точный формат валюты и экранирование заметок. |
 | ML-082 | DONE | PASS lint, format:check, typecheck, test (89), build | `3bfaa91` | 2026-11-19. application/storage: read-only проверка схемы, контрольной суммы, связности и дублей; повреждённые файлы оставляют снимок исходной базы равным. |
 | ML-083 | DONE | PASS lint, format:check, typecheck, test (90), build | `247dabe` | 2026-11-19. application и IndexedDB v8: подтверждение, снимок и транзакционная замена; сбой после очистки проверен на исходной базе. |
-| ML-084 | DONE | PASS lint, format:check, typecheck, test (91), build | ML-084 | 2026-11-19. application/storage: дедупликация UUID, проверка объединённого состояния и TC-FIN-007 на повторном открытии базы; местные записи сохраняют приоритет. |
+| ML-084 | DONE | PASS lint, format:check, typecheck, test (91), build | `9091e20` | 2026-11-19. application/storage: дедупликация UUID, проверка объединённого состояния и TC-FIN-007 на повторном открытии базы; местные записи сохраняют приоритет. |
+| ML-057 | DONE | PASS lint, format:check, typecheck, test (92), build | ML-057 | 2026-11-19. интеграционные тесты IndexedDB: проверка редактирования, мягкого удаления, merge и replace через реальные команды и JSON. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

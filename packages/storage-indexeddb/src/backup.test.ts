@@ -1,6 +1,9 @@
 import type { UnitOfWork } from '@money-level/application';
 import {
   addExpense,
+  deleteTransaction,
+  getAnalyticsReport,
+  updateTransaction,
   createGoal,
   getDashboardSummary,
   mergeBackup,
@@ -260,5 +263,45 @@ test('TC-FIN-007: merge deduplicates the same backup after reopen and restores t
   } finally {
     target.close();
     storage.close();
+  }
+});
+
+test('analytics recalculates the same period after edits, deletion and an actual JSON import', async () => {
+  const { storage, context } = await backupFixture();
+  const target = journalFixture().open();
+  const readReport = () => getAnalyticsReport(storage, '2026-11');
+  try {
+    const details = await exportBackup(storage, sha256Checksum, context.clock);
+    const expense = details.data.transactions.find(
+      (entry) => entry.kind === 'expense',
+    );
+    if (!expense) throw new Error('Expected an expense.');
+    expect((await readReport()).totals.expenseMinor).toBe('8000');
+
+    await updateTransaction(context, expense.id, { amountMinor: '12000' });
+    const adjusted = await readReport();
+    expect(adjusted.totals.expenseMinor).toBe('12000');
+    expect(adjusted.byCategory).toMatchObject([
+      { amountMinor: '12000', name: 'Еда' },
+    ]);
+    const exported = await exportBackup(storage, sha256Checksum, context.clock);
+
+    await deleteTransaction(context, expense.id);
+    expect((await readReport()).totals.expenseMinor).toBe('0');
+    expect((await readReport()).byCategory).toEqual([]);
+
+    await mergeBackup(target, JSON.stringify(exported), sha256Checksum);
+    expect(await getAnalyticsReport(target, '2026-11')).toEqual(adjusted);
+
+    await replaceBackup(
+      context,
+      JSON.stringify(exported),
+      sha256Checksum,
+      true,
+    );
+    expect(await readReport()).toEqual(adjusted);
+  } finally {
+    storage.close();
+    target.close();
   }
 });
