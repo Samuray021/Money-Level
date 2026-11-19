@@ -43,3 +43,11 @@ export type { HistoryDay, HistoryEntry, HistoryFilters } from './history.js';
 
 export { archiveJournalCategory, saveCategory } from './manage-categories.js';
 export type { CategoryInput } from './manage-categories.js';
+
+export {
+  archiveAccount,
+  createAccount,
+  getAccountOverview,
+  renameAccount,
+} from './manage-accounts.js';
+export type { NewAccountInput } from './manage-accounts.js';

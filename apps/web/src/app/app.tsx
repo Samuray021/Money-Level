@@ -5,6 +5,7 @@ import { Dashboard } from '../features/dashboard/dashboard.js';
 import { TransactionEntry } from '../features/transactions/transaction-entry.js';
 import { EditEntry } from '../features/history/edit-entry.js';
 import { History, HistoryDetail } from '../features/history/history.js';
+import { ManageAccounts } from '../features/profile/manage-accounts.js';
 import { ManageCategories } from '../features/profile/manage-categories.js';
 import { Profile } from '../features/profile/profile.js';
 import { Onboarding } from '../features/onboarding/onboarding.js';
@@ -48,6 +49,7 @@ function AppRoutes() {
         <Route path="goals" element={<h1>Цели</h1>} />
         <Route path="profile" element={<Profile />} />
         <Route path="profile/categories" element={<ManageCategories />} />
+        <Route path="profile/accounts" element={<ManageAccounts />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
