@@ -82,3 +82,18 @@
   color: var(--color-danger);
   font-size: var(--text-small);
 }
+
+.dashboard-stack {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: var(--space-3);
+}
+
+.dashboard-actions a {
+  text-decoration: none;
+}

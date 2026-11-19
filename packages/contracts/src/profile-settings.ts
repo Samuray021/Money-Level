@@ -22,6 +22,7 @@ export const profileSettingsSchema = z.strictObject({
   firstAccountId: uuidSchema,
   onboardingCompleted: z.boolean(),
   balanceHidden: z.boolean().default(false),
+  starterCategoriesReady: z.boolean().default(false),
   humorMode: z.enum(['off', 'neutral', 'roast', 'chaos']).default('roast'),
   humorFrequency: humorFrequencySchema.default('usual'),
   profanityEnabled: z.boolean().default(false),

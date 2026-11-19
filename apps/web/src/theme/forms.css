@@ -59,3 +59,26 @@ body > #root > .form-page {
   margin: 0;
   accent-color: var(--color-accent);
 }
+
+.form-extra {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.form-extra summary {
+  min-block-size: var(--control-height);
+  padding-block: var(--space-2);
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.form-extra .form-field + .form-field {
+  margin-block-start: var(--space-3);
+}
+
+.form-cancel {
+  justify-self: center;
+  min-block-size: var(--control-height);
+  padding: var(--space-2);
+  font-weight: 650;
+}

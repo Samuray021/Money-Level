@@ -15,6 +15,7 @@ export {
   assertCategoryType,
   assertUniqueCategoryName,
   categorySchema,
+  normalizeCategoryName,
 } from './category.js';
 export type { Category } from './category.js';
 export { transactionPatchSchema, transactionSchema } from './transaction.js';

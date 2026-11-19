@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { getDashboardSummary } from '@money-level/application';
 import { Button } from '@money-level/ui-kit';
 import { useCallback } from 'react';
@@ -33,64 +34,74 @@ export function Dashboard() {
 
   const value = state.value;
   return (
-    <section className="balance-panel" aria-labelledby="balance-title">
-      <h1 id="balance-title">Общий баланс</h1>
-      <p className="balance-total money-value" data-testid="total-balance">
-        <MoneyAmount amount={value.totalMinor} currency={value.currency} />
-      </p>
+    <div className="dashboard-stack">
+      <section className="balance-panel" aria-labelledby="balance-title">
+        <h1 id="balance-title">Общий баланс</h1>
+        <p className="balance-total money-value" data-testid="total-balance">
+          <MoneyAmount amount={value.totalMinor} currency={value.currency} />
+        </p>
 
-      <div className="balance-breakdown">
-        <p className="balance-period">
-          {monthLabel.format(new Date(value.period.from + 'T00:00:00.000Z'))}
-        </p>
-        <dl className="balance-flow">
-          <div>
-            <dt>Доходы</dt>
-            <dd className="money-value balance-income" data-testid="income">
-              <MoneyAmount
-                amount={value.incomeMinor}
-                currency={value.currency}
-              />
-            </dd>
-          </div>
-          <div>
-            <dt>Расходы</dt>
-            <dd className="money-value" data-testid="expenses">
-              <MoneyAmount
-                amount={value.expenseMinor}
-                currency={value.currency}
-              />
-            </dd>
-          </div>
-        </dl>
-      </div>
-      <dl className="balance-availability">
-        <div>
-          <dt>Доступно к тратам</dt>
-          <dd className="money-value" data-testid="available">
-            <MoneyAmount
-              amount={value.availableMinor}
-              currency={value.currency}
-            />
-          </dd>
+        <div className="balance-breakdown">
+          <p className="balance-period">
+            {monthLabel.format(new Date(value.period.from + 'T00:00:00.000Z'))}
+          </p>
+          <dl className="balance-flow">
+            <div>
+              <dt>Доходы</dt>
+              <dd className="money-value balance-income" data-testid="income">
+                <MoneyAmount
+                  amount={value.incomeMinor}
+                  currency={value.currency}
+                />
+              </dd>
+            </div>
+            <div>
+              <dt>Расходы</dt>
+              <dd className="money-value" data-testid="expenses">
+                <MoneyAmount
+                  amount={value.expenseMinor}
+                  currency={value.currency}
+                />
+              </dd>
+            </div>
+          </dl>
         </div>
-        {value.reservedMinor !== '0' && (
+        <dl className="balance-availability">
           <div>
-            <dt>В целях</dt>
-            <dd className="money-value">
+            <dt>Доступно к тратам</dt>
+            <dd className="money-value" data-testid="available">
               <MoneyAmount
-                amount={value.reservedMinor}
+                amount={value.availableMinor}
                 currency={value.currency}
               />
             </dd>
           </div>
+          {value.reservedMinor !== '0' && (
+            <div>
+              <dt>В целях</dt>
+              <dd className="money-value">
+                <MoneyAmount
+                  amount={value.reservedMinor}
+                  currency={value.currency}
+                />
+              </dd>
+            </div>
+          )}
+        </dl>
+        {value.overReserved && (
+          <p className="balance-warning" role="status">
+            Резервы превышают баланс.
+          </p>
         )}
-      </dl>
-      {value.overReserved && (
-        <p className="balance-warning" role="status">
-          Резервы превышают баланс.
-        </p>
-      )}
-    </section>
+      </section>
+      <div className="dashboard-actions">
+        <Link
+          className="ml-button ml-button--primary"
+          to="/transactions/income"
+        >
+          <span aria-hidden="true">+</span> Доход
+        </Link>
+      </div>
+    </div>
   );
 }

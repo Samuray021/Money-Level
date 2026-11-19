@@ -32,3 +32,6 @@ export type { GoalReservationInput } from './goal-reservations.js';
 export { getDashboardSummary } from './dashboard.js';
 
 export { setBalanceHidden } from './onboarding.js';
+
+export { ensureStarterCategories } from './starter-categories.js';
+export { getTransactionChoices } from './transaction-choices.js';

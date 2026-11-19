@@ -29,7 +29,7 @@ export function assertCategoryType(
   }
 }
 
-function normalizedName(name: string): string {
+export function normalizeCategoryName(name: string): string {
   return name
     .normalize('NFC')
     .trim()
@@ -41,14 +41,14 @@ export function assertUniqueCategoryName(
   candidate: Category,
   existing: readonly Category[],
 ): void {
-  const key = normalizedName(candidate.name);
+  const key = normalizeCategoryName(candidate.name);
   if (
     existing.some(
       (category) =>
         category.id !== candidate.id &&
         category.type === candidate.type &&
         category.deletedAt === undefined &&
-        normalizedName(category.name) === key,
+        normalizeCategoryName(category.name) === key,
     )
   ) {
     throw new RangeError('A category with this name and type already exists.');

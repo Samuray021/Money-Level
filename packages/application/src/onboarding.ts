@@ -14,6 +14,7 @@ import {
   parseCurrencyAmount,
 } from '@money-level/finance-core';
 import type { JournalCommandContext } from './create-transaction.js';
+import { seedStarterCategories } from './starter-categories.js';
 
 export interface ProfileSetupInput {
   currency: CurrencyCode;
@@ -117,12 +118,14 @@ export function finishOnboarding(
     const completed = profileSettingsSchema.parse({
       ...profile,
       onboardingCompleted: true,
+      starterCategoriesReady: true,
       humorFrequency: input.humorFrequency,
       profanityEnabled:
         input.humorFrequency !== 'off' && input.profanityEnabled,
     });
 
     await journal.transactions.put(opening);
+    await seedStarterCategories(journal, opening.createdAt);
     await journal.settings.put(completed);
     return completed;
   });

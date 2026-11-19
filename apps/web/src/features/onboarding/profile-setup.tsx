@@ -3,7 +3,6 @@ import { Button } from '@money-level/ui-kit';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useJournal } from '../../app/journal-context.js';
-import './setup.css';
 
 const names = new Intl.DisplayNames('ru-RU', { type: 'currency' });
 const currencies = [

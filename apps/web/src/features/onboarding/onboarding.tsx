@@ -5,7 +5,6 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useJournal } from '../../app/journal-context.js';
 import { ProfileSetup } from './profile-setup.js';
-import './setup.css';
 
 function OpeningSetup({ profile }: { profile: ProfileSettings }) {
   const { commands, setProfile } = useJournal();
