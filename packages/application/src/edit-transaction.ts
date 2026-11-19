@@ -78,3 +78,44 @@ export function deleteTransaction(
     );
   });
 }
+
+export const undoDeleteWindowMs = 10_000;
+
+export function undoDeleteTransaction(
+  context: TransactionCommandContext,
+  id: UUID,
+  deletionTimestamp: string,
+): Promise<boolean> {
+  return context.storage.write(async (journal) => {
+    const previous = await journal.transactions.get(uuidSchema.parse(id));
+    if (!previous?.deletedAt || previous.deletedAt !== deletionTimestamp)
+      return false;
+
+    const now = (context.clock ?? systemClock).now().getTime();
+    if (now >= Date.parse(previous.deletedAt) + undoDeleteWindowMs)
+      return false;
+
+    const updatedAt = new Date(
+      Math.max(now, Date.parse(previous.updatedAt)),
+    ).toISOString();
+    const restored = { ...previous, updatedAt };
+    delete restored.deletedAt;
+    await validateJournalReferences(
+      journal,
+      restored,
+      context.baseCurrency,
+      previous,
+    );
+    await recordTransactionChange(
+      journal,
+      restored,
+      createJournalChangeEvent(
+        context.createId(),
+        'transaction.restored',
+        restored,
+        updatedAt,
+      ),
+    );
+    return true;
+  });
+}

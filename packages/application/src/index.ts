@@ -15,4 +15,9 @@ export type {
   TransactionCommandContext,
   TransferInput,
 } from './create-transaction.js';
-export { deleteTransaction, updateTransaction } from './edit-transaction.js';
+export {
+  deleteTransaction,
+  undoDeleteTransaction,
+  undoDeleteWindowMs,
+  updateTransaction,
+} from './edit-transaction.js';

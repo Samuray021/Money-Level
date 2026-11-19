@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-028`.
-**Подтверждённо завершено:** `27 / 100` задач.
+**Текущее задание:** `ML-029`.
+**Подтверждённо завершено:** `28 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -44,7 +44,8 @@
 | ML-024 | DONE | PASS lint, format:check, typecheck, test (54), build | `c1f612a` | 2026-11-19. application и IndexedDB: команда дохода; два параллельных запроса создают одну запись и одно событие. Устранён преждевременный commit привязкой таблиц к транзакции. |
 | ML-025 | DONE | PASS lint, format:check, typecheck, test (55), build | `0e74bb3` | 2026-11-19. application: команда расхода по общему пути сохранения, тест повторного ключа и конфликта видов операций. |
 | ML-026 | DONE | PASS lint, format:check, typecheck, test (56), build | `a7f81c2` | 2026-11-19. application: ввод перевода, атомарная проверка назначения и валюты, неизменный общий баланс. |
-| ML-027 | DONE | PASS lint, format:check, typecheck, test (58), build | ML-027 | 2026-11-19. application: PATCH с проверкой вида и ссылок, мягкое удаление, пересчёт и защита от дублей. |
+| ML-027 | DONE | PASS lint, format:check, typecheck, test (58), build | `96152aa` | 2026-11-19. application: PATCH с проверкой вида и ссылок, мягкое удаление, пересчёт и защита от дублей. |
+| ML-028 | DONE | PASS lint, format:check, typecheck, test (59), build | ML-028 | 2026-11-19. application: 10-секундная отмена, проверка повторов, срока и устаревшей отметки удаления. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
