@@ -14,7 +14,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "build": "pnpm --filter @money-level/web build"
+    "build": "pnpm --filter @money-level/web build",
+    "test:e2e": "pnpm --filter @money-level/web build && pnpm --filter @money-level/web exec playwright test"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
