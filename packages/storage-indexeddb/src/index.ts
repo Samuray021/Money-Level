@@ -13,6 +13,11 @@ import {
 } from '@money-level/finance-core';
 import { Dexie } from 'dexie';
 import type { DexieOptions, Table, Transaction } from 'dexie';
+import {
+  currentJournalSchemaVersion,
+  initializeMigrationHistory,
+  migrateJournal,
+} from './migrations.js';
 
 function repository<Record>(
   table: Table<Record, string>,
@@ -52,6 +57,13 @@ export class IndexedDbJournal implements UnitOfWork {
     this.database.version(3).stores({
       commandReceipts: 'key',
     });
+    this.database
+      .version(currentJournalSchemaVersion)
+      .stores({
+        appMigrations: 'version',
+      })
+      .upgrade(migrateJournal);
+    this.database.on('populate', initializeMigrationHistory);
   }
 
   private repositories(transaction: Transaction): JournalWriter {
@@ -106,7 +118,14 @@ export class IndexedDbJournal implements UnitOfWork {
     );
   }
 
+  async schemaVersion(): Promise<number> {
+    if (!this.database.isOpen()) await this.database.open();
+    return this.database.verno;
+  }
+
   close(): void {
     this.database.close();
   }
 }
+
+export { currentJournalSchemaVersion } from './migrations.js';
