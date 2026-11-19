@@ -17,11 +17,14 @@ import {
 } from './journal-change.js';
 import type { JournalReader, UnitOfWork } from './journal-repository.js';
 
-export interface TransactionCommandContext {
+export interface JournalCommandContext {
   storage: UnitOfWork;
-  baseCurrency: CurrencyCode;
   createId: () => UUID;
   clock?: Clock;
+}
+
+export interface TransactionCommandContext extends JournalCommandContext {
+  baseCurrency: CurrencyCode;
 }
 
 export interface NewTransactionInput {

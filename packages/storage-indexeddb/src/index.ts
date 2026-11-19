@@ -6,6 +6,7 @@ import type {
   Repository,
   UnitOfWork,
 } from '@money-level/application';
+import { profileSettingsSchema } from '@money-level/contracts';
 import {
   accountSchema,
   categorySchema,
@@ -14,9 +15,9 @@ import {
 import { Dexie } from 'dexie';
 import type { DexieOptions, Table, Transaction } from 'dexie';
 import {
-  currentJournalSchemaVersion,
   initializeMigrationHistory,
   migrateJournal,
+  recordMigration,
 } from './migrations.js';
 
 function repository<Record>(
@@ -58,11 +59,15 @@ export class IndexedDbJournal implements UnitOfWork {
       commandReceipts: 'key',
     });
     this.database
-      .version(currentJournalSchemaVersion)
+      .version(4)
       .stores({
         appMigrations: 'version',
       })
       .upgrade(migrateJournal);
+    this.database
+      .version(5)
+      .stores({ settings: 'id' })
+      .upgrade((transaction) => recordMigration(transaction, 5));
     this.database.on('populate', initializeMigrationHistory);
   }
 
@@ -91,6 +96,10 @@ export class IndexedDbJournal implements UnitOfWork {
           });
         },
       },
+      settings: repository(
+        transaction.table('settings'),
+        profileSettingsSchema,
+      ),
       accounts: repository(transaction.table('accounts'), accountSchema),
       categories: repository(transaction.table('categories'), categorySchema),
       transactions: repository(

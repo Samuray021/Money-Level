@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-033`.
-**Подтверждённо завершено:** `31 / 100` задач.
+**Текущее задание:** `ML-034`.
+**Подтверждённо завершено:** `32 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -49,7 +49,8 @@
 | ML-029 | DONE | PASS lint, format:check, typecheck, test (61), build | `7540652` | 2026-11-19. storage-indexeddb и DATA_MODEL: схема v4, переход с v1, повторное открытие и проверяемое восстановление при сбое. |
 | ML-030 | DEFERRED | PASS lint, format:check, typecheck, test (64), build; NOT RUN полный эталонный набор | `b2b4e22` | 2026-11-19. Сквозные сценарии в financial-scenarios.test.ts и матрица приёмки в docs/ACCEPTANCE.md. |
 | ML-031 | DONE | PASS lint, format:check, typecheck, test (64), build | `b74e856` | 2026-11-19. web и ui-kit: темы, типографика и кнопки; Chromium 320/390/428 px, обе цветовые схемы, контраст, фокус, hover и busy. |
-| ML-032 | DONE | PASS lint, format:check, typecheck, test (64), build | ML-032 | 2026-11-19. web: общий макет, пять маршрутов, активный пункт и нижняя панель; Chromium подтвердил переходы и зазор для ввода на 320 px. |
+| ML-032 | DONE | PASS lint, format:check, typecheck, test (64), build | `01819d1` | 2026-11-19. web: общий макет, пять маршрутов, активный пункт и нижняя панель; Chromium подтвердил переходы и зазор для ввода на 320 px. |
+| ML-033 | DONE | PASS lint, format:check, typecheck, test (66), build | ML-033 | 2026-11-19. web, contracts, application и IndexedDB v5: первый счёт, защита входа на главную, конкурентные запросы и перезапуск в Chromium. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

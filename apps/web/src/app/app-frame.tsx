@@ -9,9 +9,15 @@ const tabs = [
   { path: '/profile', label: 'Профиль', icon: '◉' },
 ];
 
-export function AppFrame() {
+export function AppFrame({
+  showNavigation = true,
+}: {
+  showNavigation?: boolean;
+}) {
   return (
-    <div className="app-frame">
+    <div
+      className={showNavigation ? 'app-frame' : 'app-frame app-frame--setup'}
+    >
       <a className="skip-link" href="#main-content">
         К содержимому
       </a>
@@ -28,16 +34,18 @@ export function AppFrame() {
       <main className="app-main" id="main-content" tabIndex={-1}>
         <Outlet />
       </main>
-      <nav className="tab-bar" aria-label="Основное меню">
-        {tabs.map(({ path, label, icon }) => (
-          <NavLink key={path} to={path} end={path === '/'}>
-            <span className="tab-icon" aria-hidden="true">
-              {icon}
-            </span>
-            <span>{label}</span>
-          </NavLink>
-        ))}
-      </nav>
+      {showNavigation && (
+        <nav className="tab-bar" aria-label="Основное меню">
+          {tabs.map(({ path, label, icon }) => (
+            <NavLink key={path} to={path} end={path === '/'}>
+              <span className="tab-icon" aria-hidden="true">
+                {icon}
+              </span>
+              <span>{label}</span>
+            </NavLink>
+          ))}
+        </nav>
+      )}
     </div>
   );
 }

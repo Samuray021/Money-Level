@@ -9,7 +9,8 @@
   "dependencies": {
     "@money-level/application": "workspace:*",
     "@money-level/finance-core": "workspace:*",
-    "dexie": "^4.2.1"
+    "dexie": "^4.2.1",
+    "@money-level/contracts": "workspace:*"
   },
   "devDependencies": {
     "fake-indexeddb": "^6.2.5"

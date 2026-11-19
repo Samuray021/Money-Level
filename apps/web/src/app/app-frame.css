@@ -124,3 +124,7 @@
     color: var(--color-text);
   }
 }
+
+.app-frame--setup .app-main {
+  padding-block-end: var(--space-6);
+}

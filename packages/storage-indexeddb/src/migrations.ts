@@ -5,20 +5,21 @@ import {
 } from '@money-level/finance-core';
 import type { Transaction } from 'dexie';
 
-export const currentJournalSchemaVersion = 4;
+export const currentJournalSchemaVersion = 5;
 
 interface AppMigration {
   version: number;
   appliedAt: string;
 }
 
-export function initializeMigrationHistory(
+export function recordMigration(
   transaction: Transaction,
+  version: number,
 ): Promise<void> {
   return transaction
     .table<AppMigration, number>('appMigrations')
     .add({
-      version: currentJournalSchemaVersion,
+      version,
       appliedAt: new Date().toISOString(),
     })
     .then(() => undefined);
@@ -39,6 +40,12 @@ export function migrateJournal(transaction: Transaction): Promise<void> {
     })
     .then((rows) => {
       rows.forEach((row) => transactionSchema.parse(row));
-      return initializeMigrationHistory(transaction);
+      return recordMigration(transaction, 4);
     });
+}
+
+export function initializeMigrationHistory(
+  transaction: Transaction,
+): Promise<void> {
+  return recordMigration(transaction, currentJournalSchemaVersion);
 }

@@ -1,10 +1,20 @@
 import { z } from 'zod';
 
-export const uuidSchema = z.uuidv4().transform((uuid) => uuid.toLowerCase());
-export const isoDateSchema = z.iso.date();
-export const isoDateTimeSchema = z.iso.datetime();
-export const currencyCodeSchema = z.enum(Intl.supportedValuesOf('currency'));
-export const minorUnitsSchema = z.string().regex(/^-?\d+$/);
+import {
+  currencyCodeSchema,
+  isoDateSchema,
+  isoDateTimeSchema,
+  minorUnitsSchema,
+  uuidSchema,
+} from './primitives.js';
+
+export {
+  currencyCodeSchema,
+  isoDateSchema,
+  isoDateTimeSchema,
+  minorUnitsSchema,
+  uuidSchema,
+};
 
 export const accountKindSchema = z.enum(['cash', 'card', 'savings', 'other']);
 export const categoryTypeSchema = z.enum(['income', 'expense']);
@@ -27,3 +37,6 @@ export type TransactionKind = z.infer<typeof transactionKindSchema>;
 
 export { createSeededRandom, systemClock } from './runtime.js';
 export type { Clock, RandomSource } from './runtime.js';
+
+export { profileSettingsSchema } from './profile-settings.js';
+export type { ProfileSettings } from './profile-settings.js';

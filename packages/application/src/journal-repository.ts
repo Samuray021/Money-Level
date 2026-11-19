@@ -1,3 +1,4 @@
+import type { ProfileSettings } from '@money-level/contracts';
 import type { Account, Category, Transaction } from '@money-level/finance-core';
 import type { JournalChangeEvent } from './journal-change.js';
 
@@ -11,6 +12,7 @@ export interface Repository<Record> extends ReadRepository<Record> {
 }
 
 interface JournalRecords {
+  settings: ProfileSettings;
   accounts: Account;
   categories: Category;
   transactions: Transaction;
