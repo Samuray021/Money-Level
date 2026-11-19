@@ -89,3 +89,36 @@ test('honors global and per-rule cooldowns with an injected clock', () => {
   expect(evaluateMeme(pack, { ...input, frequency: 'rare' })).toBeUndefined();
   expect(evaluateMeme(pack, { ...input, frequency: 'off' })).toBeUndefined();
 });
+
+test('a rare scene uses the 1% boundary and can be selected at most once per session', () => {
+  const scenes = memePackSchema.parse({
+    ...samplePack,
+    rules: [
+      sampleRule,
+      { ...sampleRule, id: 'rare-scene', rarity: 'rare', cooldownMs: 0 },
+    ],
+  });
+  const clock = { now: () => new Date(event.occurredAt) };
+  const input = { ...base, clock, sessionId: 'current' };
+  expect(
+    evaluateMeme(scenes, { ...input, random: { next: () => 0.009 } })?.rarity,
+  ).toBe('rare');
+  expect(
+    evaluateMeme(scenes, { ...input, random: { next: () => 0.01 } })?.rarity,
+  ).toBe('normal');
+  expect(
+    evaluateMeme(scenes, {
+      ...input,
+      random: { next: () => 0 },
+      history: [
+        {
+          packId: scenes.id,
+          ruleId: 'rare-scene',
+          shownAt: '2026-11-17T12:00:00Z',
+          sessionId: 'current',
+          rarity: 'rare',
+        },
+      ],
+    })?.rarity,
+  ).toBe('normal');
+});

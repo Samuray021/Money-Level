@@ -16,6 +16,8 @@ export interface ShownReaction {
 }
 
 interface Evaluation {
+  sessionId?: string;
+  rareChance?: number;
   frequency?: ProfileSettings['humorFrequency'];
   history?: readonly ShownReaction[];
   clock?: Clock;
@@ -91,7 +93,6 @@ export function evaluateMeme(
 
   const eligible = pack.rules.filter(
     (rule) =>
-      rule.rarity === 'normal' &&
       matches(rule, input) &&
       !history.some(
         (item) =>
@@ -102,7 +103,24 @@ export function evaluateMeme(
   );
   if (eligible.length > 0 && frequency === 'rare' && draw(input.random) >= 0.25)
     return undefined;
-  const selected = choose(eligible, input.random);
+
+  const rareChance = input.rareChance ?? 0.01;
+  if (!(rareChance >= 0 && rareChance <= 1))
+    throw new RangeError('The rare chance must be in [0, 1].');
+  const rare = eligible.filter((rule) => rule.rarity === 'rare');
+  const canShowRare =
+    input.sessionId &&
+    rare.length > 0 &&
+    !history.some(
+      (item) => item.rarity === 'rare' && item.sessionId === input.sessionId,
+    );
+  const selected =
+    canShowRare && draw(input.random) < rareChance
+      ? choose(rare, input.random)
+      : choose(
+          eligible.filter((rule) => rule.rarity === 'normal'),
+          input.random,
+        );
   if (!selected) return undefined;
   return {
     packId: pack.id,
