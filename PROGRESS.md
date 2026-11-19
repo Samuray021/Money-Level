@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-047`.
-**Подтверждённо завершено:** `50 / 100` задач.
+**Текущее задание:** `ML-048`.
+**Подтверждённо завершено:** `51 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -68,7 +68,8 @@
 | ML-044 | DONE | PASS lint, format:check, typecheck, test (79), build | `d08cafa` | 2026-11-19. web/application: счета, начальные остатки, переименование и архив. Chromium проверил добавление, перевод и сохранённую сумму в архиве. |
 | ML-086 | DONE | PASS lint, format:check, typecheck, test (79), build | `7421f75` | 2026-11-19. web: манифест, standalone, цвет темы и PNG. Chromium обычного профиля проверил установку и размеры иконок. Зависимость офлайн-сценария ML-045. |
 | ML-087 | DONE | PASS lint, format:check, typecheck, test (79), build | `9b66d51` | 2026-11-19. web: Workbox, только статический кэш, статус офлайна и ленивые маршруты. Chromium подтвердил открытие, запись и прямой маршрут без сети. Зависимость ML-045. |
-| ML-045 | DONE | PASS lint, format:check, typecheck, test (79), build | ML-045 | 2026-11-19. Chromium Pixel 7: онбординг, доход, расход, правка, загрузка без сети и запись в офлайне. Добавлены E2E-команда и шаги GitHub Actions. |
+| ML-045 | DONE | PASS lint, format:check, typecheck, test (79), build | `272050d` | 2026-11-19. Chromium Pixel 7: онбординг, доход, расход, правка, загрузка без сети и запись в офлайне. Добавлены E2E-команда и шаги GitHub Actions. |
+| ML-047 | DONE | PASS lint, format:check, typecheck, test (80), build | ML-047 | 2026-11-19. analytics: суммы по категориям, детерминированная сортировка и сверка с расходами периода. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

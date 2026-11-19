@@ -1,6 +1,7 @@
+import { addMinorUnits } from '@money-level/finance-core';
 import type { Transaction } from '@money-level/finance-core';
 import { expect, test } from 'vitest';
-import { selectPeriodTotals } from './index.js';
+import { selectCategoryExpenses, selectPeriodTotals } from './index.js';
 
 const record = {
   id: 'd0000000-0000-4000-8000-000000000001',
@@ -55,4 +56,28 @@ test('period totals exclude opening amounts, transfers, corrections and deleted 
   expect(() =>
     selectPeriodTotals(entries, { ...period, from: period.until }),
   ).toThrow(RangeError);
+});
+
+test('category totals reconcile exactly with the period expense total', () => {
+  const entries: Transaction[] = [
+    { ...categorized, kind: 'expense', amountMinor: '9007199254740993' },
+    { ...categorized, kind: 'expense', amountMinor: '7' },
+    {
+      ...categorized,
+      kind: 'expense',
+      amountMinor: '3',
+      categoryId: record.accountId,
+    },
+    { ...categorized, kind: 'income', amountMinor: '25' },
+    { ...categorized, kind: 'expense', transactionDate: '2026-10-31' },
+    { ...categorized, kind: 'expense', deletedAt: record.createdAt },
+  ];
+  const categories = selectCategoryExpenses(entries, period);
+  expect(categories).toEqual([
+    { categoryId: categorized.categoryId, amountMinor: '9007199254741000' },
+    { categoryId: record.accountId, amountMinor: '3' },
+  ]);
+  expect(
+    categories.reduce((sum, item) => addMinorUnits(sum, item.amountMinor), '0'),
+  ).toBe(selectPeriodTotals(entries, period).expenseMinor);
 });

@@ -1,6 +1,10 @@
 import { isoDateSchema } from '@money-level/contracts';
 import type { ISODate, MinorUnits } from '@money-level/contracts';
-import { addMinorUnits, subtractMinorUnits } from '@money-level/finance-core';
+import {
+  addMinorUnits,
+  compareMinorUnits,
+  subtractMinorUnits,
+} from '@money-level/finance-core';
 import type { Transaction } from '@money-level/finance-core';
 
 export interface DatePeriod {
@@ -14,15 +18,20 @@ export interface PeriodTotals {
   netMinor: MinorUnits;
 }
 
-export function selectPeriodTotals(
-  transactions: readonly Transaction[],
-  period: DatePeriod,
-): PeriodTotals {
+function validatedPeriod(period: DatePeriod): DatePeriod {
   const from = isoDateSchema.parse(period.from);
   const until = isoDateSchema.parse(period.until);
   if (from >= until)
     throw new RangeError('A report period must have a positive duration.');
 
+  return { from, until };
+}
+
+export function selectPeriodTotals(
+  transactions: readonly Transaction[],
+  period: DatePeriod,
+): PeriodTotals {
+  const { from, until } = validatedPeriod(period);
   return summarizeCashFlow(
     transactions.filter(
       (entry) => entry.transactionDate >= from && entry.transactionDate < until,
@@ -54,4 +63,46 @@ export function calendarMonthPeriod(localDate: ISODate): DatePeriod {
   const nextMonth = new Date(from + 'T00:00:00.000Z');
   nextMonth.setUTCMonth(nextMonth.getUTCMonth() + 1);
   return { from, until: nextMonth.toISOString().slice(0, 10) };
+}
+
+type Expense = Extract<Transaction, { kind: 'expense' }>;
+
+function expensesWithin(
+  transactions: readonly Transaction[],
+  from: ISODate,
+  until: ISODate,
+): Expense[] {
+  return transactions.filter(
+    (entry): entry is Expense =>
+      entry.kind === 'expense' &&
+      !entry.deletedAt &&
+      entry.transactionDate >= from &&
+      entry.transactionDate < until,
+  );
+}
+
+export interface CategoryExpense {
+  categoryId: string;
+  amountMinor: MinorUnits;
+}
+
+export function selectCategoryExpenses(
+  transactions: readonly Transaction[],
+  period: DatePeriod,
+): CategoryExpense[] {
+  const { from, until } = validatedPeriod(period);
+  const totals = new Map<string, MinorUnits>();
+  for (const entry of expensesWithin(transactions, from, until)) {
+    totals.set(
+      entry.categoryId,
+      addMinorUnits(totals.get(entry.categoryId) ?? '0', entry.amountMinor),
+    );
+  }
+  return [...totals]
+    .map(([categoryId, amountMinor]) => ({ categoryId, amountMinor }))
+    .sort(
+      (left, right) =>
+        compareMinorUnits(right.amountMinor, left.amountMinor) ||
+        left.categoryId.localeCompare(right.categoryId),
+    );
 }
