@@ -46,12 +46,13 @@
 | ML-026 | DONE | PASS lint, format:check, typecheck, test (56), build | `a7f81c2` | 2026-11-19. application: ввод перевода, атомарная проверка назначения и валюты, неизменный общий баланс. |
 | ML-027 | DONE | PASS lint, format:check, typecheck, test (58), build | `96152aa` | 2026-11-19. application: PATCH с проверкой вида и ссылок, мягкое удаление, пересчёт и защита от дублей. |
 | ML-028 | DONE | PASS lint, format:check, typecheck, test (59), build | `d8e8b55` | 2026-11-19. application: 10-секундная отмена, проверка повторов, срока и устаревшей отметки удаления. |
-| ML-029 | DONE | PASS lint, format:check, typecheck, test (61), build | ML-029 | 2026-11-19. storage-indexeddb и DATA_MODEL: схема v4, переход с v1, повторное открытие и проверяемое восстановление при сбое. |
+| ML-029 | DONE | PASS lint, format:check, typecheck, test (61), build | `7540652` | 2026-11-19. storage-indexeddb и DATA_MODEL: схема v4, переход с v1, повторное открытие и проверяемое восстановление при сбое. |
+| ML-030 | BLOCKED | PASS lint, format:check, typecheck, test (64), build; NOT RUN полный эталонный набор | ML-030 | 2026-11-19. Сквозные сценарии в financial-scenarios.test.ts и матрица приёмки в docs/ACCEPTANCE.md. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
 ## Блокеры
-Активных блокеров нет.
+- ML-030 требует TC-FIN-001–007 и 010. Для полного прогона отсутствуют расчёты отчётов по периоду (ML-046), резервы целей (ML-054), обработчики достижений (ML-058–059 и ML-072–074) и импорт merge (ML-084). Эти задачи стоят позднее в атомарном порядке. Имеющиеся эталоны проверены, ML-030 остаётся открытой.
 
 ## Решения и вопросы
 - Работа идёт в отдельной ветке по атомарному бэклогу.
