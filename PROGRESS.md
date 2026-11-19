@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-050`.
-**Подтверждённо завершено:** `53 / 100` задач.
+**Текущее задание:** `ML-051`.
+**Подтверждённо завершено:** `54 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -71,7 +71,8 @@
 | ML-045 | DONE | PASS lint, format:check, typecheck, test (79), build | `272050d` | 2026-11-19. Chromium Pixel 7: онбординг, доход, расход, правка, загрузка без сети и запись в офлайне. Добавлены E2E-команда и шаги GitHub Actions. |
 | ML-047 | DONE | PASS lint, format:check, typecheck, test (80), build | `557f4b8` | 2026-11-19. analytics: суммы по категориям, детерминированная сортировка и сверка с расходами периода. |
 | ML-048 | DONE | PASS lint, format:check, typecheck, test (82), build | `c5f14d3` | 2026-11-19. analytics: дневные и месячные интервалы, неполные месяцы, високосный день и переход года. |
-| ML-049 | DONE | PASS lint, format:check, typecheck, test (82), build | ML-049 | 2026-11-19. web/application: отчёт и выбор месяца, итоги, топ категорий, график и таблица, пустой месяц. Chromium 320 px подтвердил цифры. |
+| ML-049 | DONE | PASS lint, format:check, typecheck, test (82), build | `dfea236` | 2026-11-19. web/application: отчёт и выбор месяца, итоги, топ категорий, график и таблица, пустой месяц. Chromium 320 px подтвердил цифры. |
+| ML-050 | DONE | PASS lint, format:check, typecheck, test (83), build | ML-050 | 2026-11-19. budgets: строгое описание месячного бюджета, отдельный лимит категории или всех расходов, проверка суммы. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
