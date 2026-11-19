@@ -1,3 +1,4 @@
+import type { UnitOfWork } from '@money-level/application';
 import {
   addExpense,
   backupFileSchema,
@@ -5,6 +6,7 @@ import {
   exportTransactionsCsv,
   finishOnboarding,
   initializeProfile,
+  replaceBackup,
   validateBackupJson,
 } from '@money-level/application';
 import { selectTotalBalance } from '@money-level/finance-core';
@@ -138,6 +140,74 @@ test('backup validation rejects altered contents and dangling references without
     expect(await exportBackup(storage, sha256Checksum, context.clock)).toEqual(
       original,
     );
+  } finally {
+    storage.close();
+  }
+});
+
+test('replace requires explicit confirmation, writes a recovery snapshot and rolls back a failed replacement', async () => {
+  const { storage, context } = await backupFixture();
+  try {
+    const original = await exportBackup(storage, sha256Checksum, context.clock);
+    const data = {
+      ...original.data,
+      transactions: original.data.transactions.map((row) =>
+        row.kind === 'expense' ? { ...row, amountMinor: '10000' } : row,
+      ),
+    };
+    const checksum = await sha256Checksum(
+      JSON.stringify({
+        schemaVersion: original.schemaVersion,
+        createdAt: original.createdAt,
+        data,
+      }),
+    );
+    const input = JSON.stringify({ ...original, data, checksum });
+
+    await expect(
+      replaceBackup(context, input, sha256Checksum, false),
+    ).rejects.toThrow(/confirmation/);
+    const failing: UnitOfWork = {
+      read: (operation) => storage.read(operation),
+      write: (operation) =>
+        storage.write((journal) =>
+          operation({
+            ...journal,
+            transactions: {
+              ...journal.transactions,
+              putMany: () => Promise.reject(new Error('Test storage failure')),
+            },
+          }),
+        ),
+    };
+    await expect(
+      replaceBackup(
+        { ...context, storage: failing },
+        input,
+        sha256Checksum,
+        true,
+      ),
+    ).rejects.toThrow(/storage failure/);
+    expect(await exportBackup(storage, sha256Checksum, context.clock)).toEqual(
+      original,
+    );
+    expect(
+      await storage.read((journal) => journal.recoverySnapshots.list()),
+    ).toEqual([]);
+
+    const { snapshotId } = await replaceBackup(
+      context,
+      input,
+      sha256Checksum,
+      true,
+    );
+    const recovered = await storage.read((journal) =>
+      journal.recoverySnapshots.get(snapshotId),
+    );
+    expect(recovered?.data).toEqual(original.data);
+    expect(
+      (await exportBackup(storage, sha256Checksum, context.clock)).data,
+    ).toEqual(data);
   } finally {
     storage.close();
   }

@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-083`.
-**Подтверждённо завершено:** `61 / 100` задач.
+**Текущее задание:** `ML-084`.
+**Подтверждённо завершено:** `62 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -79,7 +79,8 @@
 | ML-079 | DONE | PASS lint, format:check, typecheck, test (86), build | `6c468ec` | 2026-11-19. application: строгая JSON-схема, дата, версия и SHA-256. Зависимость сценария импорта ML-057. |
 | ML-080 | DONE | PASS lint, format:check, typecheck, test (87), build | `841d6cd` | 2026-11-19. application/storage: JSON-снимок всех записей, реальный SHA-256, точный баланс после сериализации. |
 | ML-081 | DONE | PASS lint, format:check, typecheck, test (88), build | `1cea322` | 2026-11-19. application: CSV UTF-8 BOM, стабильные поля, ISO-даты, точный формат валюты и экранирование заметок. |
-| ML-082 | DONE | PASS lint, format:check, typecheck, test (89), build | ML-082 | 2026-11-19. application/storage: read-only проверка схемы, контрольной суммы, связности и дублей; повреждённые файлы оставляют снимок исходной базы равным. |
+| ML-082 | DONE | PASS lint, format:check, typecheck, test (89), build | `3bfaa91` | 2026-11-19. application/storage: read-only проверка схемы, контрольной суммы, связности и дублей; повреждённые файлы оставляют снимок исходной базы равным. |
+| ML-083 | DONE | PASS lint, format:check, typecheck, test (90), build | ML-083 | 2026-11-19. application и IndexedDB v8: подтверждение, снимок и транзакционная замена; сбой после очистки проверен на исходной базе. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

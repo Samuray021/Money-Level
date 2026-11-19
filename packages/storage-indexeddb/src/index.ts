@@ -1,3 +1,4 @@
+import { recoverySnapshotSchema } from '@money-level/application';
 import { budgetNoticeSchema, budgetSchema } from '@money-level/budgets';
 import type {
   CommandReceipt,
@@ -38,6 +39,11 @@ function repository<Record>(
         .toArray()
         .then((records) => records.map((record) => schema.parse(record))),
     put: (record) => table.put(schema.parse(record)).then(() => undefined),
+    putMany: (records) =>
+      table
+        .bulkPut(records.map((record) => schema.parse(record)))
+        .then(() => undefined),
+    clear: () => table.clear(),
   };
 }
 
@@ -81,6 +87,10 @@ export class IndexedDbJournal implements UnitOfWork {
         budgetNotices: 'id, [budgetId+monthStart]',
       })
       .upgrade((transaction) => recordMigration(transaction, 7));
+    this.database
+      .version(8)
+      .stores({ recoverySnapshots: 'id, createdAt' })
+      .upgrade((transaction) => recordMigration(transaction, 8));
     this.database.on('populate', initializeMigrationHistory);
   }
 
@@ -92,11 +102,13 @@ export class IndexedDbJournal implements UnitOfWork {
 
     return {
       commands: {
+        clear: () => receipts.clear(),
         list: () => receipts.toArray(),
         get: (key) => receipts.get(key),
         add: (receipt) => receipts.add(receipt).then(() => undefined),
       },
       outbox: {
+        clear: () => outbox.clear(),
         list: () => outbox.toArray(),
         async add(event) {
           const { eventId, type, version, sourceEntityId, occurredAt } = event;
@@ -110,6 +122,10 @@ export class IndexedDbJournal implements UnitOfWork {
           });
         },
       },
+      recoverySnapshots: repository(
+        transaction.table('recoverySnapshots'),
+        recoverySnapshotSchema,
+      ),
       settings: repository(
         transaction.table('settings'),
         profileSettingsSchema,

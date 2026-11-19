@@ -81,3 +81,7 @@ export { exportBackup } from './backup-export.js';
 export { exportTransactionsCsv } from './backup-csv.js';
 
 export { validateBackupJson } from './backup-import.js';
+
+export { recoverySnapshotSchema } from './backup-format.js';
+export type { RecoverySnapshot } from './backup-format.js';
+export { replaceBackup } from './backup-write.js';

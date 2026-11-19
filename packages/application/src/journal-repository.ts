@@ -1,3 +1,4 @@
+import type { RecoverySnapshot } from './backup-format.js';
 import type { Budget, BudgetNotice } from '@money-level/budgets';
 import type { ProfileSettings } from '@money-level/contracts';
 import type { Account, Category, Transaction } from '@money-level/finance-core';
@@ -11,10 +12,13 @@ export interface ReadRepository<Record> {
 
 export interface Repository<Record> extends ReadRepository<Record> {
   put(record: Record): Promise<void>;
+  putMany(records: readonly Record[]): Promise<void>;
+  clear(): Promise<void>;
 }
 
 interface JournalRecords {
   settings: ProfileSettings;
+  recoverySnapshots: RecoverySnapshot;
   budgets: Budget;
   budgetNotices: BudgetNotice;
   goals: Goal;
@@ -45,9 +49,13 @@ export type JournalReader = {
 export type JournalWriter = {
   [Table in keyof JournalRecords]: Repository<JournalRecords[Table]>;
 } & {
-  outbox: OutboxReader & { add(event: JournalChangeEvent): Promise<void> };
+  outbox: OutboxReader & {
+    add(event: JournalChangeEvent): Promise<void>;
+    clear(): Promise<void>;
+  };
   commands: CommandReceiptReader & {
     add(receipt: CommandReceipt): Promise<void>;
+    clear(): Promise<void>;
   };
 };
 

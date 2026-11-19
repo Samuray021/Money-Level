@@ -50,3 +50,11 @@ export const backupFileSchema = z.strictObject({
 export type BackupData = z.infer<typeof backupDataSchema>;
 export type BackupFile = z.infer<typeof backupFileSchema>;
 export type BackupChecksum = (serialized: string) => Promise<string>;
+
+export const recoverySnapshotSchema = z.strictObject({
+  id: uuidSchema,
+  createdAt: isoDateTimeSchema,
+  data: backupDataSchema,
+});
+
+export type RecoverySnapshot = z.infer<typeof recoverySnapshotSchema>;
