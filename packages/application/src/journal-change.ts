@@ -1,3 +1,4 @@
+import { uuidSchema } from '@money-level/contracts';
 import type { Transaction } from '@money-level/finance-core';
 import type { JournalWriter } from './journal-repository.js';
 
@@ -22,4 +23,20 @@ export async function recordTransactionChange(
   }
   await journal.transactions.put(transaction);
   await journal.outbox.add(event);
+}
+
+export function createJournalChangeEvent(
+  eventId: string,
+  type: string,
+  transaction: Transaction,
+  occurredAt: string,
+): JournalChangeEvent {
+  return {
+    eventId: uuidSchema.parse(eventId),
+    type,
+    version: 1,
+    sourceEntityId: transaction.id,
+    occurredAt,
+    payload: {},
+  };
 }

@@ -1,4 +1,4 @@
-import { systemClock, uuidSchema } from '@money-level/contracts';
+import { systemClock } from '@money-level/contracts';
 import type {
   Clock,
   CurrencyCode,
@@ -11,7 +11,10 @@ import {
   transactionSchema,
 } from '@money-level/finance-core';
 import type { Transaction } from '@money-level/finance-core';
-import { recordTransactionChange } from './journal-change.js';
+import {
+  createJournalChangeEvent,
+  recordTransactionChange,
+} from './journal-change.js';
 import type { JournalReader, UnitOfWork } from './journal-repository.js';
 
 export interface TransactionCommandContext {
@@ -45,6 +48,7 @@ export async function validateJournalReferences(
   journal: JournalReader,
   transaction: Transaction,
   baseCurrency: CurrencyCode,
+  previous?: Transaction,
 ): Promise<void> {
   const source = await journal.accounts.get(transaction.accountId);
   const destination =
@@ -61,7 +65,17 @@ export async function validateJournalReferences(
     accounts: [source, destination].filter((account) => account !== undefined),
     categories: category ? [category] : [],
   });
-  if (source?.archived || destination?.archived || category?.archived) {
+  const previousDestination =
+    previous?.kind === 'transfer' ? previous.toAccountId : undefined;
+  const previousCategory =
+    previous?.kind === 'income' || previous?.kind === 'expense'
+      ? previous.categoryId
+      : undefined;
+  if (
+    (source?.archived && source.id !== previous?.accountId) ||
+    (destination?.archived && destination.id !== previousDestination) ||
+    (category?.archived && category.id !== previousCategory)
+  ) {
     throw new RangeError(
       'Archived accounts and categories cannot be used in new links.',
     );
@@ -103,14 +117,16 @@ async function createTransaction(
     }
     await validateJournalReferences(journal, transaction, context.baseCurrency);
 
-    await recordTransactionChange(journal, transaction, {
-      eventId: uuidSchema.parse(context.createId()),
-      type: 'transaction.' + transaction.kind + '.created',
-      version: 1,
-      sourceEntityId: transaction.id,
-      occurredAt,
-      payload: {},
-    });
+    await recordTransactionChange(
+      journal,
+      transaction,
+      createJournalChangeEvent(
+        context.createId(),
+        'transaction.' + transaction.kind + '.created',
+        transaction,
+        occurredAt,
+      ),
+    );
     await journal.commands.add({ key, transactionId: transaction.id });
     return transaction;
   });

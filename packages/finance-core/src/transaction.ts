@@ -1,4 +1,8 @@
-import { minorUnitsSchema, uuidSchema } from '@money-level/contracts';
+import {
+  isoDateSchema,
+  minorUnitsSchema,
+  uuidSchema,
+} from '@money-level/contracts';
 import { z } from 'zod';
 import { journalEntryFields, openingEntrySchema } from './opening-entry.js';
 
@@ -37,3 +41,14 @@ export const transactionSchema = z.discriminatedUnion('kind', [
 ]);
 
 export type Transaction = z.infer<typeof transactionSchema>;
+
+export const transactionPatchSchema = z.strictObject({
+  accountId: uuidSchema.optional(),
+  categoryId: uuidSchema.optional(),
+  toAccountId: uuidSchema.optional(),
+  amountMinor: minorUnitsSchema.optional(),
+  transactionDate: isoDateSchema.optional(),
+  note: z.string().max(500).nullable().optional(),
+});
+
+export type TransactionPatch = z.infer<typeof transactionPatchSchema>;
