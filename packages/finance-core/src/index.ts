@@ -1,1 +1,1 @@
-export {};
+export { parseRubAmount } from './money.js';

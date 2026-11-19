@@ -1,0 +1,29 @@
+import { expect, test } from 'vitest';
+import { parseRubAmount } from './index.js';
+
+test.each([
+  ['450', '45000'],
+  ['450,5', '45050'],
+  ['450.50', '45050'],
+  ['000.01', '1'],
+  ['92233720368547758.07', '9223372036854775807'],
+])('parses %s RUB exactly', (input, expected) => {
+  expect(parseRubAmount(input)).toBe(expected);
+});
+
+test.each([
+  '',
+  '0',
+  '0.00',
+  '-1',
+  '+1',
+  '1.001',
+  '1e3',
+  'NaN',
+  '1,',
+  ' 4',
+  '4\n',
+  '92233720368547758.08',
+])('rejects invalid or out-of-range RUB input %j', (input) => {
+  expect(() => parseRubAmount(input)).toThrow(RangeError);
+});
