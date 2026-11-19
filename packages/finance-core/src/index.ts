@@ -9,3 +9,10 @@ export { accountSchema } from './account.js';
 export type { Account } from './account.js';
 export { createOpeningEntry, openingEntrySchema } from './opening-entry.js';
 export type { OpeningEntry } from './opening-entry.js';
+export {
+  archiveCategory,
+  assertCategoryType,
+  assertUniqueCategoryName,
+  categorySchema,
+} from './category.js';
+export type { Category } from './category.js';

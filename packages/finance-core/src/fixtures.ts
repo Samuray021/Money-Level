@@ -11,3 +11,13 @@ export const accountInput = {
   createdAt: instant,
   updatedAt: instant,
 } as const;
+
+export const categoryInput = {
+  id: '48e007f4-6c46-4f2a-aa85-0aa19b622452',
+  name: 'Еда вне дома',
+  type: 'expense',
+  archived: false,
+  icon: 'food',
+  createdAt: instant,
+  updatedAt: instant,
+} as const;
