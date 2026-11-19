@@ -106,3 +106,36 @@ export function selectCategoryExpenses(
         left.categoryId.localeCompare(right.categoryId),
     );
 }
+
+export interface ExpenseSeriesPoint {
+  date: ISODate;
+  amountMinor: MinorUnits;
+}
+
+export function selectExpenseSeries(
+  transactions: readonly Transaction[],
+  period: DatePeriod,
+  grain: 'day' | 'month',
+): ExpenseSeriesPoint[] {
+  const { from, until } = validatedPeriod(period);
+  const monthly = grain === 'month';
+  const totals = new Map<ISODate, MinorUnits>();
+  for (const entry of expensesWithin(transactions, from, until)) {
+    const date = monthly
+      ? entry.transactionDate.slice(0, 7) + '-01'
+      : entry.transactionDate;
+    totals.set(date, addMinorUnits(totals.get(date) ?? '0', entry.amountMinor));
+  }
+
+  const cursor = new Date(from + 'T00:00:00.000Z');
+  const end = Date.parse(until + 'T00:00:00.000Z');
+  if (monthly) cursor.setUTCDate(1);
+  const points: ExpenseSeriesPoint[] = [];
+  while (cursor.getTime() < end) {
+    const date = cursor.toISOString().slice(0, 10);
+    points.push({ date, amountMinor: totals.get(date) ?? '0' });
+    if (monthly) cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+    else cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return points;
+}

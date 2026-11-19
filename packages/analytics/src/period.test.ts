@@ -1,7 +1,11 @@
 import { addMinorUnits } from '@money-level/finance-core';
 import type { Transaction } from '@money-level/finance-core';
 import { expect, test } from 'vitest';
-import { selectCategoryExpenses, selectPeriodTotals } from './index.js';
+import {
+  selectCategoryExpenses,
+  selectExpenseSeries,
+  selectPeriodTotals,
+} from './index.js';
 
 const record = {
   id: 'd0000000-0000-4000-8000-000000000001',
@@ -80,4 +84,47 @@ test('category totals reconcile exactly with the period expense total', () => {
   expect(
     categories.reduce((sum, item) => addMinorUnits(sum, item.amountMinor), '0'),
   ).toBe(selectPeriodTotals(entries, period).expenseMinor);
+});
+
+test('builds complete daily and monthly expense series across leap days and month boundaries', () => {
+  const entries: Transaction[] = [
+    { ...categorized, kind: 'expense', transactionDate: '2024-02-29' },
+    {
+      ...categorized,
+      kind: 'expense',
+      transactionDate: '2024-03-01',
+      amountMinor: '20',
+    },
+    {
+      ...categorized,
+      kind: 'expense',
+      transactionDate: '2024-03-03',
+      amountMinor: '100',
+    },
+    { ...categorized, kind: 'income', transactionDate: '2024-03-02' },
+  ];
+  const window = { from: '2024-02-28', until: '2024-03-03' };
+  expect(selectExpenseSeries(entries, window, 'day')).toEqual([
+    { date: '2024-02-28', amountMinor: '0' },
+    { date: '2024-02-29', amountMinor: '30000' },
+    { date: '2024-03-01', amountMinor: '20' },
+    { date: '2024-03-02', amountMinor: '0' },
+  ]);
+  expect(selectExpenseSeries(entries, window, 'month')).toEqual([
+    { date: '2024-02-01', amountMinor: '30000' },
+    { date: '2024-03-01', amountMinor: '20' },
+  ]);
+});
+
+test('fills the month series across a year boundary', () => {
+  expect(
+    selectExpenseSeries(
+      [],
+      { from: '2025-12-15', until: '2026-02-01' },
+      'month',
+    ),
+  ).toEqual([
+    { date: '2025-12-01', amountMinor: '0' },
+    { date: '2026-01-01', amountMinor: '0' },
+  ]);
 });
