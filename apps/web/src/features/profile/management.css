@@ -64,3 +64,9 @@
 .category-color[data-color='lime'] {
   color: var(--color-highlight);
 }
+
+.level-progress {
+  inline-size: 100%;
+  block-size: 0.875rem;
+  accent-color: var(--color-accent);
+}

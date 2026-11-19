@@ -5,6 +5,9 @@ export function Profile() {
   return (
     <section className="management">
       <h1>Профиль</h1>
+      <Link className="management-link" to="/profile/progress">
+        Прогресс и достижения
+      </Link>
       <Link className="management-link" to="/profile/humor">
         Компаньон и юмор
       </Link>

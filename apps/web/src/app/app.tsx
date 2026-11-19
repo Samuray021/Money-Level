@@ -58,6 +58,12 @@ const RoastReport = lazy(() =>
   })),
 );
 
+const AchievementProgress = lazy(() =>
+  import('../features/profile/progress.js').then((section) => ({
+    default: section.AchievementProgress,
+  })),
+);
+
 function AppRoutes() {
   const { profile } = useJournal();
   if (!profile?.onboardingCompleted) {
@@ -96,6 +102,7 @@ function AppRoutes() {
         <Route path="analytics/roast" element={<RoastReport />} />
         <Route path="goals" element={<Goals />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="profile/progress" element={<AchievementProgress />} />
         <Route path="profile/humor" element={<HumorPreferences />} />
         <Route path="profile/categories" element={<ManageCategories />} />
         <Route path="profile/accounts" element={<ManageAccounts />} />
