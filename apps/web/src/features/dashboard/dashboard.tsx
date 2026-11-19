@@ -96,6 +96,13 @@ export function Dashboard() {
       </section>
       <div className="dashboard-actions">
         <Link
+          className="ml-button ml-button--secondary"
+          to="/transactions/expense"
+        >
+          <span aria-hidden="true">−</span> Расход
+        </Link>
+
+        <Link
           className="ml-button ml-button--primary"
           to="/transactions/income"
         >

@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-038`.
-**Подтверждённо завершено:** `40 / 100` задач.
+**Текущее задание:** `ML-039`.
+**Подтверждённо завершено:** `41 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -58,7 +58,8 @@
 | ML-055 | DONE | PASS lint, format:check, typecheck, test (75), build | `ec77abf` | 2026-11-19. goals и application: единый селектор остатка, тест оверрезерва и проверка архивации. Зависимость ML-035. |
 | ML-035 | DONE | PASS lint, format:check, typecheck, test (76), build | `6f53202` | 2026-11-19. web и application: общий баланс, доходы, расходы и резервы из снимка базы. Chromium 320 px подтвердил сохранённый баланс и нулевой доход после opening. |
 | ML-036 | DONE | PASS lint, format:check, typecheck, test (76), build | `e50b748` | 2026-11-19. web/contracts/application: скрытие виджетов без сырых сумм в DOM, переключатель с фокусом, сохранение и синхронизация между вкладками Chromium. |
-| ML-037 | DONE | PASS lint, format:check, typecheck, test (76), build | ML-037 | 2026-11-19. web/application: доход за три основных действия, проверка суммы, безопасный повтор, стартовые категории; Chromium и обновление во второй вкладке. |
+| ML-037 | DONE | PASS lint, format:check, typecheck, test (76), build | `96dbf79` | 2026-11-19. web/application: доход за три основных действия, проверка суммы, безопасный повтор, стартовые категории; Chromium и обновление во второй вкладке. |
+| ML-038 | DONE | PASS lint, format:check, typecheck, test (76), build | ML-038 | 2026-11-19. web: общий ввод дохода и расхода, категория «Другое» и проверка трёх действий Chromium 320 px. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

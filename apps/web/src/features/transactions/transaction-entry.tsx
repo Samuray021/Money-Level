@@ -1,4 +1,5 @@
 import {
+  addExpense,
   addIncome,
   ensureStarterCategories,
   getTransactionChoices,
@@ -16,7 +17,13 @@ import { useJournalQuery } from '../../app/use-journal-query.js';
 
 type Choices = Awaited<ReturnType<typeof getTransactionChoices>>;
 
-function EntryForm({ choices }: { choices: Choices }) {
+function EntryForm({
+  kind,
+  choices,
+}: {
+  kind: CategoryType;
+  choices: Choices;
+}) {
   const { commands } = useJournal();
   const navigate = useNavigate();
   const { accounts, categories, profile } = choices;
@@ -68,10 +75,8 @@ function EntryForm({ choices }: { choices: Choices }) {
     inFlight.current = true;
     setSaving(true);
     try {
-      await addIncome(
-        { ...commands, baseCurrency: profile.baseCurrency },
-        input,
-      );
+      const save = kind === 'income' ? addIncome : addExpense;
+      await save({ ...commands, baseCurrency: profile.baseCurrency }, input);
       navigate('/', { replace: true });
     } catch {
       setSaveError(
@@ -210,7 +215,7 @@ export function TransactionEntry({ kind }: { kind: CategoryType }) {
       ) : !state.value.accounts.length || !state.value.categories.length ? (
         <p role="status">Нужен активный счёт и категория для этой операции.</p>
       ) : (
-        <EntryForm key={kind} choices={state.value} />
+        <EntryForm key={kind} kind={kind} choices={state.value} />
       )}
     </section>
   );

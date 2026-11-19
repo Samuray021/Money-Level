@@ -28,6 +28,10 @@ function AppRoutes() {
           path="transactions/income"
           element={<TransactionEntry kind="income" />}
         />
+        <Route
+          path="transactions/expense"
+          element={<TransactionEntry kind="expense" />}
+        />
         <Route path="setup" element={<Navigate to="/" replace />} />
         <Route path="history" element={<h1>История</h1>} />
         <Route path="analytics" element={<h1>Аналитика</h1>} />
