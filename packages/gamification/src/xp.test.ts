@@ -1,5 +1,10 @@
 import { expect, test } from 'vitest';
-import { achievementSchema, selectTotalXp } from './index.js';
+import {
+  achievementSchema,
+  levelThresholds,
+  selectLevelProgress,
+  selectTotalXp,
+} from './index.js';
 
 const first = {
   id: 'd0000000-0000-4000-8000-000000000001',
@@ -22,4 +27,21 @@ test('XP counts each achievement source once and validates the XP grant', () => 
     ]),
   ).toBe(25);
   expect(selectTotalXp([])).toBe(0);
+});
+
+test('levels have deterministic inclusive thresholds and a finite final level', () => {
+  expect(
+    levelThresholds.every(
+      (value, index) =>
+        index === 0 || value > (levelThresholds[index - 1] ?? value),
+    ),
+  ).toBe(true);
+  expect(selectLevelProgress(24)).toMatchObject({ level: 1, remainingXp: 1 });
+  expect(selectLevelProgress(25)).toMatchObject({ level: 2, remainingXp: 35 });
+  expect(selectLevelProgress(830)).toMatchObject({
+    level: 10,
+    nextThreshold: null,
+    remainingXp: 0,
+  });
+  expect(() => selectLevelProgress(-1)).toThrow(RangeError);
 });

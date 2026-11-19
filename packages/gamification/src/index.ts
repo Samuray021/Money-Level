@@ -35,3 +35,22 @@ export function selectTotalXp(achievements: readonly Achievement[]): number {
   }
   return experience;
 }
+
+export const levelThresholds: readonly number[] = [
+  0, 25, 60, 110, 180, 270, 380, 510, 660, 830,
+];
+
+export function selectLevelProgress(xp: number) {
+  if (!Number.isSafeInteger(xp) || xp < 0)
+    throw new RangeError('XP must be a nonnegative integer.');
+  const current = levelThresholds.findLastIndex((threshold) => xp >= threshold);
+  const levelStart = levelThresholds[current] ?? 0;
+  const next = levelThresholds[current + 1];
+  return {
+    level: current + 1,
+    levelStart,
+    totalXp: xp,
+    nextThreshold: next ?? null,
+    remainingXp: next === undefined ? 0 : next - xp,
+  };
+}
