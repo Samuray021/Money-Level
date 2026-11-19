@@ -148,7 +148,14 @@ importers:
         specifier: ^4.6.7
         version: 4.6.7
 
-  packages/gamification: {}
+  packages/gamification:
+    dependencies:
+      '@money-level/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
 
   packages/goals:
     dependencies:
