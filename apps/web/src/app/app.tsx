@@ -64,6 +64,12 @@ const AchievementProgress = lazy(() =>
   })),
 );
 
+const BackupSettings = lazy(() =>
+  import('../features/profile/backup-settings.js').then((section) => ({
+    default: section.BackupSettings,
+  })),
+);
+
 function AppRoutes() {
   const { profile } = useJournal();
   if (!profile?.onboardingCompleted) {
@@ -71,6 +77,7 @@ function AppRoutes() {
       <Routes>
         <Route element={<AppFrame showNavigation={false} />}>
           <Route path="setup" element={<Onboarding />} />
+          <Route path="restore" element={<BackupSettings restoreOnly />} />
           <Route path="*" element={<Navigate to="/setup" replace />} />
         </Route>
       </Routes>
@@ -102,6 +109,7 @@ function AppRoutes() {
         <Route path="analytics/roast" element={<RoastReport />} />
         <Route path="goals" element={<Goals />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="profile/backup" element={<BackupSettings />} />
         <Route path="profile/progress" element={<AchievementProgress />} />
         <Route path="profile/humor" element={<HumorPreferences />} />
         <Route path="profile/categories" element={<ManageCategories />} />

@@ -70,3 +70,32 @@
   block-size: 0.875rem;
   accent-color: var(--color-accent);
 }
+
+.backup-details,
+.backup-modes {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  margin: 0;
+}
+
+.backup-details > div {
+  display: grid;
+  grid-template-columns: minmax(5rem, 1fr) minmax(0, 2fr);
+  gap: var(--space-2);
+}
+
+.backup-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.backup-modes {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+}
+
+.backup-destructive {
+  justify-self: start;
+}

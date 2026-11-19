@@ -45,8 +45,31 @@ export async function exportBackup(
   checksum: BackupChecksum,
   clock: Clock = systemClock,
 ): Promise<BackupFile> {
-  const createdAt = clock.now().toISOString();
   const data = await storage.read(readBackupData);
+  return createBackupFile(data, clock.now().toISOString(), checksum);
+}
+
+export async function exportLatestRecoveryBackup(
+  storage: UnitOfWork,
+  checksum: BackupChecksum,
+): Promise<BackupFile | undefined> {
+  const snapshot = await storage.read(async (journal) => {
+    const snapshots = await journal.recoverySnapshots.list();
+    return snapshots.sort(
+      (left, right) =>
+        right.createdAt.localeCompare(left.createdAt) ||
+        right.id.localeCompare(left.id),
+    )[0];
+  });
+  if (!snapshot) return undefined;
+  return createBackupFile(snapshot.data, snapshot.createdAt, checksum);
+}
+
+async function createBackupFile(
+  data: BackupData,
+  createdAt: string,
+  checksum: BackupChecksum,
+): Promise<BackupFile> {
   const digest = await checksum(
     checksumPayload(backupSchemaVersion, createdAt, data),
   );

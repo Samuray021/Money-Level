@@ -3,6 +3,7 @@ import type { HumorFrequency, ProfileSettings } from '@money-level/contracts';
 import { Button } from '@money-level/ui-kit';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { useJournal } from '../../app/journal-context.js';
 import { ProfileSetup } from './profile-setup.js';
 
@@ -42,6 +43,7 @@ function OpeningSetup({ profile }: { profile: ProfileSettings }) {
     <section className="form-page">
       <h1>Начальный остаток</h1>
       <p className="form-intro">Укажите, сколько уже есть на счёте.</p>
+      <Link to="/restore">Восстановить из резервной копии</Link>
       <form className="form-card" onSubmit={submit}>
         <label className="form-field">
           Сумма ({profile.baseCurrency})
@@ -106,6 +108,7 @@ export function Onboarding() {
         счетах.
       </p>
       <Button onClick={() => setStarted(true)}>Начать</Button>
+      <Link to="/restore">Восстановить из резервной копии</Link>
     </section>
   );
 }

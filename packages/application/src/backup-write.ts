@@ -3,7 +3,7 @@ import { readBackupData } from './backup-export.js';
 import type { BackupChecksum, BackupData } from './backup-format.js';
 import { validateBackupJson } from './backup-import.js';
 import type { JournalCommandContext } from './create-transaction.js';
-import type { JournalWriter } from './journal-repository.js';
+import type { JournalWriter, UnitOfWork } from './journal-repository.js';
 
 export async function clearBackupData(journal: JournalWriter): Promise<void> {
   await journal.settings.clear();
@@ -64,5 +64,17 @@ export async function replaceBackup(
     await clearBackupData(journal);
     await writeBackupData(journal, data);
     return { snapshotId };
+  });
+}
+
+export function wipeLocalJournal(
+  storage: UnitOfWork,
+  confirmed: boolean,
+): Promise<void> {
+  if (!confirmed)
+    throw new RangeError('Erasing the journal requires explicit confirmation.');
+  return storage.write(async (journal) => {
+    await clearBackupData(journal);
+    await journal.recoverySnapshots.clear();
   });
 }

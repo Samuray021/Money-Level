@@ -76,7 +76,7 @@ export type {
   BackupFile,
 } from './backup-format.js';
 
-export { exportBackup } from './backup-export.js';
+export { exportBackup, exportLatestRecoveryBackup } from './backup-export.js';
 
 export { exportTransactionsCsv } from './backup-csv.js';
 
@@ -84,7 +84,7 @@ export { validateBackupJson } from './backup-import.js';
 
 export { recoverySnapshotSchema } from './backup-format.js';
 export type { RecoverySnapshot } from './backup-format.js';
-export { replaceBackup } from './backup-write.js';
+export { replaceBackup, wipeLocalJournal } from './backup-write.js';
 
 export { mergeBackup } from './backup-merge.js';
 

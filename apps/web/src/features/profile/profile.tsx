@@ -11,6 +11,9 @@ export function Profile() {
       <Link className="management-link" to="/profile/humor">
         Компаньон и юмор
       </Link>
+      <Link className="management-link" to="/profile/backup">
+        Резервные копии и данные
+      </Link>
       <Link className="management-link" to="/profile/accounts">
         Счета
       </Link>
