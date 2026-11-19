@@ -11,6 +11,7 @@
     "@money-level/finance-core": "workspace:*",
     "@money-level/goals": "workspace:*",
     "@money-level/analytics": "workspace:*",
-    "@money-level/budgets": "workspace:*"
+    "@money-level/budgets": "workspace:*",
+    "zod": "^4.6.7"
   }
 }

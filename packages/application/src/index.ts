@@ -64,3 +64,14 @@ export type { BudgetInput } from './budgets.js';
 
 export { createGoal, getGoalOverview } from './manage-goals.js';
 export type { NewGoalInput } from './manage-goals.js';
+
+export {
+  backupDataSchema,
+  backupFileSchema,
+  backupSchemaVersion,
+} from './backup-format.js';
+export type {
+  BackupChecksum,
+  BackupData,
+  BackupFile,
+} from './backup-format.js';

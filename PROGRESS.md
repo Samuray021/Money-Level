@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-057`.
-**Подтверждённо завершено:** `57 / 100` задач.
+**Текущее задание:** `ML-080`.
+**Подтверждённо завершено:** `58 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -75,7 +75,8 @@
 | ML-050 | DONE | PASS lint, format:check, typecheck, test (83), build | `c6cde24` | 2026-11-19. budgets: строгое описание месячного бюджета, отдельный лимит категории или всех расходов, проверка суммы. |
 | ML-051 | DONE | PASS lint, format:check, typecheck, test (85), build | `5ba534e` | 2026-11-19. budgets: точные расходы/остаток, пороги 80/100/превышение, учёт предыдущих уведомлений и месяца. |
 | ML-052 | DONE | PASS lint, format:check, typecheck, test (85), build | `10e7251` | 2026-11-19. web, application, IndexedDB v7: лимиты, карточки, настройки уведомлений и дедупликация. Chromium подтвердил предупреждения и сохранение расхода сверх лимита. |
-| ML-056 | DONE | PASS lint, format:check, typecheck, test (85), build | ML-056 | 2026-11-19. web/application: создание цели, прогресс, резерв и снятие; Chromium 320 px проверил TC-FIN-001/004 без изменения баланса. |
+| ML-056 | DONE | PASS lint, format:check, typecheck, test (85), build | `988e2f5` | 2026-11-19. web/application: создание цели, прогресс, резерв и снятие; Chromium 320 px проверил TC-FIN-001/004 без изменения баланса. |
+| ML-079 | DONE | PASS lint, format:check, typecheck, test (86), build | ML-079 | 2026-11-19. application: строгая JSON-схема, дата, версия и SHA-256. Зависимость сценария импорта ML-057. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
