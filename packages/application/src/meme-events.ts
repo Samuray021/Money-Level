@@ -1,6 +1,10 @@
 import { systemClock } from '@money-level/contracts';
 import type { Clock, RandomSource } from '@money-level/contracts';
-import { defaultMemePack, evaluateMeme } from '@money-level/meme-engine';
+import {
+  defaultMemePack,
+  evaluateMeme,
+  memePackSchema,
+} from '@money-level/meme-engine';
 import type { MemeReaction } from '@money-level/meme-engine';
 import type { UnitOfWork } from './journal-repository.js';
 import { consumeOutbox } from './outbox.js';
@@ -10,7 +14,12 @@ export async function runMemeReactions(
   session: { id: string; startedAt: number },
   random: RandomSource,
   clock: Clock = systemClock,
+  packInput?: unknown,
 ): Promise<MemeReaction[]> {
+  const parsed =
+    packInput === undefined ? undefined : memePackSchema.safeParse(packInput);
+  if (parsed && !parsed.success) return [];
+  const pack = parsed?.data ?? defaultMemePack;
   const candidates = await consumeOutbox(storage, {
     consumer: 'meme-engine',
     clock,
@@ -19,7 +28,7 @@ export async function runMemeReactions(
       const profile = await journal.settings.get('profile');
       if (!profile?.onboardingCompleted || !profile.companionEnabled)
         return undefined;
-      const reaction = evaluateMeme(defaultMemePack, {
+      const reaction = evaluateMeme(pack, {
         event,
         mode: profile.humorMode,
         frequency: profile.humorFrequency,
