@@ -16,3 +16,6 @@ export const budgetSchema = z.strictObject({
 });
 
 export type Budget = z.infer<typeof budgetSchema>;
+
+export { budgetThresholds, selectBudgetUsage } from './usage.js';
+export type { BudgetThreshold } from './usage.js';

@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "@money-level/contracts": "workspace:*",
-    "zod": "^4.6.7"
+    "zod": "^4.6.7",
+    "@money-level/analytics": "workspace:*",
+    "@money-level/finance-core": "workspace:*"
   }
 }
