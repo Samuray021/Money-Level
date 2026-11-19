@@ -21,3 +21,25 @@ export const categoryInput = {
   createdAt: instant,
   updatedAt: instant,
 } as const;
+
+export const otherAccountId = '548dd16f-c9dd-4248-ab7f-b19d88ffe489';
+export const entryInput = {
+  id: entryId,
+  accountId,
+  amountMinor: '45050',
+  currencyCode: 'RUB',
+  transactionDate: '2026-11-19',
+  createdAt: instant,
+  updatedAt: instant,
+} as const;
+
+export const expenseInput = {
+  ...entryInput,
+  kind: 'expense',
+  categoryId: categoryInput.id,
+} as const;
+export const transferInput = {
+  ...entryInput,
+  kind: 'transfer',
+  toAccountId: otherAccountId,
+} as const;

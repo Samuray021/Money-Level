@@ -16,3 +16,5 @@ export {
   categorySchema,
 } from './category.js';
 export type { Category } from './category.js';
+export { transactionSchema } from './transaction.js';
+export type { Transaction } from './transaction.js';
