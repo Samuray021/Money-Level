@@ -4,3 +4,6 @@ export {
   memePackSchema,
 } from './pack.js';
 export type { MemeEmotion, MemePack, MemeRule } from './pack.js';
+
+export { evaluateMeme } from './evaluate.js';
+export type { MemeReaction } from './evaluate.js';

@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-061`.
-**Подтверждённо завершено:** `67 / 100` задач.
+**Текущее задание:** `ML-062`.
+**Подтверждённо завершено:** `68 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -85,7 +85,8 @@
 | ML-057 | DONE | PASS lint, format:check, typecheck, test (92), build | `4551164` | 2026-11-19. интеграционные тесты IndexedDB: проверка редактирования, мягкого удаления, merge и replace через реальные команды и JSON. |
 | ML-058 | DONE | PASS lint, format:check, typecheck, test (93), build | `0f574bb` | 2026-11-19. contracts/application/storage: минимальный типизированный payload, проверка отката и чтения только после commit. |
 | ML-059 | DONE | PASS lint, format:check, typecheck, test (94), build | `3999753` | 2026-11-19. contracts/application/storage v9: атомарные квитанции, повтор после сбоя, параллельная обработка и backup. |
-| ML-060 | DONE | PASS lint, format:check, typecheck, test (95), build | ML-060 | 2026-11-19. meme-engine: JSON Schema, метаданные, ограничения текста и ключей, отбраковка повреждённых паков. |
+| ML-060 | DONE | PASS lint, format:check, typecheck, test (95), build | `118a088` | 2026-11-19. meme-engine: JSON Schema, метаданные, ограничения текста и ключей, отбраковка повреждённых паков. |
+| ML-061 | DONE | PASS lint, format:check, typecheck, test (96), build | ML-061 | 2026-11-19. meme-engine: фильтрация события и настроек, веса и фиксируемый seed; проверка порогов и повторяемости. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
