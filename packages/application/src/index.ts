@@ -87,3 +87,5 @@ export type { RecoverySnapshot } from './backup-format.js';
 export { replaceBackup } from './backup-write.js';
 
 export { mergeBackup } from './backup-merge.js';
+
+export { consumeOutbox } from './outbox.js';

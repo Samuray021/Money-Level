@@ -125,7 +125,7 @@ async function createTransaction(
       transaction,
       createJournalChangeEvent(
         context.createId(),
-        'transaction.' + transaction.kind + '.created',
+        `transaction.${fields.kind}.created`,
         transaction,
         occurredAt,
       ),

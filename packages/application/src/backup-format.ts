@@ -1,5 +1,6 @@
 import { budgetNoticeSchema, budgetSchema } from '@money-level/budgets';
 import {
+  domainEventSchema,
   isoDateTimeSchema,
   profileSettingsSchema,
   uuidSchema,
@@ -14,14 +15,6 @@ import { z } from 'zod';
 
 export const backupSchemaVersion = 1;
 
-const journalEventSchema = z.strictObject({
-  eventId: uuidSchema,
-  type: z.string().min(1),
-  version: z.int().positive(),
-  sourceEntityId: uuidSchema,
-  occurredAt: isoDateTimeSchema,
-  payload: z.strictObject({}),
-});
 const commandReceiptSchema = z.strictObject({
   key: z.string().trim().min(1),
   transactionId: uuidSchema,
@@ -36,7 +29,7 @@ export const backupDataSchema = z.strictObject({
   budgetNotices: z.array(budgetNoticeSchema),
   goals: z.array(goalSchema),
   goalAllocations: z.array(goalAllocationSchema),
-  outbox: z.array(journalEventSchema),
+  outbox: z.array(domainEventSchema),
   commandReceipts: z.array(commandReceiptSchema),
 });
 

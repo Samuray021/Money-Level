@@ -131,7 +131,11 @@ export function assertBackupRelations(data: BackupData): void {
   }
   if (
     data.commandReceipts.some((row) => !transactions.has(row.transactionId)) ||
-    data.outbox.some((row) => !transactions.has(row.sourceEntityId))
+    data.outbox.some(
+      (row) =>
+        row.type.startsWith('transaction.') &&
+        !transactions.has(row.sourceEntityId),
+    )
   ) {
     throw new RangeError('A receipt or event refers to an unknown entry.');
   }

@@ -8,7 +8,10 @@ import type {
   Repository,
   UnitOfWork,
 } from '@money-level/application';
-import { profileSettingsSchema } from '@money-level/contracts';
+import {
+  domainEventSchema,
+  profileSettingsSchema,
+} from '@money-level/contracts';
 import {
   accountSchema,
   categorySchema,
@@ -109,18 +112,14 @@ export class IndexedDbJournal implements UnitOfWork {
       },
       outbox: {
         clear: () => outbox.clear(),
-        list: () => outbox.toArray(),
-        async add(event) {
-          const { eventId, type, version, sourceEntityId, occurredAt } = event;
-          await outbox.add({
-            eventId,
-            type,
-            version,
-            sourceEntityId,
-            occurredAt,
-            payload: {},
-          });
-        },
+        list: () =>
+          outbox
+            .toArray()
+            .then((events) =>
+              events.map((event) => domainEventSchema.parse(event)),
+            ),
+        add: (event) =>
+          outbox.add(domainEventSchema.parse(event)).then(() => undefined),
       },
       recoverySnapshots: repository(
         transaction.table('recoverySnapshots'),
