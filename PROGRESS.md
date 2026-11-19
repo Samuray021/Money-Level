@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-045`.
-**Подтверждённо завершено:** `47 / 100` задач.
+**Текущее задание:** `ML-087`.
+**Подтверждённо завершено:** `48 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -65,7 +65,8 @@
 | ML-041 | DONE | PASS lint, format:check, typecheck, test (78), build | `0f6fb67` | 2026-11-19. web/application: комбинированная фильтрация и пустые состояния, Chromium проверил возврат в отфильтрованную историю без заметок в URL. |
 | ML-042 | DONE | PASS lint, format:check, typecheck, test (79), build | `bf41b79` | 2026-11-19. web/finance-core: редактирование, проверка приватности, подтверждение и отмена удаления; пересчёт проверен в Chromium. |
 | ML-043 | DONE | PASS lint, format:check, typecheck, test (79), build | `f811a52` | 2026-11-19. web/application: создание, редактирование, значки, цвет и архивация категорий. Chromium проверил связку с историей и исключение из ввода. |
-| ML-044 | DONE | PASS lint, format:check, typecheck, test (79), build | ML-044 | 2026-11-19. web/application: счета, начальные остатки, переименование и архив. Chromium проверил добавление, перевод и сохранённую сумму в архиве. |
+| ML-044 | DONE | PASS lint, format:check, typecheck, test (79), build | `d08cafa` | 2026-11-19. web/application: счета, начальные остатки, переименование и архив. Chromium проверил добавление, перевод и сохранённую сумму в архиве. |
+| ML-086 | DONE | PASS lint, format:check, typecheck, test (79), build | ML-086 | 2026-11-19. web: манифест, standalone, цвет темы и PNG. Chromium обычного профиля проверил установку и размеры иконок. Зависимость офлайн-сценария ML-045. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
