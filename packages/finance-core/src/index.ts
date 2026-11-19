@@ -5,3 +5,5 @@ export {
   subtractMinorUnits,
 } from './money.js';
 export { formatMoney } from './format-money.js';
+export { accountSchema } from './account.js';
+export type { Account } from './account.js';
