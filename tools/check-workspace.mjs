@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
+import { URL } from 'node:url';
 
 const scope = '@money-level/';
 const contracts = ['contracts'];
@@ -12,25 +13,44 @@ const allowed = {
   goals: finance,
   'meme-engine': contracts,
   gamification: contracts,
-  application: [...finance, 'analytics', 'budgets', 'goals', 'meme-engine', 'gamification'],
+  application: [
+    ...finance,
+    'analytics',
+    'budgets',
+    'goals',
+    'meme-engine',
+    'gamification',
+  ],
   'storage-indexeddb': [...finance, 'application', 'goals', 'gamification'],
   'ui-kit': contracts,
   web: [
-    ...finance, 'analytics', 'budgets', 'goals', 'meme-engine', 'gamification',
-    'application', 'storage-indexeddb', 'ui-kit',
+    ...finance,
+    'analytics',
+    'budgets',
+    'goals',
+    'meme-engine',
+    'gamification',
+    'application',
+    'storage-indexeddb',
+    'ui-kit',
   ],
 };
 
 const clientPackages = new Set(['web', 'ui-kit', 'storage-indexeddb']);
 
 function workspaceFolders(root) {
-  return readdirSync(new URL('../' + root + '/', import.meta.url), { withFileTypes: true })
+  return readdirSync(new URL('../' + root + '/', import.meta.url), {
+    withFileTypes: true,
+  })
     .filter((entry) => entry.isDirectory())
     .map((entry) => root + '/' + entry.name);
 }
 
 const folders = [...workspaceFolders('apps'), ...workspaceFolders('packages')];
-assert.deepEqual(folders.map((folder) => folder.split('/')[1]).sort(), Object.keys(allowed).sort());
+assert.deepEqual(
+  folders.map((folder) => folder.split('/')[1]).sort(),
+  Object.keys(allowed).sort(),
+);
 
 for (const folder of folders) {
   const name = folder.split('/')[1];
@@ -47,12 +67,23 @@ for (const folder of folders) {
   };
   for (const [dependency, range] of Object.entries(dependencies)) {
     if (dependency.startsWith(scope)) {
-      assert(allowed[name].includes(dependency.slice(scope.length)), manifest.name + ' cannot depend on ' + dependency);
-      assert(range.startsWith('workspace:'), 'Use the workspace protocol for ' + dependency);
+      assert(
+        allowed[name].includes(dependency.slice(scope.length)),
+        manifest.name + ' cannot depend on ' + dependency,
+      );
+      assert(
+        range.startsWith('workspace:'),
+        'Use the workspace protocol for ' + dependency,
+      );
     } else if (!clientPackages.has(name)) {
-      assert(!/^(react(?:-dom|-router(?:-dom)?)?|dexie|idb)$/.test(dependency), manifest.name + ' cannot depend on ' + dependency);
+      assert(
+        !/^(react(?:-dom|-router(?:-dom)?)?|dexie|idb)$/.test(dependency),
+        manifest.name + ' cannot depend on ' + dependency,
+      );
     }
   }
 }
 
-console.log('Workspace package boundaries verified for ' + folders.length + ' packages.');
+console.log(
+  'Workspace package boundaries verified for ' + folders.length + ' packages.',
+);

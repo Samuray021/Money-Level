@@ -9,9 +9,17 @@
   },
   "scripts": {
     "check:boundaries": "node tools/check-workspace.mjs",
-    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.browser.json"
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.browser.json",
+    "lint": "eslint . && pnpm check:boundaries",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "typescript": "5.9.3"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.10.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.73.0"
   }
 }
