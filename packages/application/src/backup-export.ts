@@ -27,6 +27,7 @@ export async function readBackupData(
     outbox: await journal.outbox.list(),
     eventReceipts: await journal.eventReceipts.list(),
     memeShown: await journal.memeShown.list(),
+    achievements: await journal.achievements.list(),
     commandReceipts: await journal.commands.list(),
   });
 }

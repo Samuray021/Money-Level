@@ -147,3 +147,17 @@ export function selectExpenseCount(
   const { from, until } = validatedPeriod(period);
   return expensesWithin(transactions, from, until).length;
 }
+
+export function shiftCalendarDate(date: ISODate, days: number): ISODate {
+  const instant = new Date(isoDateSchema.parse(date) + 'T00:00:00.000Z');
+  instant.setUTCDate(instant.getUTCDate() + days);
+  return instant.toISOString().slice(0, 10);
+}
+
+export function calendarWeekPeriod(date: ISODate): DatePeriod {
+  const weekday = new Date(
+    isoDateSchema.parse(date) + 'T00:00:00.000Z',
+  ).getUTCDay();
+  const from = shiftCalendarDate(date, -((weekday + 6) % 7));
+  return { from, until: shiftCalendarDate(from, 7) };
+}

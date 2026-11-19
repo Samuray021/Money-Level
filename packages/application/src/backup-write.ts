@@ -17,6 +17,7 @@ export async function clearBackupData(journal: JournalWriter): Promise<void> {
   await journal.outbox.clear();
   await journal.eventReceipts.clear();
   await journal.memeShown.clear();
+  await journal.achievements.clear();
   await journal.commands.clear();
 }
 
@@ -34,6 +35,7 @@ export async function writeBackupData(
   await journal.goalAllocations.putMany(data.goalAllocations);
   await journal.eventReceipts.putMany(data.eventReceipts);
   await journal.memeShown.putMany(data.memeShown);
+  await journal.achievements.putMany(data.achievements);
   for (const event of data.outbox) await journal.outbox.add(event);
   for (const receipt of data.commandReceipts)
     await journal.commands.add(receipt);

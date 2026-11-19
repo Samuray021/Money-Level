@@ -1,3 +1,4 @@
+import type { Achievement } from '@money-level/gamification';
 import type { MemeShown } from '@money-level/contracts';
 import type { EventReceipt } from '@money-level/contracts';
 import type { RecoverySnapshot } from './backup-format.js';
@@ -20,6 +21,7 @@ export interface Repository<Record> extends ReadRepository<Record> {
 
 interface JournalRecords {
   settings: ProfileSettings;
+  achievements: Achievement;
   eventReceipts: EventReceipt;
   memeShown: MemeShown;
   recoverySnapshots: RecoverySnapshot;

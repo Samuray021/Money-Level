@@ -108,6 +108,9 @@ importers:
       '@money-level/finance-core':
         specifier: workspace:*
         version: link:../finance-core
+      '@money-level/gamification':
+        specifier: workspace:*
+        version: link:../gamification
       '@money-level/goals':
         specifier: workspace:*
         version: link:../goals
@@ -192,6 +195,9 @@ importers:
       '@money-level/finance-core':
         specifier: workspace:*
         version: link:../finance-core
+      '@money-level/gamification':
+        specifier: workspace:*
+        version: link:../gamification
       '@money-level/goals':
         specifier: workspace:*
         version: link:../goals

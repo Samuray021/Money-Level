@@ -1,5 +1,7 @@
 import {
   calendarMonthPeriod,
+  calendarWeekPeriod,
+  shiftCalendarDate,
   selectCategoryExpenses,
   selectExpenseCount,
   selectPeriodTotals,
@@ -15,18 +17,6 @@ import type { UnitOfWork } from './journal-repository.js';
 
 export type RoastPeriod = 'week' | 'month';
 
-function shift(date: string, days: number): string {
-  const instant = new Date(date + 'T00:00:00.000Z');
-  instant.setUTCDate(instant.getUTCDate() + days);
-  return instant.toISOString().slice(0, 10);
-}
-
-function week(today: string) {
-  const weekday = new Date(today + 'T00:00:00.000Z').getUTCDay();
-  const from = shift(today, -((weekday + 6) % 7));
-  return { from, until: shift(from, 7) };
-}
-
 export function getRoastReport(
   storage: UnitOfWork,
   kind: RoastPeriod,
@@ -38,9 +28,9 @@ export function getRoastReport(
     if (!profile?.onboardingCompleted)
       throw new RangeError('The profile setup is incomplete.');
     const today = localTransactionDate(clock.now(), profile.timeZone);
-    const select = kind === 'week' ? week : calendarMonthPeriod;
+    const select = kind === 'week' ? calendarWeekPeriod : calendarMonthPeriod;
     const period = select(today);
-    const previous = select(shift(period.from, -1));
+    const previous = select(shiftCalendarDate(period.from, -1));
     const transactions = await journal.transactions.list();
     const { expenseMinor } = selectPeriodTotals(transactions, period);
     const priorExpenseMinor = selectPeriodTotals(
@@ -71,7 +61,7 @@ export function getRoastReport(
     return {
       kind,
       seed,
-      period: { from: period.from, to: shift(period.until, -1) },
+      period: { from: period.from, to: shiftCalendarDate(period.until, -1) },
       cards,
     };
   });

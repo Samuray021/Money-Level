@@ -97,3 +97,9 @@ export type { HumorSettings } from './humor-settings.js';
 
 export { getRoastReport } from './roast-report.js';
 export type { RoastPeriod } from './roast-report.js';
+
+export {
+  getAchievementProgress,
+  noteManualBackup,
+  runAchievementRules,
+} from './achievements.js';

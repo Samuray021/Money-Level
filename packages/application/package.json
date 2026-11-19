@@ -13,6 +13,7 @@
     "@money-level/analytics": "workspace:*",
     "@money-level/budgets": "workspace:*",
     "zod": "^4.6.7",
-    "@money-level/meme-engine": "workspace:*"
+    "@money-level/meme-engine": "workspace:*",
+    "@money-level/gamification": "workspace:*"
   }
 }

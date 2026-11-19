@@ -17,6 +17,7 @@ const empty = {
     outbox: [],
     eventReceipts: [],
     memeShown: [],
+    achievements: [],
     commandReceipts: [],
   },
 };

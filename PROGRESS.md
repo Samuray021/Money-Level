@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-074`.
-**Подтверждённо завершено:** `80 / 100` задач.
+**Текущее задание:** `ML-075`.
+**Подтверждённо завершено:** `81 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -98,7 +98,8 @@
 | ML-070 | DONE | PASS lint, format:check, typecheck, test (101), build | `6a2dd15` | 2026-11-19. web/application: разбор, выбор периода, повтор, объяснения и приватность. Chromium проверил пустой и заполненный отчёты. |
 | ML-071 | DONE | PASS lint, format:check, typecheck, test (103), build | `4102e18` | 2026-11-19. интеграционные тесты IndexedDB: TC-FIN-008, повреждённый пак, дубли, параллельная обработка и сохранность журнала. |
 | ML-072 | DONE | PASS lint, format:check, typecheck, test (104), build | `5745780` | 2026-11-19. gamification: достижения и XP, строгая валидация grant, уникальность вида и источника при подсчёте. |
-| ML-073 | DONE | PASS lint, format:check, typecheck, test (105), build | ML-073 | 2026-11-19. gamification: десять уровней, границы диапазонов, последний уровень и проверка невалидного XP. |
+| ML-073 | DONE | PASS lint, format:check, typecheck, test (105), build | `8501ba2` | 2026-11-19. gamification: десять уровней, границы диапазонов, последний уровень и проверка невалидного XP. |
+| ML-074 | DONE | PASS lint, format:check, typecheck, test (107), build | ML-074 | 2026-11-19. application/storage v11: достижения за первую запись, неделю, цель и ручной backup; TC-FIN-005/007, повтор событий и отсутствие XP за сумму расхода. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

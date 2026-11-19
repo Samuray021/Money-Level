@@ -15,6 +15,7 @@ export const domainEventTypeSchema = z.enum([
   'analytics.weekly.opened',
   'analytics.monthly.opened',
   'achievement.unlocked',
+  'backup.exported',
   'app.session.started',
   'easter_egg.triggered',
 ]);

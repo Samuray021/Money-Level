@@ -12,7 +12,8 @@
     "dexie": "^4.2.1",
     "@money-level/contracts": "workspace:*",
     "@money-level/goals": "workspace:*",
-    "@money-level/budgets": "workspace:*"
+    "@money-level/budgets": "workspace:*",
+    "@money-level/gamification": "workspace:*"
   },
   "devDependencies": {
     "fake-indexeddb": "^6.2.5"

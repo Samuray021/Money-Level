@@ -1,3 +1,4 @@
+import { achievementKey } from '@money-level/gamification';
 import {
   addMinorUnits,
   assertTransactionReferences,
@@ -51,6 +52,8 @@ export function assertBackupRelations(data: BackupData): void {
   const events = indexBy(data.outbox, (row) => row.eventId, 'outbox');
   indexBy(data.eventReceipts, (row) => row.id, 'event receipts');
   indexBy(data.memeShown, (row) => row.id, 'meme history');
+  indexBy(data.achievements, (row) => row.id, 'achievement IDs');
+  indexBy(data.achievements, achievementKey, 'achievement sources');
   if (data.memeShown.some((row) => !events.has(row.id)))
     throw new RangeError('A meme refers to an unknown event.');
   for (const receipt of data.eventReceipts) {

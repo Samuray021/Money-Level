@@ -1,3 +1,4 @@
+import { AchievementRunner } from './achievement-runner.js';
 import { ReactionProvider } from '../features/companion/reaction-provider.js';
 import { lazy } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
@@ -108,6 +109,7 @@ export function App() {
   return (
     <BrowserRouter>
       <JournalProvider>
+        <AchievementRunner />
         <ReactionProvider>
           <AppRoutes />
         </ReactionProvider>

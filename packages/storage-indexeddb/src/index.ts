@@ -1,3 +1,4 @@
+import { achievementSchema } from '@money-level/gamification';
 import { recoverySnapshotSchema } from '@money-level/application';
 import { budgetNoticeSchema, budgetSchema } from '@money-level/budgets';
 import type {
@@ -104,6 +105,10 @@ export class IndexedDbJournal implements UnitOfWork {
       .version(10)
       .stores({ memeShown: 'id, shownAt' })
       .upgrade((transaction) => recordMigration(transaction, 10));
+    this.database
+      .version(11)
+      .stores({ achievements: 'id, &[kind+sourceKey]' })
+      .upgrade((transaction) => recordMigration(transaction, 11));
     this.database.on('populate', initializeMigrationHistory);
   }
 
@@ -146,6 +151,10 @@ export class IndexedDbJournal implements UnitOfWork {
         eventReceiptSchema,
       ),
       memeShown: repository(transaction.table('memeShown'), memeShownSchema),
+      achievements: repository(
+        transaction.table('achievements'),
+        achievementSchema,
+      ),
       settings: repository(
         transaction.table('settings'),
         profileSettingsSchema,

@@ -1,3 +1,4 @@
+import { achievementSchema } from '@money-level/gamification';
 import { budgetNoticeSchema, budgetSchema } from '@money-level/budgets';
 import {
   domainEventSchema,
@@ -34,6 +35,7 @@ export const backupDataSchema = z.strictObject({
   outbox: z.array(domainEventSchema),
   eventReceipts: z.array(eventReceiptSchema).default([]),
   memeShown: z.array(memeShownSchema).default([]),
+  achievements: z.array(achievementSchema).default([]),
   commandReceipts: z.array(commandReceiptSchema),
 });
 

@@ -1,3 +1,4 @@
+import { achievementKey } from '@money-level/gamification';
 import { compareMinorUnits } from '@money-level/finance-core';
 import { selectGoalReserved } from '@money-level/goals';
 import { readBackupData } from './backup-export.js';
@@ -31,6 +32,10 @@ export async function mergeBackup(
   return storage.write(async (journal) => {
     const local = await readBackupData(journal);
     const changes: BackupData = {
+      achievements: identified(
+        local.achievements,
+        added(local.achievements, incoming.achievements, achievementKey),
+      ),
       memeShown: identified(local.memeShown, incoming.memeShown),
       eventReceipts: identified(local.eventReceipts, incoming.eventReceipts),
       settings: local.settings ? null : incoming.settings,
@@ -52,6 +57,7 @@ export async function mergeBackup(
       ),
     };
     const merged: BackupData = {
+      achievements: [...local.achievements, ...changes.achievements],
       memeShown: [...local.memeShown, ...changes.memeShown],
       eventReceipts: [...local.eventReceipts, ...changes.eventReceipts],
       settings: local.settings ?? changes.settings,
