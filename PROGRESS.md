@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-078`.
-**Подтверждённо завершено:** `85 / 100` задач.
+**Текущее задание:** `ML-085`.
+**Подтверждённо завершено:** `86 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -102,7 +102,8 @@
 | ML-074 | DONE | PASS lint, format:check, typecheck, test (107), build | `b0f011f` | 2026-11-19. application/storage v11: достижения за первую запись, неделю, цель и ручной backup; TC-FIN-005/007, повтор событий и отсутствие XP за сумму расхода. |
 | ML-075 | DONE | PASS lint, format:check, typecheck, test (107), build | `0323d80` | 2026-11-19. web: пустое состояние, уровень, XP и реальные достижения. Chromium проверил первое начисление и перезапуск. |
 | ML-076 | DONE | PASS lint, format:check, typecheck, test (107), build | `33d2aa2` | 2026-11-19. web: безопасный предпросмотр и PNG 1080×1080; Chromium подтвердил загрузку файла и изменение изображения только по согласию. |
-| ML-077 | DONE | PASS lint, format:check, typecheck, test (107), build | ML-077 | 2026-11-19. web: системный share с активным жестом, fallback save и отмена. Chromium проверил все три ветви. |
+| ML-077 | DONE | PASS lint, format:check, typecheck, test (107), build | `c8d4b86` | 2026-11-19. web: системный share с активным жестом, fallback save и отмена. Chromium проверил все три ветви. |
+| ML-078 | DONE | PASS lint, format:check, typecheck, test (107), build | ML-078 | 2026-11-19. Playwright 2/2. Включённое скрытие заменяет явный opt-in; проверены HTML/ARIA, PNG, системный share и повторное открытие. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
