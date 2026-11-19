@@ -51,3 +51,5 @@ export {
   renameAccount,
 } from './manage-accounts.js';
 export type { NewAccountInput } from './manage-accounts.js';
+
+export { getAnalyticsReport } from './analytics-report.js';

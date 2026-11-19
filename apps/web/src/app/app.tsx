@@ -26,6 +26,12 @@ const ManageCategories = lazy(() =>
   })),
 );
 
+const Analytics = lazy(() =>
+  import('../features/analytics/analytics.js').then((section) => ({
+    default: section.Analytics,
+  })),
+);
+
 function AppRoutes() {
   const { profile } = useJournal();
   if (!profile?.onboardingCompleted) {
@@ -59,7 +65,7 @@ function AppRoutes() {
         <Route path="history" element={<History />} />
         <Route path="history/:id" element={<HistoryDetail />} />
         <Route path="history/:id/edit" element={<EditEntry />} />
-        <Route path="analytics" element={<h1>Аналитика</h1>} />
+        <Route path="analytics" element={<Analytics />} />
         <Route path="goals" element={<h1>Цели</h1>} />
         <Route path="profile" element={<Profile />} />
         <Route path="profile/categories" element={<ManageCategories />} />
