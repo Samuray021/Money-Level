@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-077`.
-**Подтверждённо завершено:** `84 / 100` задач.
+**Текущее задание:** `ML-078`.
+**Подтверждённо завершено:** `85 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -101,7 +101,8 @@
 | ML-073 | DONE | PASS lint, format:check, typecheck, test (105), build | `8501ba2` | 2026-11-19. gamification: десять уровней, границы диапазонов, последний уровень и проверка невалидного XP. |
 | ML-074 | DONE | PASS lint, format:check, typecheck, test (107), build | `b0f011f` | 2026-11-19. application/storage v11: достижения за первую запись, неделю, цель и ручной backup; TC-FIN-005/007, повтор событий и отсутствие XP за сумму расхода. |
 | ML-075 | DONE | PASS lint, format:check, typecheck, test (107), build | `0323d80` | 2026-11-19. web: пустое состояние, уровень, XP и реальные достижения. Chromium проверил первое начисление и перезапуск. |
-| ML-076 | DONE | PASS lint, format:check, typecheck, test (107), build | ML-076 | 2026-11-19. web: безопасный предпросмотр и PNG 1080×1080; Chromium подтвердил загрузку файла и изменение изображения только по согласию. |
+| ML-076 | DONE | PASS lint, format:check, typecheck, test (107), build | `33d2aa2` | 2026-11-19. web: безопасный предпросмотр и PNG 1080×1080; Chromium подтвердил загрузку файла и изменение изображения только по согласию. |
+| ML-077 | DONE | PASS lint, format:check, typecheck, test (107), build | ML-077 | 2026-11-19. web: системный share с активным жестом, fallback save и отмена. Chromium проверил все три ветви. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
