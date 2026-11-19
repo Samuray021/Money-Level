@@ -33,9 +33,13 @@ export interface CategorizedTransactionInput extends NewTransactionInput {
   categoryId: UUID;
 }
 
-type CreateTransactionInput = CategorizedTransactionInput & {
-  kind: 'income' | 'expense';
-};
+export interface TransferInput extends NewTransactionInput {
+  toAccountId: UUID;
+}
+
+type CreateTransactionInput =
+  | (CategorizedTransactionInput & { kind: 'income' | 'expense' })
+  | (TransferInput & { kind: 'transfer' });
 
 export async function validateJournalReferences(
   journal: JournalReader,
@@ -124,4 +128,11 @@ export function addExpense(
   input: CategorizedTransactionInput,
 ): Promise<Transaction> {
   return createTransaction(context, { ...input, kind: 'expense' });
+}
+
+export function transfer(
+  context: TransactionCommandContext,
+  input: TransferInput,
+): Promise<Transaction> {
+  return createTransaction(context, { ...input, kind: 'transfer' });
 }
