@@ -5,5 +5,13 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@money-level/application": "workspace:*",
+    "@money-level/finance-core": "workspace:*",
+    "dexie": "^4.2.1"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "^6.2.5"
   }
 }
