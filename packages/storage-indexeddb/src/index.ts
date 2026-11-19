@@ -148,3 +148,5 @@ export class IndexedDbJournal implements UnitOfWork {
 }
 
 export { currentJournalSchemaVersion } from './migrations.js';
+
+export { liveQuery as observeJournal } from 'dexie';

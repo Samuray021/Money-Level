@@ -1,5 +1,8 @@
 import type { ProfileSettings } from '@money-level/contracts';
-import { IndexedDbJournal } from '@money-level/storage-indexeddb';
+import {
+  IndexedDbJournal,
+  observeJournal,
+} from '@money-level/storage-indexeddb';
 import { Button } from '@money-level/ui-kit';
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
@@ -20,20 +23,13 @@ export function JournalProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ProfileState>({ status: 'loading' });
 
   useEffect(() => {
-    let active = true;
-    void commands.storage
-      .read((journal) => journal.settings.get('profile'))
-      .then(
-        (profile) => {
-          if (active) setState({ status: 'ready', profile });
-        },
-        () => {
-          if (active) setState({ status: 'error' });
-        },
-      );
-    return () => {
-      active = false;
-    };
+    const subscription = observeJournal(() =>
+      commands.storage.read((journal) => journal.settings.get('profile')),
+    ).subscribe({
+      next: (profile) => setState({ status: 'ready', profile }),
+      error: () => setState({ status: 'error' }),
+    });
+    return () => subscription.unsubscribe();
   }, [attempt]);
 
   if (state.status === 'loading') {

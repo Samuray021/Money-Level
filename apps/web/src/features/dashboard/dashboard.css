@@ -1,0 +1,84 @@
+.dashboard-state {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+}
+
+.balance-panel {
+  padding: clamp(var(--space-4), 6vw, var(--space-8));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.balance-panel h1,
+.balance-period,
+.balance-panel dt {
+  font-size: var(--text-small);
+  font-weight: 650;
+  letter-spacing: 0;
+  color: var(--color-muted);
+}
+
+.balance-total {
+  margin-block: var(--space-2) var(--space-6);
+  font: 780 var(--text-balance) / 1.12 var(--font-display);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.065em;
+  overflow-wrap: anywhere;
+}
+
+.balance-period {
+  text-transform: capitalize;
+}
+
+.balance-panel dl,
+.balance-panel dd {
+  margin: 0;
+}
+
+.balance-flow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding-block: var(--space-2) var(--space-4);
+}
+
+.balance-flow > div {
+  padding: var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-raised);
+}
+
+.balance-panel dd {
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+.balance-income {
+  color: var(--color-highlight);
+}
+
+.balance-availability {
+  display: grid;
+  gap: var(--space-2);
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.balance-availability > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.balance-availability dd {
+  min-inline-size: 0;
+  text-align: end;
+}
+
+.balance-warning {
+  margin-block-start: var(--space-3);
+  color: var(--color-danger);
+  font-size: var(--text-small);
+}

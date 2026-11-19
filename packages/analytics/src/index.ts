@@ -43,3 +43,10 @@ export function selectPeriodTotals(
     netMinor: subtractMinorUnits(incomeMinor, expenseMinor),
   };
 }
+
+export function calendarMonthPeriod(localDate: ISODate): DatePeriod {
+  const from = isoDateSchema.parse(localDate).slice(0, 7) + '-01';
+  const nextMonth = new Date(from + 'T00:00:00.000Z');
+  nextMonth.setUTCMonth(nextMonth.getUTCMonth() + 1);
+  return { from, until: nextMonth.toISOString().slice(0, 10) };
+}

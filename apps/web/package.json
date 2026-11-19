@@ -15,7 +15,8 @@
     "@money-level/ui-kit": "workspace:*",
     "@money-level/application": "workspace:*",
     "@money-level/contracts": "workspace:*",
-    "@money-level/storage-indexeddb": "workspace:*"
+    "@money-level/storage-indexeddb": "workspace:*",
+    "@money-level/finance-core": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",

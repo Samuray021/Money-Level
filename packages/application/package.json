@@ -9,6 +9,7 @@
   "dependencies": {
     "@money-level/contracts": "workspace:*",
     "@money-level/finance-core": "workspace:*",
-    "@money-level/goals": "workspace:*"
+    "@money-level/goals": "workspace:*",
+    "@money-level/analytics": "workspace:*"
   }
 }

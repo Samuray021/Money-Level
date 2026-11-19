@@ -38,6 +38,9 @@ importers:
       '@money-level/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
+      '@money-level/finance-core':
+        specifier: workspace:*
+        version: link:../../packages/finance-core
       '@money-level/storage-indexeddb':
         specifier: workspace:*
         version: link:../../packages/storage-indexeddb
@@ -78,6 +81,9 @@ importers:
 
   packages/application:
     dependencies:
+      '@money-level/analytics':
+        specifier: workspace:*
+        version: link:../analytics
       '@money-level/contracts':
         specifier: workspace:*
         version: link:../contracts
