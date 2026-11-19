@@ -5,6 +5,7 @@ import {
   exportTransactionsCsv,
   finishOnboarding,
   initializeProfile,
+  validateBackupJson,
 } from '@money-level/application';
 import { selectTotalBalance } from '@money-level/finance-core';
 import { expect, test } from 'vitest';
@@ -84,6 +85,59 @@ test('CSV has a stable UTF-8 header and exact amounts and prevents formula execu
     expect(csv).toContain('"2026-11-19","expense","80.00","RUB"');
     expect(csv).toContain('"\'=Тест"');
     expect(csv).toContain('"opening","500.00","RUB"');
+  } finally {
+    storage.close();
+  }
+});
+
+test('backup validation rejects altered contents and dangling references without touching storage', async () => {
+  const { storage, context } = await backupFixture();
+  try {
+    const original = await exportBackup(storage, sha256Checksum, context.clock);
+    await expect(
+      validateBackupJson(JSON.stringify(original), sha256Checksum),
+    ).resolves.toEqual(original);
+    await expect(
+      validateBackupJson('{"broken":', sha256Checksum),
+    ).rejects.toThrow(SyntaxError);
+
+    const { schemaVersion, createdAt } = original;
+    const duplicate = {
+      ...original.data,
+      transactions: [
+        ...original.data.transactions,
+        ...original.data.transactions,
+      ],
+    };
+    await expect(
+      validateBackupJson(
+        JSON.stringify({ ...original, data: duplicate }),
+        sha256Checksum,
+      ),
+    ).rejects.toThrow(/checksum/);
+    const digest = await sha256Checksum(
+      JSON.stringify({ schemaVersion, createdAt, data: duplicate }),
+    );
+    await expect(
+      validateBackupJson(
+        JSON.stringify({ ...original, data: duplicate, checksum: digest }),
+        sha256Checksum,
+      ),
+    ).rejects.toThrow(/Duplicate/);
+
+    const dangling = { ...original.data, categories: [] };
+    const checksum = await sha256Checksum(
+      JSON.stringify({ schemaVersion, createdAt, data: dangling }),
+    );
+    await expect(
+      validateBackupJson(
+        JSON.stringify({ ...original, data: dangling, checksum }),
+        sha256Checksum,
+      ),
+    ).rejects.toThrow(/category/);
+    expect(await exportBackup(storage, sha256Checksum, context.clock)).toEqual(
+      original,
+    );
   } finally {
     storage.close();
   }

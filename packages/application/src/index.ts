@@ -79,3 +79,5 @@ export type {
 export { exportBackup } from './backup-export.js';
 
 export { exportTransactionsCsv } from './backup-csv.js';
+
+export { validateBackupJson } from './backup-import.js';

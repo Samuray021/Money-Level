@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-082`.
-**Подтверждённо завершено:** `60 / 100` задач.
+**Текущее задание:** `ML-083`.
+**Подтверждённо завершено:** `61 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -78,7 +78,8 @@
 | ML-056 | DONE | PASS lint, format:check, typecheck, test (85), build | `988e2f5` | 2026-11-19. web/application: создание цели, прогресс, резерв и снятие; Chromium 320 px проверил TC-FIN-001/004 без изменения баланса. |
 | ML-079 | DONE | PASS lint, format:check, typecheck, test (86), build | `6c468ec` | 2026-11-19. application: строгая JSON-схема, дата, версия и SHA-256. Зависимость сценария импорта ML-057. |
 | ML-080 | DONE | PASS lint, format:check, typecheck, test (87), build | `841d6cd` | 2026-11-19. application/storage: JSON-снимок всех записей, реальный SHA-256, точный баланс после сериализации. |
-| ML-081 | DONE | PASS lint, format:check, typecheck, test (88), build | ML-081 | 2026-11-19. application: CSV UTF-8 BOM, стабильные поля, ISO-даты, точный формат валюты и экранирование заметок. |
+| ML-081 | DONE | PASS lint, format:check, typecheck, test (88), build | `1cea322` | 2026-11-19. application: CSV UTF-8 BOM, стабильные поля, ISO-даты, точный формат валюты и экранирование заметок. |
+| ML-082 | DONE | PASS lint, format:check, typecheck, test (89), build | ML-082 | 2026-11-19. application/storage: read-only проверка схемы, контрольной суммы, связности и дублей; повреждённые файлы оставляют снимок исходной базы равным. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
