@@ -48,3 +48,28 @@ export function journalFixture() {
   const open = () => new IndexedDbJournal('money-level-test', dependencies);
   return { open, dependencies };
 }
+
+export const salary = {
+  ...category,
+  id: exampleId(10),
+  name: 'Зарплата',
+  type: 'income',
+} as const satisfies Category;
+
+export async function commandFixture() {
+  const { open } = journalFixture();
+  const storage = open();
+  await storage.write(async (journal) => {
+    await journal.accounts.put(account);
+    await journal.categories.put(category);
+    await journal.categories.put(salary);
+  });
+  let sequence = 100;
+  const context = {
+    storage,
+    baseCurrency: 'RUB',
+    createId: () => exampleId(sequence++),
+    clock: { now: () => new Date(instant) },
+  };
+  return { context, open, storage };
+}

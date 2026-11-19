@@ -59,6 +59,9 @@ importers:
 
   packages/application:
     dependencies:
+      '@money-level/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@money-level/finance-core':
         specifier: workspace:*
         version: link:../finance-core

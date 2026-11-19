@@ -1,4 +1,5 @@
 import type {
+  CommandReceipt,
   JournalChangeEvent,
   JournalReader,
   JournalWriter,
@@ -11,29 +12,29 @@ import {
   transactionSchema,
 } from '@money-level/finance-core';
 import { Dexie } from 'dexie';
-import type { DexieOptions, Table } from 'dexie';
+import type { DexieOptions, Table, Transaction } from 'dexie';
 
 function repository<Record>(
   table: Table<Record, string>,
   schema: { parse(value: unknown): Record },
 ): Repository<Record> {
   return {
-    async get(id) {
-      const record = await table.get(id);
-      return record === undefined ? undefined : schema.parse(record);
-    },
-    async list() {
-      return (await table.toArray()).map((record) => schema.parse(record));
-    },
-    async put(record) {
-      await table.put(schema.parse(record));
-    },
+    get: (id) =>
+      table
+        .get(id)
+        .then((record) =>
+          record === undefined ? undefined : schema.parse(record),
+        ),
+    list: () =>
+      table
+        .toArray()
+        .then((records) => records.map((record) => schema.parse(record))),
+    put: (record) => table.put(schema.parse(record)).then(() => undefined),
   };
 }
 
 export class IndexedDbJournal implements UnitOfWork {
   private readonly database: Dexie;
-  private readonly repositories: JournalWriter;
 
   constructor(
     name = 'money-level',
@@ -48,9 +49,22 @@ export class IndexedDbJournal implements UnitOfWork {
     this.database.version(2).stores({
       outbox: 'eventId, occurredAt',
     });
-    const outbox = this.database.table<JournalChangeEvent, string>('outbox');
+    this.database.version(3).stores({
+      commandReceipts: 'key',
+    });
+  }
 
-    this.repositories = {
+  private repositories(transaction: Transaction): JournalWriter {
+    const outbox = transaction.table<JournalChangeEvent, string>('outbox');
+    const receipts = transaction.table<CommandReceipt, string>(
+      'commandReceipts',
+    );
+
+    return {
+      commands: {
+        get: (key) => receipts.get(key),
+        add: (receipt) => receipts.add(receipt).then(() => undefined),
+      },
       outbox: {
         list: () => outbox.toArray(),
         async add(event) {
@@ -65,10 +79,10 @@ export class IndexedDbJournal implements UnitOfWork {
           });
         },
       },
-      accounts: repository(this.database.table('accounts'), accountSchema),
-      categories: repository(this.database.table('categories'), categorySchema),
+      accounts: repository(transaction.table('accounts'), accountSchema),
+      categories: repository(transaction.table('categories'), categorySchema),
       transactions: repository(
-        this.database.table('transactions'),
+        transaction.table('transactions'),
         transactionSchema,
       ),
     };
@@ -77,16 +91,18 @@ export class IndexedDbJournal implements UnitOfWork {
   read<Result>(
     operation: (journal: JournalReader) => Promise<Result>,
   ): Promise<Result> {
-    return this.database.transaction('r', this.database.tables, () =>
-      operation(this.repositories),
+    return this.database.transaction('r', this.database.tables, (transaction) =>
+      operation(this.repositories(transaction)),
     );
   }
 
   write<Result>(
     operation: (journal: JournalWriter) => Promise<Result>,
   ): Promise<Result> {
-    return this.database.transaction('rw', this.database.tables, () =>
-      operation(this.repositories),
+    return this.database.transaction(
+      'rw',
+      this.database.tables,
+      (transaction) => operation(this.repositories(transaction)),
     );
   }
 

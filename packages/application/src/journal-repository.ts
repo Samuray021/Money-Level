@@ -16,18 +16,30 @@ interface JournalRecords {
   transactions: Transaction;
 }
 
+export interface CommandReceipt {
+  key: string;
+  transactionId: string;
+}
+
+interface CommandReceiptReader {
+  get(key: string): Promise<CommandReceipt | undefined>;
+}
+
 interface OutboxReader {
   list(): Promise<JournalChangeEvent[]>;
 }
 
 export type JournalReader = {
   [Table in keyof JournalRecords]: ReadRepository<JournalRecords[Table]>;
-} & { outbox: OutboxReader };
+} & { outbox: OutboxReader; commands: CommandReceiptReader };
 
 export type JournalWriter = {
   [Table in keyof JournalRecords]: Repository<JournalRecords[Table]>;
 } & {
   outbox: OutboxReader & { add(event: JournalChangeEvent): Promise<void> };
+  commands: CommandReceiptReader & {
+    add(receipt: CommandReceipt): Promise<void>;
+  };
 };
 
 export interface UnitOfWork {
