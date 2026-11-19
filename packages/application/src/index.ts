@@ -25,3 +25,6 @@ export {
 
 export { finishOnboarding, initializeProfile } from './onboarding.js';
 export type { FinishOnboardingInput, ProfileSetupInput } from './onboarding.js';
+
+export { releaseFromGoal, reserveToGoal } from './goal-reservations.js';
+export type { GoalReservationInput } from './goal-reservations.js';

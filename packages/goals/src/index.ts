@@ -33,3 +33,5 @@ export const goalAllocationSchema = z.strictObject({
 
 export type Goal = z.infer<typeof goalSchema>;
 export type GoalAllocation = z.infer<typeof goalAllocationSchema>;
+
+export { selectGoalReserved, selectTotalReserved } from './reservations.js';

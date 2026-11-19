@@ -5,7 +5,7 @@ import {
 } from '@money-level/finance-core';
 import type { Transaction } from 'dexie';
 
-export const currentJournalSchemaVersion = 5;
+export const currentJournalSchemaVersion = 6;
 
 interface AppMigration {
   version: number;

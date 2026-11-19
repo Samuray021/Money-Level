@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-054`.
-**Подтверждённо завершено:** `35 / 100` задач.
+**Текущее задание:** `ML-055`.
+**Подтверждённо завершено:** `36 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -53,7 +53,8 @@
 | ML-033 | DONE | PASS lint, format:check, typecheck, test (66), build | `69141aa` | 2026-11-19. web, contracts, application и IndexedDB v5: первый счёт, защита входа на главную, конкурентные запросы и перезапуск в Chromium. |
 | ML-034 | DONE | PASS lint, format:check, typecheck, test (68), build | `b30cc8b` | 2026-11-19. web/finance-core/application: возобновляемая настройка, разбор валютного остатка, атомарное завершение, повторное открытие браузера и одна запись opening. |
 | ML-046 | DONE | PASS lint, format:check, typecheck, test (70), build | `cee6a76` | 2026-11-19. analytics: календарный селектор доходов и расходов, границы периода и TC-FIN-006. Выполнено до ML-035, поскольку главная использует эти итоги. |
-| ML-053 | DONE | PASS lint, format:check, typecheck, test (72), build | ML-053 | 2026-11-19. goals: цель и знаковые дельты отдельного журнала, валидация суммы и даты. Требуется для ML-035. |
+| ML-053 | DONE | PASS lint, format:check, typecheck, test (72), build | `77e6223` | 2026-11-19. goals: цель и знаковые дельты отдельного журнала, валидация суммы и даты. Требуется для ML-035. |
+| ML-054 | DONE | PASS lint, format:check, typecheck, test (74), build | ML-054 | 2026-11-19. goals, application и IndexedDB v6: атомарные резервы, ограничения, TC-FIN-001/004, правка арифметики ТЗ. Зависимость ML-035. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

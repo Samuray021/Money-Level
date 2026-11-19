@@ -12,6 +12,7 @@ import {
   categorySchema,
   transactionSchema,
 } from '@money-level/finance-core';
+import { goalAllocationSchema, goalSchema } from '@money-level/goals';
 import { Dexie } from 'dexie';
 import type { DexieOptions, Table, Transaction } from 'dexie';
 import {
@@ -68,6 +69,10 @@ export class IndexedDbJournal implements UnitOfWork {
       .version(5)
       .stores({ settings: 'id' })
       .upgrade((transaction) => recordMigration(transaction, 5));
+    this.database
+      .version(6)
+      .stores({ goals: 'id, status', goalAllocations: 'id, goalId' })
+      .upgrade((transaction) => recordMigration(transaction, 6));
     this.database.on('populate', initializeMigrationHistory);
   }
 
@@ -99,6 +104,11 @@ export class IndexedDbJournal implements UnitOfWork {
       settings: repository(
         transaction.table('settings'),
         profileSettingsSchema,
+      ),
+      goals: repository(transaction.table('goals'), goalSchema),
+      goalAllocations: repository(
+        transaction.table('goalAllocations'),
+        goalAllocationSchema,
       ),
       accounts: repository(transaction.table('accounts'), accountSchema),
       categories: repository(transaction.table('categories'), categorySchema),
