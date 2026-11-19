@@ -1,5 +1,9 @@
 import { expect, test } from 'vitest';
-import { getMemePackJsonSchema, memePackSchema } from './index.js';
+import {
+  defaultMemePack,
+  getMemePackJsonSchema,
+  memePackSchema,
+} from './index.js';
 
 import { samplePack, sampleRule } from './fixtures.js';
 
@@ -26,4 +30,18 @@ test('exports a JSON schema and rejects unsafe packs before evaluation', () => {
     memePackSchema.safeParse({ ...samplePack, rules: [sampleRule, sampleRule] })
       .success,
   ).toBe(false);
+});
+
+test('the bundled Russian pack includes original, tagged reactions and clean fallbacks', () => {
+  expect(defaultMemePack.rules.length).toBeGreaterThanOrEqual(20);
+  expect(defaultMemePack.rules.length).toBeLessThanOrEqual(30);
+  expect(defaultMemePack.locale).toBe('ru-RU');
+  for (const rule of defaultMemePack.rules) {
+    expect(rule.tags.length).toBeGreaterThan(0);
+    expect(rule.fallbackText).not.toMatch(/блядь|ёбаный/i);
+  }
+  expect(defaultMemePack.rules.some((rule) => rule.rarity === 'rare')).toBe(
+    true,
+  );
+  expect(defaultMemePack.rules.some((rule) => rule.profanity)).toBe(true);
 });
