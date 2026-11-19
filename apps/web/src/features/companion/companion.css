@@ -1,0 +1,102 @@
+.companion {
+  display: grid;
+  grid-template-columns: 5.25rem minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  min-block-size: 7rem;
+  margin: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.companion img {
+  max-inline-size: 100%;
+  object-fit: contain;
+}
+
+.companion-shape {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: end;
+  gap: var(--space-2);
+  inline-size: 4.75rem;
+  block-size: 3.85rem;
+  margin-block-start: 0.9rem;
+  padding-block-end: var(--space-3);
+  border-radius: 1.35rem 1.45rem 1.25rem 1.35rem;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  transform: rotate(-8deg);
+}
+
+.companion-antenna {
+  position: absolute;
+  inset-block-start: -0.75rem;
+  inset-inline-start: 56%;
+  inline-size: 0.22rem;
+  block-size: 0.95rem;
+  border-radius: 1rem;
+  background: var(--color-accent);
+}
+
+.companion-antenna::before {
+  position: absolute;
+  inset-block-start: -0.3rem;
+  inset-inline-start: -0.25rem;
+  inline-size: 0.7rem;
+  block-size: 0.7rem;
+  border-radius: 50%;
+  background: var(--color-highlight);
+  content: '';
+}
+
+.companion-eyes {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.companion-eyes i {
+  inline-size: 0.5rem;
+  block-size: 0.65rem;
+  border-radius: 60%;
+  background: currentColor;
+}
+
+.companion-mouth {
+  inline-size: 1rem;
+  block-size: 0.2rem;
+  border-radius: 1rem;
+  background: currentColor;
+}
+
+.companion[data-emotion='happy'] .companion-mouth,
+.companion[data-emotion='celebrating'] .companion-mouth {
+  block-size: 0.65rem;
+  border-radius: 0 0 1rem 1rem;
+}
+
+.companion[data-emotion='surprised'] .companion-mouth {
+  inline-size: 0.65rem;
+  block-size: 0.75rem;
+  border-radius: 60%;
+}
+
+.companion[data-emotion='sarcastic'] .companion-eyes i:first-child {
+  block-size: 0.25rem;
+}
+
+.companion[data-emotion='celebrating'] .companion-shape {
+  transform: rotate(8deg);
+}
+
+.companion[data-emotion='sleeping'] .companion-eyes i {
+  block-size: 0.15rem;
+}
+
+.companion figcaption {
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}

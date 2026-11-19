@@ -41,6 +41,9 @@ importers:
       '@money-level/finance-core':
         specifier: workspace:*
         version: link:../../packages/finance-core
+      '@money-level/meme-engine':
+        specifier: workspace:*
+        version: link:../../packages/meme-engine
       '@money-level/storage-indexeddb':
         specifier: workspace:*
         version: link:../../packages/storage-indexeddb

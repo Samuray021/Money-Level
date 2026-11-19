@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-065`.
-**Подтверждённо завершено:** `71 / 100` задач.
+**Текущее задание:** `ML-066`.
+**Подтверждённо завершено:** `72 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -89,7 +89,8 @@
 | ML-061 | DONE | PASS lint, format:check, typecheck, test (96), build | `405b081` | 2026-11-19. meme-engine: фильтрация события и настроек, веса и фиксируемый seed; проверка порогов и повторяемости. |
 | ML-062 | DONE | PASS lint, format:check, typecheck, test (97), build | `c60f873` | 2026-11-19. meme-engine: задержки между показами и повторами правила, редкая частота, фиктивные часы. |
 | ML-063 | DONE | PASS lint, format:check, typecheck, test (98), build | `257ca74` | 2026-11-19. meme-engine: граница 1%, одна сцена за сессию, сохранение обычного выбора и cooldown. |
-| ML-064 | DONE | PASS lint, format:check, typecheck, test (99), build | ML-064 | 2026-11-19. meme-engine: 28 собственных реплик, типы событий, режимы, теги, редкие сцены и нейтральные fallback. |
+| ML-064 | DONE | PASS lint, format:check, typecheck, test (99), build | `a333951` | 2026-11-19. meme-engine: 28 собственных реплик, типы событий, режимы, теги, редкие сцены и нейтральные fallback. |
+| ML-065 | DONE | PASS lint, format:check, typecheck, test (99), build | ML-065 | 2026-11-19. web: отдельный UI компаньона, шесть эмоций, fallback текста и формы. Chromium 320 px проверил отсутствующий ассет. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

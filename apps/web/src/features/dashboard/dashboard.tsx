@@ -1,3 +1,4 @@
+import { Companion } from '../companion/companion.js';
 import { Link } from 'react-router-dom';
 import { getDashboardSummary } from '@money-level/application';
 import { Button } from '@money-level/ui-kit';
@@ -14,7 +15,7 @@ const monthLabel = new Intl.DateTimeFormat('ru-RU', {
 });
 
 export function Dashboard() {
-  const { commands } = useJournal();
+  const { commands, profile } = useJournal();
   const read = useCallback(
     () => getDashboardSummary(commands.storage),
     [commands.storage],
@@ -94,6 +95,9 @@ export function Dashboard() {
           </p>
         )}
       </section>
+      {profile?.humorFrequency !== 'off' && profile?.humorMode !== 'off' && (
+        <Companion />
+      )}
       <div className="dashboard-actions">
         <Link
           className="ml-button ml-button--secondary"
