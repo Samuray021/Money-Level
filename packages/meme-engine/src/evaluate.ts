@@ -1,3 +1,5 @@
+import { systemClock } from '@money-level/contracts';
+import type { Clock } from '@money-level/contracts';
 import type {
   DomainEvent,
   ProfileSettings,
@@ -5,7 +7,18 @@ import type {
 } from '@money-level/contracts';
 import type { MemePack, MemeRule } from './pack.js';
 
+export interface ShownReaction {
+  packId: string;
+  ruleId: string;
+  shownAt: string;
+  sessionId: string;
+  rarity: MemeRule['rarity'];
+}
+
 interface Evaluation {
+  frequency?: ProfileSettings['humorFrequency'];
+  history?: readonly ShownReaction[];
+  clock?: Clock;
   event: DomainEvent;
   mode: ProfileSettings['humorMode'];
   profanity: boolean;
@@ -68,9 +81,27 @@ export function evaluateMeme(
   pack: MemePack,
   input: Evaluation,
 ): MemeReaction | undefined {
+  const frequency = input.frequency ?? 'usual';
+  if (frequency === 'off' || input.mode === 'off') return undefined;
+  const history = input.history ?? [];
+  const now = (input.clock ?? systemClock).now().getTime();
+  const globalDelay = frequency === 'rare' ? 300_000 : 90_000;
+  if (history.some((item) => now - Date.parse(item.shownAt) < globalDelay))
+    return undefined;
+
   const eligible = pack.rules.filter(
-    (rule) => rule.rarity === 'normal' && matches(rule, input),
+    (rule) =>
+      rule.rarity === 'normal' &&
+      matches(rule, input) &&
+      !history.some(
+        (item) =>
+          item.packId === pack.id &&
+          item.ruleId === rule.id &&
+          now - Date.parse(item.shownAt) < rule.cooldownMs,
+      ),
   );
+  if (eligible.length > 0 && frequency === 'rare' && draw(input.random) >= 0.25)
+    return undefined;
   const selected = choose(eligible, input.random);
   if (!selected) return undefined;
   return {

@@ -63,3 +63,29 @@ test('selection is reproducible and respects weights, triggers and predicates', 
     }),
   ).toBeUndefined();
 });
+
+test('honors global and per-rule cooldowns with an injected clock', () => {
+  const now = Date.parse(event.occurredAt);
+  const clock = { now: () => new Date(now) };
+  const history = (elapsed: number) => [
+    {
+      shownAt: new Date(now - elapsed).toISOString(),
+      packId: pack.id,
+      ruleId: 'selected',
+      sessionId: 'test-session',
+      rarity: 'normal' as const,
+    },
+  ];
+  const input = { ...base, clock, random: { next: () => 0.8 } };
+  expect(
+    evaluateMeme(pack, { ...input, history: history(89_999) }),
+  ).toBeUndefined();
+  expect(
+    evaluateMeme(pack, { ...input, history: history(90_000) })?.ruleId,
+  ).toBe('expense-small');
+  expect(
+    evaluateMeme(pack, { ...input, history: history(604_800_000) })?.ruleId,
+  ).toBe('selected');
+  expect(evaluateMeme(pack, { ...input, frequency: 'rare' })).toBeUndefined();
+  expect(evaluateMeme(pack, { ...input, frequency: 'off' })).toBeUndefined();
+});
