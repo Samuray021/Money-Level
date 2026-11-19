@@ -1,1 +1,6 @@
-export { parseRubAmount } from './money.js';
+export {
+  addMinorUnits,
+  compareMinorUnits,
+  parseRubAmount,
+  subtractMinorUnits,
+} from './money.js';
