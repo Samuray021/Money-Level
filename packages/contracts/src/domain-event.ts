@@ -47,3 +47,17 @@ export const eventReceiptSchema = z.strictObject({
 });
 
 export type EventReceipt = z.infer<typeof eventReceiptSchema>;
+
+const ruleSlug = z
+  .string()
+  .max(80)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+export const memeShownSchema = z.strictObject({
+  id: uuidSchema,
+  packId: ruleSlug,
+  ruleId: ruleSlug,
+  shownAt: isoDateTimeSchema,
+  sessionId: uuidSchema,
+  rarity: z.enum(['normal', 'rare']),
+});
+export type MemeShown = z.infer<typeof memeShownSchema>;

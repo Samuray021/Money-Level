@@ -14,6 +14,7 @@ export async function consumeOutbox<Result>(
   options: {
     consumer: string;
     clock?: Clock;
+    filter?: (event: DomainEvent) => boolean;
     handle: (
       event: DomainEvent,
       journal: JournalWriter,
@@ -28,7 +29,10 @@ export async function consumeOutbox<Result>(
         .map(({ eventId }) => eventId),
     );
     return (await journal.outbox.list())
-      .filter(({ eventId }) => !seen.has(eventId))
+      .filter(
+        (event) =>
+          !seen.has(event.eventId) && (options.filter?.(event) ?? true),
+      )
       .sort(chronological);
   });
 
@@ -37,13 +41,15 @@ export async function consumeOutbox<Result>(
     const id = options.consumer + ':' + event.eventId;
     const outcome = await storage.write(async (journal) => {
       if (await journal.eventReceipts.get(id)) return null;
+      const current = await journal.outbox.get(event.eventId);
+      if (!current || (options.filter && !options.filter(current))) return null;
       const receipt = eventReceiptSchema.parse({
         id,
         eventId: event.eventId,
         consumer: options.consumer,
         processedAt: (options.clock ?? systemClock).now().toISOString(),
       });
-      const result = await options.handle(event, journal);
+      const result = await options.handle(current, journal);
       await journal.eventReceipts.put(receipt);
       return { result };
     });

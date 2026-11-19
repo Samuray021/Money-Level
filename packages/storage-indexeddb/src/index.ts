@@ -11,6 +11,7 @@ import type {
 import {
   domainEventSchema,
   eventReceiptSchema,
+  memeShownSchema,
   profileSettingsSchema,
 } from '@money-level/contracts';
 import {
@@ -99,6 +100,10 @@ export class IndexedDbJournal implements UnitOfWork {
       .version(9)
       .stores({ eventReceipts: 'id, [consumer+eventId]' })
       .upgrade((transaction) => recordMigration(transaction, 9));
+    this.database
+      .version(10)
+      .stores({ memeShown: 'id, shownAt' })
+      .upgrade((transaction) => recordMigration(transaction, 10));
     this.database.on('populate', initializeMigrationHistory);
   }
 
@@ -116,6 +121,12 @@ export class IndexedDbJournal implements UnitOfWork {
         add: (receipt) => receipts.add(receipt).then(() => undefined),
       },
       outbox: {
+        get: (id) =>
+          outbox
+            .get(id)
+            .then((event) =>
+              event === undefined ? undefined : domainEventSchema.parse(event),
+            ),
         clear: () => outbox.clear(),
         list: () =>
           outbox
@@ -134,6 +145,7 @@ export class IndexedDbJournal implements UnitOfWork {
         transaction.table('eventReceipts'),
         eventReceiptSchema,
       ),
+      memeShown: repository(transaction.table('memeShown'), memeShownSchema),
       settings: repository(
         transaction.table('settings'),
         profileSettingsSchema,

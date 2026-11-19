@@ -50,3 +50,6 @@ export type { DomainEvent, DomainEventType } from './domain-event.js';
 
 export { eventReceiptSchema } from './domain-event.js';
 export type { EventReceipt } from './domain-event.js';
+
+export { memeShownSchema } from './domain-event.js';
+export type { MemeShown } from './domain-event.js';

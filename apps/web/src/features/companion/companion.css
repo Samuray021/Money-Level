@@ -100,3 +100,34 @@
   font-weight: 650;
   overflow-wrap: anywhere;
 }
+
+.meme-toast {
+  position: fixed;
+  z-index: 3;
+  inset-block-start: max(4.25rem, env(safe-area-inset-top));
+  inset-inline-start: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  inline-size: min(calc(var(--layout-width) - 2rem), calc(100% - 2rem));
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.meme-toast--rare {
+  border-color: var(--color-highlight);
+  background: var(--color-surface-raised);
+  box-shadow: 0 0 0 0.5rem
+    color-mix(in srgb, var(--color-highlight) 15%, transparent);
+}
+
+.meme-toast button {
+  flex: none;
+  pointer-events: auto;
+}

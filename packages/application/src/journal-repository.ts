@@ -1,3 +1,4 @@
+import type { MemeShown } from '@money-level/contracts';
 import type { EventReceipt } from '@money-level/contracts';
 import type { RecoverySnapshot } from './backup-format.js';
 import type { Budget, BudgetNotice } from '@money-level/budgets';
@@ -20,6 +21,7 @@ export interface Repository<Record> extends ReadRepository<Record> {
 interface JournalRecords {
   settings: ProfileSettings;
   eventReceipts: EventReceipt;
+  memeShown: MemeShown;
   recoverySnapshots: RecoverySnapshot;
   budgets: Budget;
   budgetNotices: BudgetNotice;
@@ -41,6 +43,7 @@ interface CommandReceiptReader {
 }
 
 interface OutboxReader {
+  get(id: string): Promise<JournalChangeEvent | undefined>;
   list(): Promise<JournalChangeEvent[]>;
 }
 

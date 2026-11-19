@@ -1,3 +1,4 @@
+import { useReaction } from '../companion/reaction-context.js';
 import { Companion } from '../companion/companion.js';
 import { Link } from 'react-router-dom';
 import { getDashboardSummary } from '@money-level/application';
@@ -16,6 +17,7 @@ const monthLabel = new Intl.DateTimeFormat('ru-RU', {
 
 export function Dashboard() {
   const { commands, profile } = useJournal();
+  const reaction = useReaction();
   const read = useCallback(
     () => getDashboardSummary(commands.storage),
     [commands.storage],
@@ -96,7 +98,7 @@ export function Dashboard() {
         )}
       </section>
       {profile?.humorFrequency !== 'off' && profile?.humorMode !== 'off' && (
-        <Companion />
+        <Companion emotion={reaction?.emotion ?? 'idle'} />
       )}
       <div className="dashboard-actions">
         <Link

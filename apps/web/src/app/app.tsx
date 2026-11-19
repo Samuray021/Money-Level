@@ -1,3 +1,4 @@
+import { ReactionProvider } from '../features/companion/reaction-provider.js';
 import { lazy } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppFrame } from './app-frame.js';
@@ -93,7 +94,9 @@ export function App() {
   return (
     <BrowserRouter>
       <JournalProvider>
-        <AppRoutes />
+        <ReactionProvider>
+          <AppRoutes />
+        </ReactionProvider>
       </JournalProvider>
     </BrowserRouter>
   );

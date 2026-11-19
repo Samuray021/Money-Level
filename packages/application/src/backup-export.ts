@@ -26,6 +26,7 @@ export async function readBackupData(
     goalAllocations: await journal.goalAllocations.list(),
     outbox: await journal.outbox.list(),
     eventReceipts: await journal.eventReceipts.list(),
+    memeShown: await journal.memeShown.list(),
     commandReceipts: await journal.commands.list(),
   });
 }

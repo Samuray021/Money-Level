@@ -89,3 +89,5 @@ export { replaceBackup } from './backup-write.js';
 export { mergeBackup } from './backup-merge.js';
 
 export { consumeOutbox } from './outbox.js';
+
+export { runMemeReactions } from './meme-events.js';

@@ -37,6 +37,14 @@ export function createGoal(
     if (await journal.goals.get(goal.id))
       throw new RangeError('The goal identifier is already in use.');
     await journal.goals.put(goal);
+    await journal.outbox.add({
+      eventId: context.createId(),
+      type: 'goal.created',
+      version: 1,
+      sourceEntityId: goal.id,
+      occurredAt: time,
+      payload: {},
+    });
     return goal;
   });
 }

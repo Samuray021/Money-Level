@@ -50,6 +50,9 @@ export function assertBackupRelations(data: BackupData): void {
   const goals = indexBy(data.goals, (row) => row.id, 'goals');
   const events = indexBy(data.outbox, (row) => row.eventId, 'outbox');
   indexBy(data.eventReceipts, (row) => row.id, 'event receipts');
+  indexBy(data.memeShown, (row) => row.id, 'meme history');
+  if (data.memeShown.some((row) => !events.has(row.id)))
+    throw new RangeError('A meme refers to an unknown event.');
   for (const receipt of data.eventReceipts) {
     if (
       !events.has(receipt.eventId) ||
