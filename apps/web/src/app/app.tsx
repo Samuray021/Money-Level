@@ -38,6 +38,12 @@ const Budgets = lazy(() =>
   })),
 );
 
+const Goals = lazy(() =>
+  import('../features/goals/goals.js').then((section) => ({
+    default: section.Goals,
+  })),
+);
+
 function AppRoutes() {
   const { profile } = useJournal();
   if (!profile?.onboardingCompleted) {
@@ -73,7 +79,7 @@ function AppRoutes() {
         <Route path="history/:id/edit" element={<EditEntry />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="analytics/budgets" element={<Budgets />} />
-        <Route path="goals" element={<h1>Цели</h1>} />
+        <Route path="goals" element={<Goals />} />
         <Route path="profile" element={<Profile />} />
         <Route path="profile/categories" element={<ManageCategories />} />
         <Route path="profile/accounts" element={<ManageAccounts />} />

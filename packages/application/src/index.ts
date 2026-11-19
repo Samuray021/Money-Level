@@ -61,3 +61,6 @@ export {
   setBudgetNoticesEnabled,
 } from './budgets.js';
 export type { BudgetInput } from './budgets.js';
+
+export { createGoal, getGoalOverview } from './manage-goals.js';
+export type { NewGoalInput } from './manage-goals.js';
