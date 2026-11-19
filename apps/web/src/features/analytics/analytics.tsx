@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { getAnalyticsReport } from '@money-level/application';
 import { localTransactionDate, systemClock } from '@money-level/contracts';
 import { Button } from '@money-level/ui-kit';
@@ -214,6 +215,7 @@ export function Analytics() {
   return (
     <section className="analytics-page">
       <h1>Аналитика</h1>
+      <Link to="/analytics/budgets">Бюджеты</Link>
       <label className="form-field analytics-month">
         Месяц
         <input

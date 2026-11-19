@@ -21,6 +21,14 @@ export function selectBudgetUsage(
         (category) => category.categoryId === budget.categoryId,
       )?.amountMinor ?? '0')
     : selectPeriodTotals(transactions, period).expenseMinor;
+  return budgetUsageForSpent(budget, spentMinor, notified);
+}
+
+export function budgetUsageForSpent(
+  budget: Budget,
+  spentMinor: string,
+  notified: readonly BudgetThreshold[] = [],
+) {
   const spent = BigInt(spentMinor);
   const limit = BigInt(budget.limitMinor);
   const reached: BudgetThreshold[] = [];

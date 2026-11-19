@@ -1,3 +1,4 @@
+import { budgetNoticeSchema, budgetSchema } from '@money-level/budgets';
 import type {
   CommandReceipt,
   JournalChangeEvent,
@@ -73,6 +74,13 @@ export class IndexedDbJournal implements UnitOfWork {
       .version(6)
       .stores({ goals: 'id, status', goalAllocations: 'id, goalId' })
       .upgrade((transaction) => recordMigration(transaction, 6));
+    this.database
+      .version(7)
+      .stores({
+        budgets: 'id, categoryId',
+        budgetNotices: 'id, [budgetId+monthStart]',
+      })
+      .upgrade((transaction) => recordMigration(transaction, 7));
     this.database.on('populate', initializeMigrationHistory);
   }
 
@@ -104,6 +112,11 @@ export class IndexedDbJournal implements UnitOfWork {
       settings: repository(
         transaction.table('settings'),
         profileSettingsSchema,
+      ),
+      budgets: repository(transaction.table('budgets'), budgetSchema),
+      budgetNotices: repository(
+        transaction.table('budgetNotices'),
+        budgetNoticeSchema,
       ),
       goals: repository(transaction.table('goals'), goalSchema),
       goalAllocations: repository(

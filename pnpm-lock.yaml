@@ -96,6 +96,9 @@ importers:
       '@money-level/analytics':
         specifier: workspace:*
         version: link:../analytics
+      '@money-level/budgets':
+        specifier: workspace:*
+        version: link:../budgets
       '@money-level/contracts':
         specifier: workspace:*
         version: link:../contracts
@@ -157,6 +160,9 @@ importers:
       '@money-level/application':
         specifier: workspace:*
         version: link:../application
+      '@money-level/budgets':
+        specifier: workspace:*
+        version: link:../budgets
       '@money-level/contracts':
         specifier: workspace:*
         version: link:../contracts

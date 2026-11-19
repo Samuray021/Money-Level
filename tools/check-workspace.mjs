@@ -21,7 +21,13 @@ const allowed = {
     'meme-engine',
     'gamification',
   ],
-  'storage-indexeddb': [...finance, 'application', 'goals', 'gamification'],
+  'storage-indexeddb': [
+    ...finance,
+    'application',
+    'budgets',
+    'goals',
+    'gamification',
+  ],
   'ui-kit': contracts,
   web: [
     ...finance,

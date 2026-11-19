@@ -1,3 +1,4 @@
+import type { Budget, BudgetNotice } from '@money-level/budgets';
 import type { ProfileSettings } from '@money-level/contracts';
 import type { Account, Category, Transaction } from '@money-level/finance-core';
 import type { Goal, GoalAllocation } from '@money-level/goals';
@@ -14,6 +15,8 @@ export interface Repository<Record> extends ReadRepository<Record> {
 
 interface JournalRecords {
   settings: ProfileSettings;
+  budgets: Budget;
+  budgetNotices: BudgetNotice;
   goals: Goal;
   goalAllocations: GoalAllocation;
   accounts: Account;

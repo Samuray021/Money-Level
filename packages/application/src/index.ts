@@ -53,3 +53,11 @@ export {
 export type { NewAccountInput } from './manage-accounts.js';
 
 export { getAnalyticsReport } from './analytics-report.js';
+
+export {
+  claimBudgetNotices,
+  getBudgetOverview,
+  saveBudget,
+  setBudgetNoticesEnabled,
+} from './budgets.js';
+export type { BudgetInput } from './budgets.js';

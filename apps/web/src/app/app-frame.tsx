@@ -1,3 +1,4 @@
+import { BudgetAlerts } from '../features/budgets/budget-alerts.js';
 import { Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
 import { PrivacyToggle } from '../components/privacy-toggle.js';
@@ -50,6 +51,7 @@ export function AppFrame({
           Офлайн · изменения сохраняются на устройстве
         </p>
       )}
+      {showNavigation && <BudgetAlerts />}
       <main className="app-main" id="main-content" tabIndex={-1}>
         <Suspense fallback={<p role="status">Загружаем раздел…</p>}>
           <Outlet />

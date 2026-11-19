@@ -11,7 +11,8 @@
     "@money-level/finance-core": "workspace:*",
     "dexie": "^4.2.1",
     "@money-level/contracts": "workspace:*",
-    "@money-level/goals": "workspace:*"
+    "@money-level/goals": "workspace:*",
+    "@money-level/budgets": "workspace:*"
   },
   "devDependencies": {
     "fake-indexeddb": "^6.2.5"
