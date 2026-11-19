@@ -24,3 +24,6 @@ export type MinorUnits = z.infer<typeof minorUnitsSchema>;
 export type AccountKind = z.infer<typeof accountKindSchema>;
 export type CategoryType = z.infer<typeof categoryTypeSchema>;
 export type TransactionKind = z.infer<typeof transactionKindSchema>;
+
+export { createSeededRandom, systemClock } from './runtime.js';
+export type { Clock, RandomSource } from './runtime.js';
