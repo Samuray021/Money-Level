@@ -1,6 +1,11 @@
 import { expect, test } from '@playwright/test';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { record, setupJournal } from './journal-fixture.js';
+
+function pngDigest(bytes: Uint8Array): string {
+  return createHash('sha256').update(bytes).digest('hex');
+}
 
 test('expense card preview, PNG and system share hide financial figures by default and in private mode', async ({
   page,
@@ -39,17 +44,17 @@ test('expense card preview, PNG and system share hide financial figures by defau
     return readFile(await download.path());
   }
 
-  const masked = await downloadCard();
+  const masked = pngDigest(await downloadCard());
   await card.getByLabel('Показать показатели в PNG').check();
   await expect(preview).toContainText('987,65');
-  expect(await downloadCard()).not.toEqual(masked);
+  expect(pngDigest(await downloadCard())).not.toBe(masked);
 
   await page.getByRole('link', { name: 'Главная', exact: true }).click();
   await record(page, 'Расход', '123,46', 'Еда');
   await page.goto('/analytics/roast');
   await card.getByText('Экспорт карточки', { exact: true }).click();
   await expect(preview).not.toContainText(privateText);
-  expect(await downloadCard()).toEqual(masked);
+  expect(pngDigest(await downloadCard())).toBe(masked);
 
   await card.getByLabel('Показать показатели в PNG').check();
   await expect(preview).toContainText('111,11');
@@ -96,7 +101,7 @@ test('expense card preview, PNG and system share hide financial figures by defau
   expect(result.keys).toEqual(['files', 'title']);
   expect(result.title).toBe('Money Level');
   expect(result.name).toBe('money-level.png');
-  expect(Buffer.from(result.bytes)).toEqual(masked);
+  expect(pngDigest(Buffer.from(result.bytes))).toBe(masked);
 
   await page.reload();
   await expect(

@@ -1,5 +1,8 @@
+import { currentJournalSchemaVersion } from '@money-level/storage-indexeddb';
 import { Link } from 'react-router-dom';
 import './management.css';
+
+declare const __MONEY_LEVEL_APP_VERSION__: string;
 
 export function Profile() {
   return (
@@ -20,6 +23,16 @@ export function Profile() {
       <Link className="management-link" to="/profile/categories">
         Категории
       </Link>
+      <dl className="backup-details">
+        <div>
+          <dt>Версия приложения</dt>
+          <dd data-testid="app-version">{__MONEY_LEVEL_APP_VERSION__}</dd>
+        </div>
+        <div>
+          <dt>Версия базы</dt>
+          <dd data-testid="schema-version">{currentJournalSchemaVersion}</dd>
+        </div>
+      </dl>
     </section>
   );
 }
