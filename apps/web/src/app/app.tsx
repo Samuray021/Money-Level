@@ -5,6 +5,8 @@ import { Dashboard } from '../features/dashboard/dashboard.js';
 import { TransactionEntry } from '../features/transactions/transaction-entry.js';
 import { EditEntry } from '../features/history/edit-entry.js';
 import { History, HistoryDetail } from '../features/history/history.js';
+import { ManageCategories } from '../features/profile/manage-categories.js';
+import { Profile } from '../features/profile/profile.js';
 import { Onboarding } from '../features/onboarding/onboarding.js';
 import { useJournal } from './journal-context.js';
 import { JournalProvider } from './journal-provider.js';
@@ -44,7 +46,8 @@ function AppRoutes() {
         <Route path="history/:id/edit" element={<EditEntry />} />
         <Route path="analytics" element={<h1>Аналитика</h1>} />
         <Route path="goals" element={<h1>Цели</h1>} />
-        <Route path="profile" element={<h1>Профиль</h1>} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="profile/categories" element={<ManageCategories />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

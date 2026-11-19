@@ -40,3 +40,6 @@ export type { EntryKind } from './transaction-choices.js';
 
 export { getHistory, getHistoryDetail } from './history.js';
 export type { HistoryDay, HistoryEntry, HistoryFilters } from './history.js';
+
+export { archiveJournalCategory, saveCategory } from './manage-categories.js';
+export type { CategoryInput } from './manage-categories.js';
