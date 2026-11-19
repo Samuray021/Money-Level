@@ -51,6 +51,12 @@ const HumorPreferences = lazy(() =>
   })),
 );
 
+const RoastReport = lazy(() =>
+  import('../features/analytics/roast-report.js').then((section) => ({
+    default: section.RoastReport,
+  })),
+);
+
 function AppRoutes() {
   const { profile } = useJournal();
   if (!profile?.onboardingCompleted) {
@@ -86,6 +92,7 @@ function AppRoutes() {
         <Route path="history/:id/edit" element={<EditEntry />} />
         <Route path="analytics" element={<Analytics />} />
         <Route path="analytics/budgets" element={<Budgets />} />
+        <Route path="analytics/roast" element={<RoastReport />} />
         <Route path="goals" element={<Goals />} />
         <Route path="profile" element={<Profile />} />
         <Route path="profile/humor" element={<HumorPreferences />} />

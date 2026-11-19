@@ -104,3 +104,19 @@
 .analytics-card :is(th, td):last-child {
   text-align: end;
 }
+
+.analytics-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.roast-card strong {
+  color: var(--color-highlight);
+  font-size: 1.5rem;
+  overflow-wrap: anywhere;
+}
+
+.roast-card details p {
+  color: var(--color-muted);
+}

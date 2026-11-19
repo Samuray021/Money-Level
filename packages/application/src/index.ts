@@ -94,3 +94,6 @@ export { runMemeReactions } from './meme-events.js';
 
 export { saveHumorSettings } from './humor-settings.js';
 export type { HumorSettings } from './humor-settings.js';
+
+export { getRoastReport } from './roast-report.js';
+export type { RoastPeriod } from './roast-report.js';

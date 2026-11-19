@@ -139,3 +139,11 @@ export function selectExpenseSeries(
   }
   return points;
 }
+
+export function selectExpenseCount(
+  transactions: readonly Transaction[],
+  period: DatePeriod,
+): number {
+  const { from, until } = validatedPeriod(period);
+  return expensesWithin(transactions, from, until).length;
+}

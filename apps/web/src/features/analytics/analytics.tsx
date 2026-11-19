@@ -215,7 +215,14 @@ export function Analytics() {
   return (
     <section className="analytics-page">
       <h1>Аналитика</h1>
-      <Link to="/analytics/budgets">Бюджеты</Link>
+      <div className="analytics-links">
+        <Link to="/analytics/budgets">Бюджеты</Link>
+        <Link to="/analytics/roast">
+          {profile?.profanityEnabled && profile.humorMode !== 'off'
+            ? 'Разъеби мои финансы'
+            : 'Разбор расходов'}
+        </Link>
+      </div>
       <label className="form-field analytics-month">
         Месяц
         <input
