@@ -77,3 +77,5 @@ export type {
 } from './backup-format.js';
 
 export { exportBackup } from './backup-export.js';
+
+export { exportTransactionsCsv } from './backup-csv.js';

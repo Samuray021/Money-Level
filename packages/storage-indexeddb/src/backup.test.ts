@@ -2,6 +2,7 @@ import {
   addExpense,
   backupFileSchema,
   exportBackup,
+  exportTransactionsCsv,
   finishOnboarding,
   initializeProfile,
 } from '@money-level/application';
@@ -67,6 +68,22 @@ test('JSON serialization preserves balances, command receipts and committed even
     expect(await sha256Checksum('abc')).toBe(
       'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad',
     );
+  } finally {
+    storage.close();
+  }
+});
+
+test('CSV has a stable UTF-8 header and exact amounts and prevents formula execution in a note', async () => {
+  const { storage } = await backupFixture();
+  try {
+    const csv = await exportTransactionsCsv(storage);
+    expect(csv.charCodeAt(0)).toBe(0xfeff);
+    expect(csv).toMatch(
+      /^\ufeffid,transaction_date,kind,amount,currency,account_id,to_account_id,category_id,note\r\n/,
+    );
+    expect(csv).toContain('"2026-11-19","expense","80.00","RUB"');
+    expect(csv).toContain('"\'=Тест"');
+    expect(csv).toContain('"opening","500.00","RUB"');
   } finally {
     storage.close();
   }
