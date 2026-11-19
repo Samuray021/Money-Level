@@ -17,7 +17,8 @@ export async function runMemeReactions(
     filter: (event) => Date.parse(event.occurredAt) >= session.startedAt,
     async handle(event, journal) {
       const profile = await journal.settings.get('profile');
-      if (!profile?.onboardingCompleted) return undefined;
+      if (!profile?.onboardingCompleted || !profile.companionEnabled)
+        return undefined;
       const reaction = evaluateMeme(defaultMemePack, {
         event,
         mode: profile.humorMode,

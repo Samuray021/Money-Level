@@ -91,3 +91,6 @@ export { mergeBackup } from './backup-merge.js';
 export { consumeOutbox } from './outbox.js';
 
 export { runMemeReactions } from './meme-events.js';
+
+export { saveHumorSettings } from './humor-settings.js';
+export type { HumorSettings } from './humor-settings.js';

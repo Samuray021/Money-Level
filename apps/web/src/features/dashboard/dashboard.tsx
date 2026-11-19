@@ -97,8 +97,11 @@ export function Dashboard() {
           </p>
         )}
       </section>
-      {profile?.humorFrequency !== 'off' && profile?.humorMode !== 'off' && (
-        <Companion emotion={reaction?.emotion ?? 'idle'} />
+      {profile?.companionEnabled && (
+        <Companion
+          emotion={reaction?.emotion ?? 'idle'}
+          {...(profile.quietMode && reaction ? { message: reaction.text } : {})}
+        />
       )}
       <div className="dashboard-actions">
         <Link

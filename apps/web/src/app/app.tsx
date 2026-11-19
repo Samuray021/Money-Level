@@ -45,6 +45,12 @@ const Goals = lazy(() =>
   })),
 );
 
+const HumorPreferences = lazy(() =>
+  import('../features/profile/humor-settings.js').then((section) => ({
+    default: section.HumorPreferences,
+  })),
+);
+
 function AppRoutes() {
   const { profile } = useJournal();
   if (!profile?.onboardingCompleted) {
@@ -82,6 +88,7 @@ function AppRoutes() {
         <Route path="analytics/budgets" element={<Budgets />} />
         <Route path="goals" element={<Goals />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="profile/humor" element={<HumorPreferences />} />
         <Route path="profile/categories" element={<ManageCategories />} />
         <Route path="profile/accounts" element={<ManageAccounts />} />
         <Route path="*" element={<Navigate to="/" replace />} />

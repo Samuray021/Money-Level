@@ -2,7 +2,7 @@ import { runMemeReactions } from '@money-level/application';
 import { createSeededRandom } from '@money-level/contracts';
 import type { MemeReaction } from '@money-level/meme-engine';
 import { Button } from '@money-level/ui-kit';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
@@ -34,8 +34,17 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
   const [reaction, setReaction] = useState<MemeReaction>();
   const enabled =
     !!profile?.onboardingCompleted &&
+    profile.companionEnabled &&
     profile.humorMode !== 'off' &&
     profile.humorFrequency !== 'off';
+
+  const previousEnabled = useRef(enabled);
+  const since = useRef(session.startedAt);
+
+  useEffect(() => {
+    if (enabled && !previousEnabled.current) since.current = Date.now();
+    previousEnabled.current = enabled;
+  }, [enabled]);
 
   const read = useCallback(
     () =>
@@ -58,7 +67,7 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
     else if (trigger)
       void runMemeReactions(
         commands.storage,
-        session,
+        { ...session, startedAt: since.current },
         random,
         commands.clock,
       ).then(
@@ -85,7 +94,7 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
   return (
     <ReactionContext.Provider value={visible}>
       {children}
-      {visible && (
+      {visible && !profile?.quietMode && (
         <aside
           className={'meme-toast meme-toast--' + visible.rarity}
           aria-label="Реакция компаньона"
