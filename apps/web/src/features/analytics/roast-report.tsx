@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
 import { MoneyAmount } from '../../components/money-amount.js';
+import { RoastCardExport } from './roast-card-export.js';
 import './analytics.css';
 
 const date = new Intl.DateTimeFormat('ru-RU', {
@@ -102,6 +103,13 @@ export function RoastReport() {
                 <summary>Откуда цифры?</summary>
                 <p>{card.formula}</p>
               </details>
+              {profile && (
+                <RoastCardExport
+                  key={String(profile.balanceHidden)}
+                  card={card}
+                  profile={profile}
+                />
+              )}
             </article>
           ))}
           {state.value.cards.length > 1 && profile?.humorMode !== 'off' && (
