@@ -1,5 +1,9 @@
 import type { MinorUnits, UUID } from '@money-level/contracts';
-import { addMinorUnits } from '@money-level/finance-core';
+import {
+  addMinorUnits,
+  compareMinorUnits,
+  subtractMinorUnits,
+} from '@money-level/finance-core';
 import type { Goal, GoalAllocation } from './index.js';
 
 export function selectGoalReserved(
@@ -29,4 +33,22 @@ export function selectTotalReserved(
       current.has(entry.goalId) ? addMinorUnits(sum, entry.deltaMinor) : sum,
     '0',
   );
+}
+
+export function selectAvailableToSpend(
+  totalMinor: MinorUnits,
+  goals: readonly Goal[],
+  allocations: readonly GoalAllocation[],
+): {
+  availableMinor: MinorUnits;
+  reservedMinor: MinorUnits;
+  overReserved: boolean;
+} {
+  const reservedMinor = selectTotalReserved(goals, allocations);
+  const availableMinor = subtractMinorUnits(totalMinor, reservedMinor);
+  return {
+    availableMinor,
+    reservedMinor,
+    overReserved: compareMinorUnits(availableMinor, '0') < 0,
+  };
 }

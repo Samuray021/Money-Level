@@ -14,7 +14,7 @@ import {
 import {
   goalAllocationSchema,
   selectGoalReserved,
-  selectTotalReserved,
+  selectAvailableToSpend,
 } from '@money-level/goals';
 import type { GoalAllocation } from '@money-level/goals';
 import type { JournalCommandContext } from './create-transaction.js';
@@ -61,11 +61,12 @@ async function changeReservation(
         await journal.accounts.list(),
         await journal.transactions.list(),
       );
-      const available = subtractMinorUnits(
+      const { availableMinor } = selectAvailableToSpend(
         totalBalance,
-        selectTotalReserved(await journal.goals.list(), allocations),
+        await journal.goals.list(),
+        allocations,
       );
-      if (compareMinorUnits(amount, available) > 0) {
+      if (compareMinorUnits(amount, availableMinor) > 0) {
         throw new RangeError(
           'The available balance is too low for this reservation.',
         );

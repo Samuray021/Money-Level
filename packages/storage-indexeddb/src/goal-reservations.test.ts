@@ -4,11 +4,8 @@ import {
   releaseFromGoal,
   reserveToGoal,
 } from '@money-level/application';
-import {
-  selectTotalBalance,
-  subtractMinorUnits,
-} from '@money-level/finance-core';
-import { selectTotalReserved } from '@money-level/goals';
+import { selectTotalBalance } from '@money-level/finance-core';
+import { selectAvailableToSpend } from '@money-level/goals';
 import { expect, test } from 'vitest';
 import { exampleId, instant, journalFixture } from './fixtures.js';
 
@@ -55,14 +52,15 @@ test('TC-FIN-001/004: reserve and release move available money without changing 
         await journal.accounts.list(),
         transactions,
       );
-      const reserved = selectTotalReserved(
+      const { reservedMinor, availableMinor } = selectAvailableToSpend(
+        total,
         await journal.goals.list(),
         await journal.goalAllocations.list(),
       );
       return {
         total,
-        reserved,
-        available: subtractMinorUnits(total, reserved),
+        reserved: reservedMinor,
+        available: availableMinor,
         count: transactions.length,
       };
     });

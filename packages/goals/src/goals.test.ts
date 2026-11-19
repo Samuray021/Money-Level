@@ -1,7 +1,11 @@
 import { expect, test } from 'vitest';
-import { goalAllocationSchema, goalSchema } from './index.js';
+import {
+  goalAllocationSchema,
+  goalSchema,
+  selectAvailableToSpend,
+} from './index.js';
 
-export const sampleGoal = {
+const sampleGoal = {
   id: 'd0000000-0000-4000-8000-000000000111',
   title: 'Компьютер',
   targetMinor: '7000000',
@@ -47,4 +51,31 @@ test('allocations are signed deltas in a goal journal, without financial transac
       kind: 'expense',
     }).success,
   ).toBe(false);
+});
+
+test('reports overreservation after expenses and keeps completed goals reserved', () => {
+  const archived = {
+    ...sampleGoal,
+    id: allocation.id,
+    status: 'archived' as const,
+  };
+  expect(
+    selectAvailableToSpend(
+      '100000',
+      [{ ...sampleGoal, status: 'completed' }, archived],
+      [
+        { ...allocation, deltaMinor: '500000' },
+        { ...allocation, goalId: archived.id, deltaMinor: '999000' },
+      ],
+    ),
+  ).toEqual({
+    availableMinor: '-400000',
+    reservedMinor: '500000',
+    overReserved: true,
+  });
+  expect(selectAvailableToSpend('0', [], [])).toEqual({
+    availableMinor: '0',
+    reservedMinor: '0',
+    overReserved: false,
+  });
 });
