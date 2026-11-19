@@ -1,4 +1,5 @@
 import type { Account, Category, Transaction } from '@money-level/finance-core';
+import type { JournalChangeEvent } from './journal-change.js';
 
 export interface ReadRepository<Record> {
   get(id: string): Promise<Record | undefined>;
@@ -15,11 +16,18 @@ interface JournalRecords {
   transactions: Transaction;
 }
 
+interface OutboxReader {
+  list(): Promise<JournalChangeEvent[]>;
+}
+
 export type JournalReader = {
   [Table in keyof JournalRecords]: ReadRepository<JournalRecords[Table]>;
-};
+} & { outbox: OutboxReader };
+
 export type JournalWriter = {
   [Table in keyof JournalRecords]: Repository<JournalRecords[Table]>;
+} & {
+  outbox: OutboxReader & { add(event: JournalChangeEvent): Promise<void> };
 };
 
 export interface UnitOfWork {

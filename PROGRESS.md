@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-023`.
-**Подтверждённо завершено:** `22 / 100` задач.
+**Текущее задание:** `ML-024`.
+**Подтверждённо завершено:** `23 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -39,7 +39,8 @@
 | ML-019 | DONE | PASS lint, format:check, typecheck, test (45), build | `9dec78d` | 2026-11-19. finance-core: перевод одной записью, две стороны без расхода, совпадение UUID независимо от регистра. |
 | ML-020 | DONE | PASS lint, format:check, typecheck, test (48), build | `263f5fd` | 2026-11-19. finance-core: селекторы баланса и сверка финансовых итогов TC-FIN-001/002; резервы по ML-054. |
 | ML-021 | DONE | PASS lint, format:check, typecheck, test (48), build | `9b85d4b` | 2026-11-19. application: контракты чтения и записи журнала без DOM, React или IndexedDB. |
-| ML-022 | DONE | PASS lint, format:check, typecheck, test (50), build | ML-022 | 2026-11-19. storage-indexeddb: Dexie, локальная схема v1, проверка повторного открытия и атомарного отката. |
+| ML-022 | DONE | PASS lint, format:check, typecheck, test (50), build | `24f7a68` | 2026-11-19. storage-indexeddb: Dexie, локальная схема v1, проверка повторного открытия и атомарного отката. |
+| ML-023 | DONE | PASS lint, format:check, typecheck, test (52), build | ML-023 | 2026-11-19. application и storage-indexeddb: запись операции с outbox, проверка отката при сбое второго сохранения. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

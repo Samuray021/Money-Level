@@ -1,4 +1,5 @@
 import type {
+  JournalChangeEvent,
   JournalReader,
   JournalWriter,
   Repository,
@@ -44,7 +45,26 @@ export class IndexedDbJournal implements UnitOfWork {
       categories: 'id, type',
       transactions: 'id, transactionDate, accountId, toAccountId, categoryId',
     });
+    this.database.version(2).stores({
+      outbox: 'eventId, occurredAt',
+    });
+    const outbox = this.database.table<JournalChangeEvent, string>('outbox');
+
     this.repositories = {
+      outbox: {
+        list: () => outbox.toArray(),
+        async add(event) {
+          const { eventId, type, version, sourceEntityId, occurredAt } = event;
+          await outbox.add({
+            eventId,
+            type,
+            version,
+            sourceEntityId,
+            occurredAt,
+            payload: {},
+          });
+        },
+      },
       accounts: repository(this.database.table('accounts'), accountSchema),
       categories: repository(this.database.table('categories'), categorySchema),
       transactions: repository(
