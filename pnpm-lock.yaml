@@ -32,6 +32,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@money-level/ui-kit':
+        specifier: workspace:*
+        version: link:../../packages/ui-kit
       react:
         specifier: ^19.3.1
         version: 19.3.1
@@ -105,7 +108,15 @@ importers:
         specifier: ^6.2.5
         version: 6.2.8
 
-  packages/ui-kit: {}
+  packages/ui-kit:
+    dependencies:
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
+    devDependencies:
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
 
 packages:
 

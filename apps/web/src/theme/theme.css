@@ -1,0 +1,106 @@
+:root {
+  color-scheme: dark;
+  --color-background: #101017;
+  --color-surface: #1c1b26;
+  --color-surface-raised: #272637;
+  --color-text: #f7f5ff;
+  --color-muted: #b7b1c9;
+  --color-border: #77708b;
+  --color-accent: #c3a7ff;
+  --color-accent-hover: #d8c6ff;
+  --color-accent-pressed: #ad8af6;
+  --color-on-accent: #191027;
+  --color-highlight: #d9ed93;
+  --color-danger: #ffb4ba;
+  --color-focus: #e2d5ff;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --radius-control: 0.85rem;
+  --radius-card: 1.25rem;
+  --layout-width: 44rem;
+  --control-height: 2.75rem;
+  --duration-fast: 140ms;
+  --font-ui: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-ui);
+  --text-small: 0.875rem;
+  --text-body: 1rem;
+  --text-heading: clamp(1.75rem, 7vw, 2.5rem);
+  --text-balance: clamp(2rem, 9vw, 3.5rem);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --color-background: #f7f5ff;
+  --color-surface: #fff;
+  --color-surface-raised: #ece7f8;
+  --color-text: #20182c;
+  --color-muted: #534865;
+  --color-border: #746689;
+  --color-accent: #6336b2;
+  --color-accent-hover: #513092;
+  --color-accent-pressed: #44237f;
+  --color-on-accent: #fff;
+  --color-highlight: #425421;
+  --color-danger: #a62542;
+  --color-focus: #4b268e;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  min-inline-size: 0;
+  min-block-size: 100vh;
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font: var(--text-body) / 1.5 var(--font-ui);
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1,
+h2,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font: 750 var(--text-heading) / 1.12 var(--font-display);
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.money-value {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+  }
+}
