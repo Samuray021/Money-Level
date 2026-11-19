@@ -1,0 +1,13 @@
+{
+  "name": "money-level",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "check:boundaries": "node tools/check-workspace.mjs"
+  }
+}

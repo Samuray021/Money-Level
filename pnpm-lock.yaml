@@ -1,0 +1,31 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .: {}
+
+  apps/web: {}
+
+  packages/analytics: {}
+
+  packages/application: {}
+
+  packages/budgets: {}
+
+  packages/contracts: {}
+
+  packages/finance-core: {}
+
+  packages/gamification: {}
+
+  packages/goals: {}
+
+  packages/meme-engine: {}
+
+  packages/storage-indexeddb: {}
+
+  packages/ui-kit: {}
