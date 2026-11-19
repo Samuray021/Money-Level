@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-035`.
-**Подтверждённо завершено:** `33 / 100` задач.
+**Текущее задание:** `ML-053`.
+**Подтверждённо завершено:** `34 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -51,7 +51,8 @@
 | ML-031 | DONE | PASS lint, format:check, typecheck, test (64), build | `b74e856` | 2026-11-19. web и ui-kit: темы, типографика и кнопки; Chromium 320/390/428 px, обе цветовые схемы, контраст, фокус, hover и busy. |
 | ML-032 | DONE | PASS lint, format:check, typecheck, test (64), build | `01819d1` | 2026-11-19. web: общий макет, пять маршрутов, активный пункт и нижняя панель; Chromium подтвердил переходы и зазор для ввода на 320 px. |
 | ML-033 | DONE | PASS lint, format:check, typecheck, test (66), build | `69141aa` | 2026-11-19. web, contracts, application и IndexedDB v5: первый счёт, защита входа на главную, конкурентные запросы и перезапуск в Chromium. |
-| ML-034 | DONE | PASS lint, format:check, typecheck, test (68), build | ML-034 | 2026-11-19. web/finance-core/application: возобновляемая настройка, разбор валютного остатка, атомарное завершение, повторное открытие браузера и одна запись opening. |
+| ML-034 | DONE | PASS lint, format:check, typecheck, test (68), build | `b30cc8b` | 2026-11-19. web/finance-core/application: возобновляемая настройка, разбор валютного остатка, атомарное завершение, повторное открытие браузера и одна запись opening. |
+| ML-046 | DONE | PASS lint, format:check, typecheck, test (70), build | ML-046 | 2026-11-19. analytics: календарный селектор доходов и расходов, границы периода и TC-FIN-006. Выполнено до ML-035, поскольку главная использует эти итоги. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

@@ -5,5 +5,9 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@money-level/contracts": "workspace:*",
+    "@money-level/finance-core": "workspace:*"
   }
 }
