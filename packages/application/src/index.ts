@@ -85,3 +85,5 @@ export { validateBackupJson } from './backup-import.js';
 export { recoverySnapshotSchema } from './backup-format.js';
 export type { RecoverySnapshot } from './backup-format.js';
 export { replaceBackup } from './backup-write.js';
+
+export { mergeBackup } from './backup-merge.js';

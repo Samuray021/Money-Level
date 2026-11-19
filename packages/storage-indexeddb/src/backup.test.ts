@@ -1,6 +1,10 @@
 import type { UnitOfWork } from '@money-level/application';
 import {
   addExpense,
+  createGoal,
+  getDashboardSummary,
+  mergeBackup,
+  reserveToGoal,
   backupFileSchema,
   exportBackup,
   exportTransactionsCsv,
@@ -209,6 +213,52 @@ test('replace requires explicit confirmation, writes a recovery snapshot and rol
       (await exportBackup(storage, sha256Checksum, context.clock)).data,
     ).toEqual(data);
   } finally {
+    storage.close();
+  }
+});
+
+test('TC-FIN-007: merge deduplicates the same backup after reopen and restores the exact balance and reserves', async () => {
+  const { storage, context } = await backupFixture();
+  const { open } = journalFixture();
+  const target = open();
+  try {
+    const goal = await createGoal(context, {
+      title: 'Компьютер',
+      target: '500',
+    });
+    await reserveToGoal(context, { goalId: goal.id, amountMinor: '10000' });
+    const imported = await exportBackup(storage, sha256Checksum, context.clock);
+    const input = JSON.stringify(imported);
+    await expect(mergeBackup(target, input, sha256Checksum)).resolves.toEqual({
+      accounts: 1,
+      transactions: 2,
+    });
+    target.close();
+
+    const reopened = open();
+    try {
+      await expect(
+        mergeBackup(reopened, input, sha256Checksum),
+      ).resolves.toEqual({ accounts: 0, transactions: 0 });
+      await expect(
+        getDashboardSummary(reopened, context.clock),
+      ).resolves.toMatchObject({
+        totalMinor: '42000',
+        availableMinor: '32000',
+        reservedMinor: '10000',
+        expenseMinor: '8000',
+      });
+      const restored = await exportBackup(
+        reopened,
+        sha256Checksum,
+        context.clock,
+      );
+      expect(restored.data).toEqual(imported.data);
+    } finally {
+      reopened.close();
+    }
+  } finally {
+    target.close();
     storage.close();
   }
 });
