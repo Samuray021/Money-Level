@@ -2,6 +2,7 @@ import {
   addExpense,
   addIncome,
   deleteTransaction,
+  getAnalyticsReport,
   transfer,
   updateTransaction,
 } from '@money-level/application';
@@ -97,6 +98,15 @@ test('TC-FIN-001 through TC-FIN-003: real journal commands match the expected ac
       total: '5870000',
     });
 
+    const totals = async () =>
+      (await getAnalyticsReport(storage, '2026-11')).totals;
+    const originalTotals = {
+      incomeMinor: '5000000',
+      expenseMinor: '130000',
+      netMinor: '4870000',
+    };
+    expect(await totals()).toEqual(originalTotals);
+
     await transfer(context, {
       ...fields,
       toAccountId: cash.id,
@@ -109,10 +119,19 @@ test('TC-FIN-001 through TC-FIN-003: real journal commands match the expected ac
       total: '5870000',
     });
 
+    expect(await totals()).toEqual(originalTotals);
+
     await deleteTransaction(context, purchase.id);
     expect((await balances()).total).toBe('5970000');
+    const revisedTotals = {
+      incomeMinor: '5000000',
+      expenseMinor: '30000',
+      netMinor: '4970000',
+    };
+    expect(await totals()).toEqual(revisedTotals);
     await deleteTransaction(context, purchase.id);
     expect((await balances()).total).toBe('5970000');
+    expect(await totals()).toEqual(revisedTotals);
   } finally {
     storage.close();
   }
