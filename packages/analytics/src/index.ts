@@ -23,15 +23,20 @@ export function selectPeriodTotals(
   if (from >= until)
     throw new RangeError('A report period must have a positive duration.');
 
+  return summarizeCashFlow(
+    transactions.filter(
+      (entry) => entry.transactionDate >= from && entry.transactionDate < until,
+    ),
+  );
+}
+
+export function summarizeCashFlow(
+  transactions: readonly Transaction[],
+): PeriodTotals {
   let incomeMinor: MinorUnits = '0';
   let expenseMinor: MinorUnits = '0';
   for (const entry of transactions) {
-    if (
-      entry.deletedAt ||
-      entry.transactionDate < from ||
-      entry.transactionDate >= until
-    )
-      continue;
+    if (entry.deletedAt) continue;
     if (entry.kind === 'income')
       incomeMinor = addMinorUnits(incomeMinor, entry.amountMinor);
     if (entry.kind === 'expense')

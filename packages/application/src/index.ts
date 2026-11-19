@@ -37,3 +37,6 @@ export { ensureStarterCategories } from './starter-categories.js';
 export { getTransactionChoices } from './transaction-choices.js';
 
 export type { EntryKind } from './transaction-choices.js';
+
+export { getHistory, getHistoryDetail } from './history.js';
+export type { HistoryDay, HistoryEntry } from './history.js';

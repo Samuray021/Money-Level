@@ -3,6 +3,7 @@ import { AppFrame } from './app-frame.js';
 
 import { Dashboard } from '../features/dashboard/dashboard.js';
 import { TransactionEntry } from '../features/transactions/transaction-entry.js';
+import { History, HistoryDetail } from '../features/history/history.js';
 import { Onboarding } from '../features/onboarding/onboarding.js';
 import { useJournal } from './journal-context.js';
 import { JournalProvider } from './journal-provider.js';
@@ -37,7 +38,8 @@ function AppRoutes() {
           element={<TransactionEntry kind="transfer" />}
         />
         <Route path="setup" element={<Navigate to="/" replace />} />
-        <Route path="history" element={<h1>История</h1>} />
+        <Route path="history" element={<History />} />
+        <Route path="history/:id" element={<HistoryDetail />} />
         <Route path="analytics" element={<h1>Аналитика</h1>} />
         <Route path="goals" element={<h1>Цели</h1>} />
         <Route path="profile" element={<h1>Профиль</h1>} />
