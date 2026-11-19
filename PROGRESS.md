@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-025`.
-**Подтверждённо завершено:** `24 / 100` задач.
+**Текущее задание:** `ML-026`.
+**Подтверждённо завершено:** `25 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -41,7 +41,8 @@
 | ML-021 | DONE | PASS lint, format:check, typecheck, test (48), build | `9b85d4b` | 2026-11-19. application: контракты чтения и записи журнала без DOM, React или IndexedDB. |
 | ML-022 | DONE | PASS lint, format:check, typecheck, test (50), build | `24f7a68` | 2026-11-19. storage-indexeddb: Dexie, локальная схема v1, проверка повторного открытия и атомарного отката. |
 | ML-023 | DONE | PASS lint, format:check, typecheck, test (52), build | `68c40ba` | 2026-11-19. application и storage-indexeddb: запись операции с outbox, проверка отката при сбое второго сохранения. |
-| ML-024 | DONE | PASS lint, format:check, typecheck, test (54), build | ML-024 | 2026-11-19. application и IndexedDB: команда дохода; два параллельных запроса создают одну запись и одно событие. Устранён преждевременный commit привязкой таблиц к транзакции. |
+| ML-024 | DONE | PASS lint, format:check, typecheck, test (54), build | `c1f612a` | 2026-11-19. application и IndexedDB: команда дохода; два параллельных запроса создают одну запись и одно событие. Устранён преждевременный commit привязкой таблиц к транзакции. |
+| ML-025 | DONE | PASS lint, format:check, typecheck, test (55), build | ML-025 | 2026-11-19. application: команда расхода по общему пути сохранения, тест повторного ключа и конфликта видов операций. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
