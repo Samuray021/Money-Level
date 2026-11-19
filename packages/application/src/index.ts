@@ -75,3 +75,5 @@ export type {
   BackupData,
   BackupFile,
 } from './backup-format.js';
+
+export { exportBackup } from './backup-export.js';

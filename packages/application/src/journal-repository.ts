@@ -30,6 +30,7 @@ export interface CommandReceipt {
 }
 
 interface CommandReceiptReader {
+  list(): Promise<CommandReceipt[]>;
   get(key: string): Promise<CommandReceipt | undefined>;
 }
 

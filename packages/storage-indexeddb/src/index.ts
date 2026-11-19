@@ -92,6 +92,7 @@ export class IndexedDbJournal implements UnitOfWork {
 
     return {
       commands: {
+        list: () => receipts.toArray(),
         get: (key) => receipts.get(key),
         add: (receipt) => receipts.add(receipt).then(() => undefined),
       },
@@ -163,3 +164,5 @@ export class IndexedDbJournal implements UnitOfWork {
 export { currentJournalSchemaVersion } from './migrations.js';
 
 export { liveQuery as observeJournal } from 'dexie';
+
+export { sha256Checksum } from './backup-checksum.js';
