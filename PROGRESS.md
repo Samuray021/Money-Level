@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-019`.
-**Подтверждённо завершено:** `18 / 100` задач.
+**Текущее задание:** `ML-020`.
+**Подтверждённо завершено:** `19 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -35,7 +35,8 @@
 | ML-015 | DONE | PASS lint, format:check, typecheck, test (35), build | `dde4350` | 2026-11-19. finance-core: модель категории, проверка типа и регрессионные тесты архивации и имён. |
 | ML-016 | DONE | PASS lint, format:check, typecheck, test (38), build | `c741cd4` | 2026-11-19. finance-core: различимые типы opening/income/expense/transfer/adjustment, схемы и регрессии. |
 | ML-017 | DONE | PASS lint, format:check, typecheck, test (41), build | `f0f7ca0` | 2026-11-19. finance-core: проверка существования счетов и категории, валюты и типа категории. |
-| ML-018 | DONE | PASS lint, format:check, typecheck, test (43), build | ML-018 | 2026-11-19. finance-core: применение проводок по счёту, проверка знаков и исключения удалённых операций. |
+| ML-018 | DONE | PASS lint, format:check, typecheck, test (43), build | `6bbbe49` | 2026-11-19. finance-core: применение проводок по счёту, проверка знаков и исключения удалённых операций. |
+| ML-019 | DONE | PASS lint, format:check, typecheck, test (45), build | ML-019 | 2026-11-19. finance-core: перевод одной записью, две стороны без расхода, совпадение UUID независимо от регистра. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
