@@ -12,7 +12,7 @@ const currencies = [
 ];
 
 export function ProfileSetup() {
-  const { commands, profile, setProfile } = useJournal();
+  const { commands, setProfile } = useJournal();
   const [currency, setCurrency] = useState('RUB');
   const [name, setName] = useState('Основной');
   const [kind, setKind] = useState<'card' | 'cash'>('card');
@@ -39,14 +39,6 @@ export function ProfileSetup() {
     } finally {
       setSaving(false);
     }
-  }
-
-  if (profile) {
-    return (
-      <section className="form-page">
-        <h1>Первый счёт сохранён</h1>
-      </section>
-    );
   }
 
   return (

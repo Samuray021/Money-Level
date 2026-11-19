@@ -1,28 +1,60 @@
-import { minorUnitsSchema } from '@money-level/contracts';
-import type { MinorUnits } from '@money-level/contracts';
+import { currencyCodeSchema, minorUnitsSchema } from '@money-level/contracts';
+import type { CurrencyCode, MinorUnits } from '@money-level/contracts';
 
 const maxEnteredMinorUnits = 9_223_372_036_854_775_807n;
 
-export function parseRubAmount(input: string): MinorUnits {
-  const match = /^(\d+)(?:[.,](\d{1,2}))?$/.exec(input);
-  if (match?.[1] === undefined) {
-    throw new RangeError(
-      'Enter a positive amount with at most two decimal places.',
-    );
+interface AmountOptions {
+  allowNegative?: boolean;
+  allowZero?: boolean;
+}
+
+function parseDecimalAmount(
+  input: string,
+  scale: number,
+  options: AmountOptions,
+): MinorUnits {
+  const parts = /^(?<sign>-?)(?<whole>\d+)(?:[.,](?<fraction>\d+))?$/.exec(
+    input,
+  )?.groups;
+  const fraction = parts?.fraction ?? '';
+  if (
+    !parts?.whole ||
+    fraction.length > scale ||
+    (parts.sign === '-' && !options.allowNegative)
+  ) {
+    throw new RangeError('Enter a valid amount for the selected currency.');
   }
 
-  const digits = (match[1] + (match[2] ?? '').padEnd(2, '0')).replace(
-    /^0+/,
-    '',
-  );
+  const digits =
+    (parts.whole + fraction.padEnd(scale, '0')).replace(/^0+/, '') || '0';
   if (
-    digits.length === 0 ||
+    (!options.allowZero && digits === '0') ||
     digits.length > 19 ||
     BigInt(digits) > maxEnteredMinorUnits
   ) {
     throw new RangeError('Amount is outside the supported range.');
   }
-  return digits;
+  return digits !== '0' && parts.sign === '-' ? '-' + digits : digits;
+}
+
+export function parseRubAmount(input: string): MinorUnits {
+  return parseDecimalAmount(input, 2, {});
+}
+
+export function parseCurrencyAmount(
+  input: string,
+  currency: CurrencyCode,
+  options: AmountOptions = {},
+): MinorUnits {
+  const formatter = new Intl.NumberFormat('ru-RU', {
+    currency: currencyCodeSchema.parse(currency),
+    style: 'currency',
+  });
+  return parseDecimalAmount(
+    input,
+    formatter.resolvedOptions().maximumFractionDigits ?? 0,
+    options,
+  );
 }
 
 function toMinorBigInt(amount: MinorUnits): bigint {

@@ -1,6 +1,18 @@
-import { profileSettingsSchema, systemClock } from '@money-level/contracts';
-import type { CurrencyCode, ProfileSettings } from '@money-level/contracts';
-import { accountSchema } from '@money-level/finance-core';
+import {
+  localTransactionDate,
+  profileSettingsSchema,
+  systemClock,
+} from '@money-level/contracts';
+import type {
+  CurrencyCode,
+  HumorFrequency,
+  ProfileSettings,
+} from '@money-level/contracts';
+import {
+  accountSchema,
+  createOpeningEntry,
+  parseCurrencyAmount,
+} from '@money-level/finance-core';
 import type { JournalCommandContext } from './create-transaction.js';
 
 export interface ProfileSetupInput {
@@ -56,5 +68,62 @@ export function initializeProfile(
     await journal.accounts.put(account);
     await journal.settings.put(profile);
     return profile;
+  });
+}
+
+export interface FinishOnboardingInput {
+  openingAmount: string;
+  humorFrequency: HumorFrequency;
+  profanityEnabled: boolean;
+}
+
+export function finishOnboarding(
+  context: JournalCommandContext,
+  input: FinishOnboardingInput,
+): Promise<ProfileSettings> {
+  return context.storage.write(async (journal) => {
+    const profile = await journal.settings.get('profile');
+    if (!profile)
+      throw new RangeError('The first account has not been created yet.');
+    if (profile.onboardingCompleted) return profile;
+
+    const account = await journal.accounts.get(profile.firstAccountId);
+    if (
+      !account ||
+      account.deletedAt ||
+      account.archived ||
+      account.currencyCode !== profile.baseCurrency
+    ) {
+      throw new RangeError('The first account is unavailable.');
+    }
+    const amountMinor = parseCurrencyAmount(
+      input.openingAmount,
+      profile.baseCurrency,
+      {
+        allowNegative: true,
+        allowZero: true,
+      },
+    );
+    const instant = (context.clock ?? systemClock).now();
+    const opening = createOpeningEntry(account, {
+      id: context.createId(),
+      amountMinor,
+      transactionDate: localTransactionDate(instant, profile.timeZone),
+      createdAt: instant.toISOString(),
+    });
+    if (await journal.transactions.get(opening.id)) {
+      throw new RangeError('The opening entry identifier is already in use.');
+    }
+    const completed = profileSettingsSchema.parse({
+      ...profile,
+      onboardingCompleted: true,
+      humorFrequency: input.humorFrequency,
+      profanityEnabled:
+        input.humorFrequency !== 'off' && input.profanityEnabled,
+    });
+
+    await journal.transactions.put(opening);
+    await journal.settings.put(completed);
+    return completed;
   });
 }

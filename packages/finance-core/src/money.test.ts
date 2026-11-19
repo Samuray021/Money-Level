@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { parseRubAmount } from './index.js';
+import { parseCurrencyAmount, parseRubAmount } from './index.js';
 
 test.each([
   ['450', '45000'],
@@ -26,4 +26,13 @@ test.each([
   '92233720368547758.08',
 ])('rejects invalid or out-of-range RUB input %j', (input) => {
   expect(() => parseRubAmount(input)).toThrow(RangeError);
+});
+
+test('respects the selected currency precision and accepts signed starting balances', () => {
+  expect(parseCurrencyAmount('25', 'JPY')).toBe('25');
+  expect(parseCurrencyAmount('0,001', 'KWD')).toBe('1');
+  expect(
+    parseCurrencyAmount('-0', 'RUB', { allowNegative: true, allowZero: true }),
+  ).toBe('0');
+  expect(() => parseCurrencyAmount('25,01', 'JPY')).toThrow(RangeError);
 });

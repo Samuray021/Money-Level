@@ -39,4 +39,6 @@ export { createSeededRandom, systemClock } from './runtime.js';
 export type { Clock, RandomSource } from './runtime.js';
 
 export { profileSettingsSchema } from './profile-settings.js';
-export type { ProfileSettings } from './profile-settings.js';
+export type { HumorFrequency, ProfileSettings } from './profile-settings.js';
+
+export { localTransactionDate } from './date.js';

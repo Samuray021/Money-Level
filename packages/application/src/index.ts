@@ -23,5 +23,5 @@ export {
   updateTransaction,
 } from './edit-transaction.js';
 
-export { initializeProfile } from './onboarding.js';
-export type { ProfileSetupInput } from './onboarding.js';
+export { finishOnboarding, initializeProfile } from './onboarding.js';
+export type { FinishOnboardingInput, ProfileSetupInput } from './onboarding.js';

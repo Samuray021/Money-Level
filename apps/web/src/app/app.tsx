@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppFrame } from './app-frame.js';
 
-import { ProfileSetup } from '../features/onboarding/profile-setup.js';
+import { Onboarding } from '../features/onboarding/onboarding.js';
 import { useJournal } from './journal-context.js';
 import { JournalProvider } from './journal-provider.js';
 
@@ -11,7 +11,7 @@ function AppRoutes() {
     return (
       <Routes>
         <Route element={<AppFrame showNavigation={false} />}>
-          <Route path="setup" element={<ProfileSetup />} />
+          <Route path="setup" element={<Onboarding />} />
           <Route path="*" element={<Navigate to="/setup" replace />} />
         </Route>
       </Routes>
@@ -22,6 +22,7 @@ function AppRoutes() {
     <Routes>
       <Route element={<AppFrame />}>
         <Route index element={<h1>Главная</h1>} />
+        <Route path="setup" element={<Navigate to="/" replace />} />
         <Route path="history" element={<h1>История</h1>} />
         <Route path="analytics" element={<h1>Аналитика</h1>} />
         <Route path="goals" element={<h1>Цели</h1>} />

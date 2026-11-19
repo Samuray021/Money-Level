@@ -2,6 +2,7 @@ export {
   addMinorUnits,
   compareMinorUnits,
   parseRubAmount,
+  parseCurrencyAmount,
   subtractMinorUnits,
 } from './money.js';
 export { formatMoney } from './format-money.js';
