@@ -70,8 +70,11 @@ test('the outbox consumer sees only committed events with validated minimal payl
     ).rejects.toThrow('Test rollback');
     const seen: string[] = [];
     const consume = () =>
-      consumeOutbox(storage, ({ eventId }) => {
-        seen.push(eventId);
+      consumeOutbox(storage, {
+        consumer: 'test-reader',
+        handle: ({ eventId }) => {
+          seen.push(eventId);
+        },
       });
     await consume();
     expect(seen).toEqual([]);
@@ -91,5 +94,46 @@ test('the outbox consumer sees only committed events with validated minimal payl
     expect(seen).toEqual([event.eventId]);
   } finally {
     storage.close();
+  }
+});
+
+test('a failed handler rolls back, and simultaneous readers cannot handle the same event twice', async () => {
+  const { open } = journalFixture();
+  const storage = open();
+  const parallel = open();
+  try {
+    await storage.write((journal) =>
+      recordTransactionChange(journal, expense, event),
+    );
+    await expect(
+      consumeOutbox(storage, {
+        consumer: 'automatic-effects',
+        async handle(_event, journal) {
+          await journal.transactions.put({ ...expense, note: 'Test effect' });
+          throw new Error('Test rollback of a side effect');
+        },
+      }),
+    ).rejects.toThrow(/side effect/);
+    expect(
+      await storage.read((journal) => journal.transactions.get(expense.id)),
+    ).toEqual(expense);
+    expect(
+      await storage.read((journal) => journal.eventReceipts.list()),
+    ).toEqual([]);
+
+    const dispatch = (target: typeof storage) =>
+      consumeOutbox(target, {
+        consumer: 'automatic-effects',
+        handle: (value) => value.eventId,
+      });
+    const results = await Promise.all([dispatch(storage), dispatch(parallel)]);
+    expect(results.flat()).toEqual([event.eventId]);
+    expect(await dispatch(storage)).toEqual([]);
+    expect(
+      await storage.read((journal) => journal.eventReceipts.list()),
+    ).toHaveLength(1);
+  } finally {
+    storage.close();
+    parallel.close();
   }
 });

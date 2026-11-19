@@ -10,6 +10,7 @@ import type {
 } from '@money-level/application';
 import {
   domainEventSchema,
+  eventReceiptSchema,
   profileSettingsSchema,
 } from '@money-level/contracts';
 import {
@@ -94,6 +95,10 @@ export class IndexedDbJournal implements UnitOfWork {
       .version(8)
       .stores({ recoverySnapshots: 'id, createdAt' })
       .upgrade((transaction) => recordMigration(transaction, 8));
+    this.database
+      .version(9)
+      .stores({ eventReceipts: 'id, [consumer+eventId]' })
+      .upgrade((transaction) => recordMigration(transaction, 9));
     this.database.on('populate', initializeMigrationHistory);
   }
 
@@ -124,6 +129,10 @@ export class IndexedDbJournal implements UnitOfWork {
       recoverySnapshots: repository(
         transaction.table('recoverySnapshots'),
         recoverySnapshotSchema,
+      ),
+      eventReceipts: repository(
+        transaction.table('eventReceipts'),
+        eventReceiptSchema,
       ),
       settings: repository(
         transaction.table('settings'),

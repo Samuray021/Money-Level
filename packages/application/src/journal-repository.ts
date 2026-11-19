@@ -1,3 +1,4 @@
+import type { EventReceipt } from '@money-level/contracts';
 import type { RecoverySnapshot } from './backup-format.js';
 import type { Budget, BudgetNotice } from '@money-level/budgets';
 import type { ProfileSettings } from '@money-level/contracts';
@@ -18,6 +19,7 @@ export interface Repository<Record> extends ReadRepository<Record> {
 
 interface JournalRecords {
   settings: ProfileSettings;
+  eventReceipts: EventReceipt;
   recoverySnapshots: RecoverySnapshot;
   budgets: Budget;
   budgetNotices: BudgetNotice;

@@ -15,6 +15,7 @@ const empty = {
     goals: [],
     goalAllocations: [],
     outbox: [],
+    eventReceipts: [],
     commandReceipts: [],
   },
 };

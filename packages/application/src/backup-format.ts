@@ -1,6 +1,7 @@
 import { budgetNoticeSchema, budgetSchema } from '@money-level/budgets';
 import {
   domainEventSchema,
+  eventReceiptSchema,
   isoDateTimeSchema,
   profileSettingsSchema,
   uuidSchema,
@@ -30,6 +31,7 @@ export const backupDataSchema = z.strictObject({
   goals: z.array(goalSchema),
   goalAllocations: z.array(goalAllocationSchema),
   outbox: z.array(domainEventSchema),
+  eventReceipts: z.array(eventReceiptSchema).default([]),
   commandReceipts: z.array(commandReceiptSchema),
 });
 

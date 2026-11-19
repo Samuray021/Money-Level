@@ -47,3 +47,6 @@ export { localTransactionDate } from './date.js';
 
 export { domainEventSchema, domainEventTypeSchema } from './domain-event.js';
 export type { DomainEvent, DomainEventType } from './domain-event.js';
+
+export { eventReceiptSchema } from './domain-event.js';
+export type { EventReceipt } from './domain-event.js';

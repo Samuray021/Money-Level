@@ -48,7 +48,16 @@ export function assertBackupRelations(data: BackupData): void {
   );
   const budgets = indexBy(data.budgets, (row) => row.id, 'budgets');
   const goals = indexBy(data.goals, (row) => row.id, 'goals');
-  indexBy(data.outbox, (row) => row.eventId, 'outbox');
+  const events = indexBy(data.outbox, (row) => row.eventId, 'outbox');
+  indexBy(data.eventReceipts, (row) => row.id, 'event receipts');
+  for (const receipt of data.eventReceipts) {
+    if (
+      !events.has(receipt.eventId) ||
+      receipt.id !== receipt.consumer + ':' + receipt.eventId
+    ) {
+      throw new RangeError('An event receipt has an invalid reference.');
+    }
+  }
   indexBy(data.commandReceipts, (row) => row.key, 'command receipts');
   indexBy(data.goalAllocations, (row) => row.id, 'goal allocations');
   indexBy(data.budgetNotices, (row) => row.id, 'budget notices');

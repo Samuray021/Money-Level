@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-059`.
-**Подтверждённо завершено:** `65 / 100` задач.
+**Текущее задание:** `ML-060`.
+**Подтверждённо завершено:** `66 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -83,7 +83,8 @@
 | ML-083 | DONE | PASS lint, format:check, typecheck, test (90), build | `247dabe` | 2026-11-19. application и IndexedDB v8: подтверждение, снимок и транзакционная замена; сбой после очистки проверен на исходной базе. |
 | ML-084 | DONE | PASS lint, format:check, typecheck, test (91), build | `9091e20` | 2026-11-19. application/storage: дедупликация UUID, проверка объединённого состояния и TC-FIN-007 на повторном открытии базы; местные записи сохраняют приоритет. |
 | ML-057 | DONE | PASS lint, format:check, typecheck, test (92), build | `4551164` | 2026-11-19. интеграционные тесты IndexedDB: проверка редактирования, мягкого удаления, merge и replace через реальные команды и JSON. |
-| ML-058 | DONE | PASS lint, format:check, typecheck, test (93), build | ML-058 | 2026-11-19. contracts/application/storage: минимальный типизированный payload, проверка отката и чтения только после commit. |
+| ML-058 | DONE | PASS lint, format:check, typecheck, test (93), build | `0f574bb` | 2026-11-19. contracts/application/storage: минимальный типизированный payload, проверка отката и чтения только после commit. |
+| ML-059 | DONE | PASS lint, format:check, typecheck, test (94), build | ML-059 | 2026-11-19. contracts/application/storage v9: атомарные квитанции, повтор после сбоя, параллельная обработка и backup. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 

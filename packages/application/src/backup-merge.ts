@@ -31,6 +31,7 @@ export async function mergeBackup(
   return storage.write(async (journal) => {
     const local = await readBackupData(journal);
     const changes: BackupData = {
+      eventReceipts: identified(local.eventReceipts, incoming.eventReceipts),
       settings: local.settings ? null : incoming.settings,
       accounts: identified(local.accounts, incoming.accounts),
       categories: identified(local.categories, incoming.categories),
@@ -50,6 +51,7 @@ export async function mergeBackup(
       ),
     };
     const merged: BackupData = {
+      eventReceipts: [...local.eventReceipts, ...changes.eventReceipts],
       settings: local.settings ?? changes.settings,
       accounts: [...local.accounts, ...changes.accounts],
       categories: [...local.categories, ...changes.categories],

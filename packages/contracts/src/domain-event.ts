@@ -38,3 +38,12 @@ export const domainEventSchema = z.strictObject({
 
 export type DomainEvent = z.infer<typeof domainEventSchema>;
 export type DomainEventType = z.infer<typeof domainEventTypeSchema>;
+
+export const eventReceiptSchema = z.strictObject({
+  id: z.string().min(1),
+  eventId: uuidSchema,
+  consumer: z.string().regex(/^[a-z][a-z0-9.-]{0,63}$/),
+  processedAt: isoDateTimeSchema,
+});
+
+export type EventReceipt = z.infer<typeof eventReceiptSchema>;
