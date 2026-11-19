@@ -90,6 +90,23 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(timer);
   }, [reaction]);
 
+  useEffect(() => {
+    if (profile?.motionEnabled === false)
+      document.documentElement.dataset.motion = 'off';
+    else delete document.documentElement.dataset.motion;
+    return () => {
+      delete document.documentElement.dataset.motion;
+    };
+  }, [profile?.motionEnabled]);
+
+  useEffect(() => {
+    if (!enabled || !reaction || !profile?.soundsEnabled || profile.quietMode)
+      return;
+    const audio = new Audio('/audio/reaction.wav');
+    void audio.play().catch(() => undefined);
+    return () => audio.pause();
+  }, [enabled, profile?.quietMode, profile?.soundsEnabled, reaction]);
+
   const visible = enabled ? reaction : undefined;
   return (
     <ReactionContext.Provider value={visible}>

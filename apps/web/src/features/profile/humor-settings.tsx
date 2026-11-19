@@ -87,6 +87,22 @@ function HumorForm({ defaults }: { defaults: HumorSettings }) {
         />{' '}
         Тихий режим без всплывающих реакций
       </label>
+      <label className="form-checkbox">
+        <input
+          type="checkbox"
+          checked={settings.motionEnabled}
+          onChange={(event) => field('motionEnabled', event.target.checked)}
+        />{' '}
+        Анимации
+      </label>
+      <label className="form-checkbox">
+        <input
+          type="checkbox"
+          checked={settings.soundsEnabled}
+          onChange={(event) => field('soundsEnabled', event.target.checked)}
+        />{' '}
+        Звуки реакций
+      </label>
       {status === 'saved' && <p role="status">Настройки сохранены.</p>}
       {status === 'error' && (
         <p className="form-error" role="alert">

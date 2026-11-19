@@ -13,7 +13,7 @@ export default defineConfig({
         clientsClaim: true,
         skipWaiting: true,
         cleanupOutdatedCaches: true,
-        globPatterns: ['**/*.{html,js,css,webmanifest,png}'],
+        globPatterns: ['**/*.{html,js,css,webmanifest,png,wav}'],
         navigateFallback: 'index.html',
         navigateFallbackDenylist: [/^\/api(?:\/|$)/],
       },

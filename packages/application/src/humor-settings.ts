@@ -9,6 +9,8 @@ export type HumorSettings = Pick<
   | 'profanityEnabled'
   | 'companionEnabled'
   | 'quietMode'
+  | 'motionEnabled'
+  | 'soundsEnabled'
 >;
 
 export function saveHumorSettings(
@@ -26,6 +28,8 @@ export function saveHumorSettings(
       profanityEnabled: input.profanityEnabled,
       companionEnabled: input.companionEnabled,
       quietMode: input.quietMode,
+      motionEnabled: input.motionEnabled,
+      soundsEnabled: input.soundsEnabled,
     });
     await settings.put(updated);
     return updated;

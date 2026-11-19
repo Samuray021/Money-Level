@@ -114,3 +114,7 @@ textarea {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+:root[data-motion='off'] {
+  --duration-fast: 0ms;
+}

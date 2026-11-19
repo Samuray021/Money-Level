@@ -29,6 +29,8 @@ export const profileSettingsSchema = z.strictObject({
   profanityEnabled: z.boolean().default(false),
   companionEnabled: z.boolean().default(true),
   quietMode: z.boolean().default(false),
+  motionEnabled: z.boolean().default(true),
+  soundsEnabled: z.boolean().default(false),
 });
 
 export type ProfileSettings = z.infer<typeof profileSettingsSchema>;
