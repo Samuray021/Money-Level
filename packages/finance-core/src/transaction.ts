@@ -1,32 +1,31 @@
 import {
   isoDateSchema,
   minorUnitsSchema,
+  positiveMinorUnitsSchema,
   uuidSchema,
 } from '@money-level/contracts';
 import { z } from 'zod';
 import { journalEntryFields, openingEntrySchema } from './opening-entry.js';
-
-const positiveMinorUnits = minorUnitsSchema.regex(/^0*[1-9]\d*$/);
 
 export const transactionSchema = z.discriminatedUnion('kind', [
   openingEntrySchema,
   z.strictObject({
     ...journalEntryFields,
     kind: z.literal('income'),
-    amountMinor: positiveMinorUnits,
+    amountMinor: positiveMinorUnitsSchema,
     categoryId: uuidSchema,
   }),
   z.strictObject({
     ...journalEntryFields,
     kind: z.literal('expense'),
-    amountMinor: positiveMinorUnits,
+    amountMinor: positiveMinorUnitsSchema,
     categoryId: uuidSchema,
   }),
   z
     .strictObject({
       ...journalEntryFields,
       kind: z.literal('transfer'),
-      amountMinor: positiveMinorUnits,
+      amountMinor: positiveMinorUnitsSchema,
       toAccountId: uuidSchema,
     })
     .refine((entry) => entry.accountId !== entry.toAccountId, {

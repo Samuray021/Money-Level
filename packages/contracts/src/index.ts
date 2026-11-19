@@ -8,6 +8,8 @@ import {
   uuidSchema,
 } from './primitives.js';
 
+export { positiveMinorUnitsSchema } from './primitives.js';
+
 export {
   currencyCodeSchema,
   isoDateSchema,

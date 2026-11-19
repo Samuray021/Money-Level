@@ -104,7 +104,14 @@ importers:
 
   packages/gamification: {}
 
-  packages/goals: {}
+  packages/goals:
+    dependencies:
+      '@money-level/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
 
   packages/meme-engine: {}
 
