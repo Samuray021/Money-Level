@@ -35,22 +35,22 @@ test('activating a new production service worker preserves the existing IndexedD
     await expect(page.getByTestId('app-version')).toHaveText(previousVersion);
     const schema = await page.getByTestId('schema-version').textContent();
 
+    const previousWorker = await page.evaluateHandle(
+      () => navigator.serviceWorker.controller,
+    );
     buildOrigin.useBuild(nextBuild);
-    await page.evaluate(async () => {
-      const registration = await navigator.serviceWorker.ready;
-      const previous = navigator.serviceWorker.controller;
-      const activated = new Promise<void>((resolve) => {
-        navigator.serviceWorker.addEventListener(
-          'controllerchange',
-          () => {
-            if (navigator.serviceWorker.controller !== previous) resolve();
-          },
-          { once: true },
-        );
+    try {
+      await page.evaluate(async () => {
+        const registration = await navigator.serviceWorker.ready;
+        await registration.update();
       });
-      await registration.update();
-      await activated;
-    });
+      await page.waitForFunction((previous) => {
+        const controller = navigator.serviceWorker.controller;
+        return controller?.state === 'activated' && controller !== previous;
+      }, previousWorker);
+    } finally {
+      await previousWorker.dispose();
+    }
 
     buildOrigin.disconnect();
     await page.reload();
