@@ -63,6 +63,18 @@ test('onboarding, journal, report and backup restore preserve the exact balance 
 
   await openBackups();
   await loadBackup(backup);
+  const preview = page.getByRole('region', {
+    name: 'Предпросмотр объединения',
+  });
+  await expect(preview).toContainText(
+    'Будут добавлены счета (0), операции (0) и цели (0).',
+  );
+  await expect(preview).toContainText('Дубликатов');
+  await expect(preview).toContainText(/1\s126,65\s₽/u);
+  await page.getByRole('button', { name: 'Скрыть суммы' }).click();
+  await expect(preview.getByText('Сумма скрыта').first()).toBeAttached();
+  await expect(preview).not.toContainText(/1\s126,65\s₽/u);
+  await page.getByRole('button', { name: 'Скрыть суммы' }).click();
   await page.getByRole('button', { name: 'Импортировать копию' }).click();
   await expect(
     page.getByText(/Добавлено счетов — 0, операций — 0/),

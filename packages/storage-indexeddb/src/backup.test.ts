@@ -1,12 +1,16 @@
 import type { UnitOfWork } from '@money-level/application';
 import {
   addExpense,
+  BackupMergePreviewChanged,
   deleteTransaction,
   getAnalyticsReport,
   updateTransaction,
   createGoal,
   getDashboardSummary,
   mergeBackup,
+  previewBackupMerge,
+  renameAccount,
+  saveBudget,
   reserveToGoal,
   backupFileSchema,
   exportBackup,
@@ -303,5 +307,119 @@ test('analytics recalculates the same period after edits, deletion and an actual
   } finally {
     storage.close();
     target.close();
+  }
+});
+
+test('merge preview classifies additions, identical rows and conflicts without writing and detects a stale confirmation', async () => {
+  const { storage, context } = await backupFixture();
+  const target = journalFixture().open();
+  let sequence = 1000;
+  const local = {
+    ...context,
+    storage: target,
+    createId: () => exampleId(sequence++),
+  };
+  try {
+    const starting = await exportBackup(storage, sha256Checksum, context.clock);
+    const accountId = starting.data.accounts[0]!.id;
+    const categoryId = starting.data.categories.find(
+      ({ name }) => name === 'Еда',
+    )!.id;
+    await mergeBackup(target, JSON.stringify(starting), sha256Checksum);
+    await renameAccount(local, accountId, 'Локальный счёт');
+    await addExpense(context, {
+      accountId,
+      categoryId,
+      amountMinor: '1234',
+      transactionDate: day,
+      idempotencyKey: 'incoming',
+    });
+    const incoming = await exportBackup(storage, sha256Checksum, context.clock);
+    const before = await exportBackup(target, sha256Checksum, context.clock);
+    const preview = await previewBackupMerge(target, incoming.data);
+    expect(preview.tables.accounts).toEqual({
+      incoming: 1,
+      added: 0,
+      duplicates: 0,
+      conflicts: 1,
+    });
+    expect(preview.tables.transactions).toEqual({
+      incoming: 3,
+      added: 1,
+      duplicates: 2,
+      conflicts: 0,
+    });
+    expect(preview.totals.incoming).toBe(
+      preview.totals.added +
+        preview.totals.duplicates +
+        preview.totals.conflicts,
+    );
+    expect(preview.projection).toMatchObject({
+      before: { transactions: 2, totalMinor: '42000' },
+      after: { transactions: 3, totalMinor: '40766' },
+    });
+    expect(await exportBackup(target, sha256Checksum, context.clock)).toEqual(
+      before,
+    );
+
+    await addExpense(local, {
+      accountId,
+      categoryId,
+      amountMinor: '1',
+      transactionDate: day,
+      idempotencyKey: 'local',
+    });
+    const changed = await exportBackup(target, sha256Checksum, context.clock);
+    await expect(
+      mergeBackup(target, JSON.stringify(incoming), sha256Checksum, preview),
+    ).rejects.toBeInstanceOf(BackupMergePreviewChanged);
+    expect(await exportBackup(target, sha256Checksum, context.clock)).toEqual(
+      changed,
+    );
+    const refreshed = await previewBackupMerge(target, incoming.data);
+    await expect(
+      mergeBackup(target, JSON.stringify(incoming), sha256Checksum, refreshed),
+    ).resolves.toEqual({ accounts: 0, transactions: 1 });
+    const applied = await exportBackup(target, sha256Checksum, context.clock);
+    expect(applied.data.accounts[0]?.name).toBe('Локальный счёт');
+    expect(
+      selectTotalBalance(applied.data.accounts, applied.data.transactions),
+    ).toBe('40765');
+  } finally {
+    target.close();
+    storage.close();
+  }
+});
+
+test('merge preview flags distinct active budgets for the same scope and leaves the journal intact', async () => {
+  const { storage, context } = await backupFixture();
+  const target = journalFixture().open();
+  try {
+    const starting = await exportBackup(storage, sha256Checksum, context.clock);
+    await mergeBackup(target, JSON.stringify(starting), sha256Checksum);
+    await saveBudget(context, { amount: '20', active: true });
+    await saveBudget(
+      { ...context, storage: target, createId: () => exampleId(1900) },
+      { amount: '25', active: true },
+    );
+    const incoming = await exportBackup(storage, sha256Checksum, context.clock);
+    const before = await exportBackup(target, sha256Checksum, context.clock);
+    const preview = await previewBackupMerge(target, incoming.data);
+    expect(preview.tables.budgets).toEqual({
+      incoming: 1,
+      added: 0,
+      duplicates: 0,
+      conflicts: 1,
+    });
+    expect(preview.projection).toBeUndefined();
+    await expect(
+      mergeBackup(target, JSON.stringify(incoming), sha256Checksum, preview),
+    ).rejects.toThrow();
+    expect(await exportBackup(target, sha256Checksum, context.clock)).toEqual(
+      before,
+    );
+  } finally {
+    target.close();
+    storage.close();
   }
 });

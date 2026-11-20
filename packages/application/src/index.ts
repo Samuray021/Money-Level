@@ -86,7 +86,12 @@ export { recoverySnapshotSchema } from './backup-format.js';
 export type { RecoverySnapshot } from './backup-format.js';
 export { replaceBackup, wipeLocalJournal } from './backup-write.js';
 
-export { mergeBackup } from './backup-merge.js';
+export {
+  BackupMergePreviewChanged,
+  mergeBackup,
+  previewBackupMerge,
+} from './backup-merge.js';
+export type { BackupMergePreview } from './backup-merge.js';
 
 export { consumeOutbox } from './outbox.js';
 

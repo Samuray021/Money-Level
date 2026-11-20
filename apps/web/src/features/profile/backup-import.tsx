@@ -1,18 +1,95 @@
 import {
+  BackupMergePreviewChanged,
   mergeBackup,
+  previewBackupMerge,
   replaceBackup,
   validateBackupJson,
 } from '@money-level/application';
-import type { BackupFile } from '@money-level/application';
+import type { BackupFile, BackupMergePreview } from '@money-level/application';
 import { sha256Checksum } from '@money-level/storage-indexeddb';
 import { Button } from '@money-level/ui-kit';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useJournal } from '../../app/journal-context.js';
+import { useJournalQuery } from '../../app/use-journal-query.js';
+import { MoneyAmount } from '../../components/money-amount.js';
 
 const formatDate = new Intl.DateTimeFormat('ru-RU', {
   dateStyle: 'medium',
   timeStyle: 'short',
 });
+
+function MergeDetails({
+  preview,
+  showAmounts,
+}: {
+  preview: BackupMergePreview;
+  showAmounts: boolean;
+}) {
+  const { totals, projection, tables } = preview;
+  return (
+    <section aria-label="Предпросмотр объединения">
+      <h3>Предпросмотр объединения</h3>
+      <dl className="backup-details">
+        <div>
+          <dt>Записей в копии</dt>
+          <dd>{totals.incoming}</dd>
+        </div>
+        <div>
+          <dt>Новых записей</dt>
+          <dd>{totals.added}</dd>
+        </div>
+        <div>
+          <dt>Дубликатов</dt>
+          <dd>{totals.duplicates}</dd>
+        </div>
+        <div>
+          <dt>Конфликтов</dt>
+          <dd>{totals.conflicts}</dd>
+        </div>
+      </dl>
+      {projection ? (
+        <>
+          <p>
+            Будут добавлены счета ({tables.accounts?.added}), операции (
+            {tables.transactions?.added}) и цели ({tables.goals?.added}).
+          </p>
+          {totals.conflicts > 0 && (
+            <p>
+              При совпадении идентификаторов сохраняются текущие записи журнала.
+            </p>
+          )}
+          {showAmounts && (
+            <dl className="backup-details">
+              <div>
+                <dt>Баланс после объединения</dt>
+                <dd>
+                  <MoneyAmount amount={projection.after.totalMinor} />
+                </dd>
+              </div>
+              <div>
+                <dt>Доступно после объединения</dt>
+                <dd>
+                  <MoneyAmount amount={projection.after.availableMinor} />
+                </dd>
+              </div>
+              <div>
+                <dt>В резервах после объединения</dt>
+                <dd>
+                  <MoneyAmount amount={projection.after.reservedMinor} />
+                </dd>
+              </div>
+            </dl>
+          )}
+        </>
+      ) : (
+        <p className="form-error" role="alert">
+          Объединение нарушит ограничения журнала. Проверьте валюту, ссылки,
+          названия категорий и бюджеты.
+        </p>
+      )}
+    </section>
+  );
+}
 
 export function BackupImport({ restoreOnly }: { restoreOnly: boolean }) {
   const { commands, profile } = useJournal();
@@ -27,6 +104,22 @@ export function BackupImport({ restoreOnly }: { restoreOnly: boolean }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
+  const shouldMerge = Boolean(selected) && mode === 'merge' && !hasSetupDraft;
+  const copy = shouldMerge ? selected?.backup : undefined;
+  const readPreview = useCallback(async () => {
+    if (!copy) return undefined;
+    return {
+      checksum: copy.checksum,
+      data: await previewBackupMerge(commands.storage, copy.data),
+    };
+  }, [commands.storage, copy]);
+  const { state: previewState, retry: retryPreview } =
+    useJournalQuery(readPreview);
+  const preview =
+    previewState.status === 'ready' &&
+    previewState.value?.checksum === copy?.checksum
+      ? previewState.value?.data
+      : undefined;
 
   async function inspect(file: File | undefined) {
     setSelected(undefined);
@@ -55,7 +148,13 @@ export function BackupImport({ restoreOnly }: { restoreOnly: boolean }) {
   }
 
   async function restore() {
-    if (!selected || busy || (mode === 'replace' && !confirmed)) return;
+    if (
+      !selected ||
+      busy ||
+      (mode === 'replace' && !confirmed) ||
+      (shouldMerge && !preview?.projection)
+    )
+      return;
     setBusy(true);
     setError('');
     setStatus('');
@@ -70,14 +169,22 @@ export function BackupImport({ restoreOnly }: { restoreOnly: boolean }) {
           commands.storage,
           selected.text,
           sha256Checksum,
+          preview,
         );
         setStatus(
           `Импорт завершён. Добавлено счетов — ${result.accounts}, операций — ${result.transactions}.`,
         );
       }
       setSelected(undefined);
-    } catch {
-      setError('Не удалось применить копию. Журнал сохранён.');
+    } catch (cause) {
+      if (cause instanceof BackupMergePreviewChanged) {
+        setError(
+          'Журнал изменился. Проверьте новый прогноз и подтвердите импорт повторно.',
+        );
+        retryPreview();
+      } else {
+        setError('Не удалось применить копию. Журнал сохранён.');
+      }
     } finally {
       setBusy(false);
     }
@@ -157,9 +264,28 @@ export function BackupImport({ restoreOnly }: { restoreOnly: boolean }) {
               )}
             </fieldset>
           )}
+          {shouldMerge &&
+            (preview ? (
+              <MergeDetails
+                preview={preview}
+                showAmounts={profile?.onboardingCompleted === true}
+              />
+            ) : previewState.status === 'error' ? (
+              <>
+                <p role="alert">Не удалось подготовить предпросмотр.</p>
+                <Button variant="secondary" onClick={retryPreview}>
+                  Повторить расчёт
+                </Button>
+              </>
+            ) : (
+              <p role="status">Рассчитываем изменения…</p>
+            ))}
           <Button
             busy={busy}
-            disabled={mode === 'replace' && !confirmed}
+            disabled={
+              (mode === 'replace' && !confirmed) ||
+              (shouldMerge && !preview?.projection)
+            }
             onClick={() => void restore()}
           >
             {restoreOnly ? 'Восстановить журнал' : 'Импортировать копию'}
