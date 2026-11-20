@@ -8,7 +8,8 @@ import {
   accountSchema,
   createOpeningEntry,
   parseCurrencyAmount,
-  selectAccountBalance,
+  compareMinorUnits,
+  selectBalances,
 } from '@money-level/finance-core';
 import type { Account } from '@money-level/finance-core';
 import type { JournalCommandContext } from './create-transaction.js';
@@ -104,8 +105,12 @@ export function archiveAccount(
 
 export function getAccountOverview(storage: UnitOfWork) {
   return storage.read(async (journal) => {
-    const transactions = await journal.transactions.list();
-    return (await journal.accounts.list())
+    const accounts = await journal.accounts.list();
+    const { byAccount } = selectBalances(
+      accounts,
+      await journal.transactions.list(),
+    );
+    return accounts
       .filter((account) => !account.deletedAt)
       .sort(
         (left, right) =>
@@ -113,9 +118,13 @@ export function getAccountOverview(storage: UnitOfWork) {
           left.sortOrder - right.sortOrder ||
           left.id.localeCompare(right.id),
       )
-      .map((account) => ({
-        account,
-        balance: selectAccountBalance(transactions, account.id),
-      }));
+      .map((account) => {
+        const balance = byAccount.get(account.id) ?? '0';
+        return {
+          account,
+          balance,
+          overdrawn: compareMinorUnits(balance, '0') < 0,
+        };
+      });
   });
 }

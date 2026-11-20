@@ -49,22 +49,34 @@ export function selectAccountBalance(
   );
 }
 
+export function selectBalances(
+  accounts: readonly Account[],
+  transactions: readonly Transaction[],
+) {
+  const byAccount = new Map<UUID, MinorUnits>(
+    accounts
+      .filter((account) => account.deletedAt === undefined)
+      .map(({ id }) => [id, '0']),
+  );
+  for (const transaction of transactions) {
+    for (const posting of getBalancePostings(transaction)) {
+      const previous = byAccount.get(posting.accountId);
+      if (previous !== undefined)
+        byAccount.set(
+          posting.accountId,
+          addMinorUnits(previous, posting.deltaMinor),
+        );
+    }
+  }
+  let totalMinor: MinorUnits = '0';
+  for (const balance of byAccount.values())
+    totalMinor = addMinorUnits(totalMinor, balance);
+  return { byAccount, totalMinor };
+}
+
 export function selectTotalBalance(
   accounts: readonly Account[],
   transactions: readonly Transaction[],
 ): MinorUnits {
-  const accountIds = new Set(
-    accounts
-      .filter((account) => account.deletedAt === undefined)
-      .map((account) => account.id),
-  );
-  let total: MinorUnits = '0';
-  for (const transaction of transactions) {
-    for (const posting of getBalancePostings(transaction)) {
-      if (accountIds.has(posting.accountId)) {
-        total = addMinorUnits(total, posting.deltaMinor);
-      }
-    }
-  }
-  return total;
+  return selectBalances(accounts, transactions).totalMinor;
 }

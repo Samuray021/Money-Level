@@ -91,9 +91,15 @@ export function Dashboard() {
             </div>
           )}
         </dl>
-        {value.overReserved && (
+        {value.overReserved && value.reservedMinor !== '0' && (
           <p className="balance-warning" role="status">
             Резервы превышают баланс.
+          </p>
+        )}
+        {value.hasOverdrawnAccount && (
+          <p className="balance-warning" role="status">
+            Есть счёт с отрицательным остатком.{' '}
+            <Link to="/profile/accounts">Счета</Link>
           </p>
         )}
       </section>

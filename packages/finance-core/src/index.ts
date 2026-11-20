@@ -26,5 +26,6 @@ export {
   getBalancePostings,
   reduceAccountBalance,
   selectAccountBalance,
+  selectBalances,
   selectTotalBalance,
 } from './balance.js';

@@ -131,6 +131,15 @@ export function ManageAccounts() {
   const [edited, setEdited] = useState<Account | 'new' | null>(null);
   const [archiving, setArchiving] = useState('');
   const [error, setError] = useState(false);
+  const [accountFilter, setAccountFilter] = useState('all');
+  const rows =
+    state.status === 'ready'
+      ? state.value.filter(
+          ({ account }) =>
+            accountFilter === 'all' ||
+            account.archived === (accountFilter === 'archived'),
+        )
+      : [];
 
   async function archive(account: Account) {
     if (archiving) return;
@@ -172,11 +181,26 @@ export function ManageAccounts() {
               done={() => setEdited(null)}
             />
           )}
-          {state.value.length === 0 && (
-            <p className="form-intro">Счетов пока нет.</p>
+          <label className="form-field">
+            Показать счета
+            <select
+              value={accountFilter}
+              onChange={(event) => setAccountFilter(event.target.value)}
+            >
+              <option value="all">Все</option>
+              <option value="active">Активные</option>
+              <option value="archived">Архивные</option>
+            </select>
+          </label>
+          {rows.length === 0 && (
+            <p className="form-intro">
+              {state.value.length === 0
+                ? 'Счетов пока нет.'
+                : 'По фильтру счетов нет.'}
+            </p>
           )}
           <ul className="management-list">
-            {state.value.map(({ account, balance }) => (
+            {rows.map(({ account, balance, overdrawn }) => (
               <li className="management-row" key={account.id}>
                 <div className="management-name">
                   <strong>{account.name}</strong>
@@ -189,6 +213,11 @@ export function ManageAccounts() {
                     currency={account.currencyCode}
                   />
                 </span>
+                {overdrawn && (
+                  <p className="form-error" role="status">
+                    Отрицательный остаток.
+                  </p>
+                )}
                 {!account.archived && (
                   <div className="management-actions">
                     <Button

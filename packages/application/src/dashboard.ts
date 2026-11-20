@@ -4,7 +4,7 @@ import {
 } from '@money-level/analytics';
 import { localTransactionDate, systemClock } from '@money-level/contracts';
 import type { Clock } from '@money-level/contracts';
-import { selectTotalBalance } from '@money-level/finance-core';
+import { compareMinorUnits, selectBalances } from '@money-level/finance-core';
 import { selectAvailableToSpend } from '@money-level/goals';
 import type { UnitOfWork } from './journal-repository.js';
 
@@ -19,7 +19,7 @@ export function getDashboardSummary(
     }
 
     const transactions = await journal.transactions.list();
-    const totalMinor = selectTotalBalance(
+    const { byAccount, totalMinor } = selectBalances(
       await journal.accounts.list(),
       transactions,
     );
@@ -30,6 +30,9 @@ export function getDashboardSummary(
       currency: profile.baseCurrency,
       period,
       totalMinor,
+      hasOverdrawnAccount: Array.from(byAccount.values()).some(
+        (balance) => compareMinorUnits(balance, '0') < 0,
+      ),
       ...selectPeriodTotals(transactions, period),
       ...selectAvailableToSpend(
         totalMinor,
