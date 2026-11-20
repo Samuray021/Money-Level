@@ -28,6 +28,7 @@ import {
   migrateJournal,
   recordMigration,
 } from './migrations.js';
+import { verifyJournalVersion } from './journal-version.js';
 
 function repository<Record>(
   table: Table<Record, string>,
@@ -55,12 +56,17 @@ function repository<Record>(
 
 export class IndexedDbJournal implements UnitOfWork {
   private readonly database: Dexie;
+  private readonly factory: Pick<IDBFactory, 'open'> | undefined;
+  private versionCheck: Promise<void> | undefined;
 
   constructor(
     name = 'money-level',
-    dependencies?: Pick<DexieOptions, 'indexedDB' | 'IDBKeyRange'>,
+    dependencies?: Pick<DexieOptions, 'IDBKeyRange'> & {
+      indexedDB?: Pick<IDBFactory, 'open'>;
+    },
   ) {
     this.database = new Dexie(name, dependencies);
+    this.factory = dependencies?.indexedDB ?? globalThis.indexedDB;
     this.database.version(1).stores({
       accounts: 'id',
       categories: 'id, type',
@@ -178,17 +184,27 @@ export class IndexedDbJournal implements UnitOfWork {
     };
   }
 
-  read<Result>(
+  private verifyVersion() {
+    this.versionCheck ??= verifyJournalVersion(
+      this.database.name,
+      this.factory,
+    );
+    return this.versionCheck;
+  }
+
+  async read<Result>(
     operation: (journal: JournalReader) => Promise<Result>,
   ): Promise<Result> {
+    await this.verifyVersion();
     return this.database.transaction('r', this.database.tables, (transaction) =>
       operation(this.repositories(transaction)),
     );
   }
 
-  write<Result>(
+  async write<Result>(
     operation: (journal: JournalWriter) => Promise<Result>,
   ): Promise<Result> {
+    await this.verifyVersion();
     return this.database.transaction(
       'rw',
       this.database.tables,
@@ -197,6 +213,7 @@ export class IndexedDbJournal implements UnitOfWork {
   }
 
   async schemaVersion(): Promise<number> {
+    await this.verifyVersion();
     if (!this.database.isOpen()) await this.database.open();
     return this.database.verno;
   }

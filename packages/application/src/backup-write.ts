@@ -1,7 +1,7 @@
 import { systemClock, uuidSchema } from '@money-level/contracts';
 import { readBackupData } from './backup-export.js';
 import type { BackupChecksum, BackupData } from './backup-format.js';
-import { validateBackupJson } from './backup-import.js';
+import { assertBackupRelations, validateBackupJson } from './backup-import.js';
 import type { JournalCommandContext } from './create-transaction.js';
 import type { JournalWriter, UnitOfWork } from './journal-repository.js';
 
@@ -39,6 +39,26 @@ export async function writeBackupData(
   for (const event of data.outbox) await journal.outbox.add(event);
   for (const receipt of data.commandReceipts)
     await journal.commands.add(receipt);
+}
+
+export function restoreIntoEmptyJournal(
+  storage: UnitOfWork,
+  data: BackupData,
+): Promise<void> {
+  assertBackupRelations(data);
+  if (!data.settings?.onboardingCompleted)
+    throw new RangeError('Recovery requires a complete profile.');
+  return storage.write(async (journal) => {
+    const current = await readBackupData(journal);
+    const populated =
+      current.settings !== null ||
+      Object.values(current).some(
+        (value) => Array.isArray(value) && value.length > 0,
+      ) ||
+      (await journal.recoverySnapshots.list()).length > 0;
+    if (populated) throw new RangeError('The recovery journal must be empty.');
+    await writeBackupData(journal, data);
+  });
 }
 
 export async function replaceBackup(

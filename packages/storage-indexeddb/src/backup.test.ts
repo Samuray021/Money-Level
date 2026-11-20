@@ -18,6 +18,7 @@ import {
   finishOnboarding,
   initializeProfile,
   replaceBackup,
+  restoreIntoEmptyJournal,
   validateBackupJson,
 } from '@money-level/application';
 import { selectTotalBalance } from '@money-level/finance-core';
@@ -420,6 +421,30 @@ test('merge preview flags distinct active budgets for the same scope and leaves 
     );
   } finally {
     target.close();
+    storage.close();
+  }
+});
+
+test('emergency restore writes only to an empty journal and preserves balances and receipts', async () => {
+  const { context, storage } = await backupFixture();
+  const recovered = journalFixture().open();
+  try {
+    const original = await exportBackup(storage, sha256Checksum, context.clock);
+    await restoreIntoEmptyJournal(recovered, original.data);
+    expect(
+      await exportBackup(recovered, sha256Checksum, context.clock),
+    ).toEqual(original);
+    await expect(
+      restoreIntoEmptyJournal(recovered, original.data),
+    ).rejects.toThrow('must be empty');
+    expect(
+      await exportBackup(recovered, sha256Checksum, context.clock),
+    ).toEqual(original);
+    expect(await exportBackup(storage, sha256Checksum, context.clock)).toEqual(
+      original,
+    );
+  } finally {
+    recovered.close();
     storage.close();
   }
 });

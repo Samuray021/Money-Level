@@ -84,7 +84,11 @@ export { validateBackupJson } from './backup-import.js';
 
 export { recoverySnapshotSchema } from './backup-format.js';
 export type { RecoverySnapshot } from './backup-format.js';
-export { replaceBackup, wipeLocalJournal } from './backup-write.js';
+export {
+  replaceBackup,
+  restoreIntoEmptyJournal,
+  wipeLocalJournal,
+} from './backup-write.js';
 
 export {
   BackupMergePreviewChanged,
