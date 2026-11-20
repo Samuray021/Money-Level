@@ -1,0 +1,155 @@
+import { getRoastReport, resolveHumorPolicy } from '@money-level/application';
+import type { RoastPeriod } from '@money-level/application';
+import type { RoastCard } from '@money-level/meme-engine';
+import { Button } from '@money-level/ui-kit';
+import { useCallback, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useJournal } from '../../app/journal-context.js';
+import { useJournalQuery } from '../../app/use-journal-query.js';
+import { MoneyAmount } from '../../components/money-amount.js';
+import { RoastCardExport } from './roast-card-export.js';
+import { roastReportTitle } from './roast-label.js';
+import { useReportOpened } from './use-report-opened.js';
+import './analytics.css';
+
+const date = new Intl.DateTimeFormat('ru-RU', {
+  dateStyle: 'medium',
+  timeZone: 'UTC',
+});
+const counts = new Intl.NumberFormat('ru-RU');
+const percentages = new Intl.NumberFormat('ru-RU', {
+  style: 'percent',
+  maximumFractionDigits: 2,
+});
+
+function nextSeed() {
+  return crypto.getRandomValues(new Uint32Array(1))[0] ?? 0;
+}
+
+function stat(card: RoastCard, hidden: boolean) {
+  switch (card.kind) {
+    case 'total':
+      return (
+        <strong>
+          <MoneyAmount amount={card.amountMinor} />
+        </strong>
+      );
+    case 'frequency':
+      return <strong>{counts.format(card.count)}</strong>;
+    case 'category':
+      return (
+        <>
+          <p>
+            {card.category} · <MoneyAmount amount={card.amountMinor} />
+          </p>
+          {!hidden && card.shares.length > 0 && (
+            <details>
+              <summary>Доли категорий расходов</summary>
+              <dl className="roast-distribution">
+                {card.shares.map(({ name, hundredthsPercent }, index) => (
+                  <div key={name + ':' + index}>
+                    <dt>{name}</dt>
+                    <dd>{percentages.format(hundredthsPercent / 10_000)}</dd>
+                  </div>
+                ))}
+              </dl>
+            </details>
+          )}
+        </>
+      );
+    case 'most-frequent-category':
+      return (
+        <p>
+          {card.category} · {counts.format(card.count)}
+        </p>
+      );
+    case 'comparison':
+      return (
+        <p>
+          <MoneyAmount amount={card.currentMinor} /> сейчас ·{' '}
+          <MoneyAmount amount={card.priorMinor} /> ранее
+        </p>
+      );
+    default:
+      return null;
+  }
+}
+
+export function RoastReport() {
+  const { commands, profile } = useJournal();
+  const { mode, playful } = resolveHumorPolicy(profile);
+  const [kind, setKind] = useState<RoastPeriod>('month');
+  const [seed, setSeed] = useState(nextSeed);
+  const read = useCallback(
+    () => getRoastReport(commands.storage, kind, seed, commands.clock),
+    [commands, kind, seed],
+  );
+  const { state, retry } = useJournalQuery(read);
+  useReportOpened(
+    kind,
+    state.status === 'ready' && state.value.kind === kind
+      ? state.value.period.from
+      : undefined,
+  );
+
+  return (
+    <section className="analytics-page">
+      <Link to="/analytics">К аналитике</Link>
+      <h1>{roastReportTitle(profile)}</h1>
+      <label className="form-field analytics-month">
+        Период
+        <select
+          value={kind}
+          onChange={(event) =>
+            setKind(event.target.value === 'week' ? 'week' : 'month')
+          }
+        >
+          <option value="month">Месяц</option>
+          <option value="week">Неделя</option>
+        </select>
+      </label>
+      {state.status === 'error' ? (
+        <>
+          <p role="alert">Не удалось загрузить разбор.</p>
+          <Button variant="secondary" onClick={retry}>
+            Повторить
+          </Button>
+        </>
+      ) : state.status === 'loading' ||
+        state.value.kind !== kind ||
+        state.value.seed !== seed ||
+        state.value.mode !== mode ? (
+        <p role="status">Собираем разбор…</p>
+      ) : (
+        <>
+          <p className="form-intro">
+            {date.format(new Date(state.value.period.from))} —{' '}
+            {date.format(new Date(state.value.period.to))}
+          </p>
+          {state.value.cards.map((card) => (
+            <article className="analytics-card roast-card" key={card.kind}>
+              <h2>{card.text}</h2>
+              {stat(card, profile?.balanceHidden === true)}
+              <details>
+                <summary>Откуда цифры?</summary>
+                <p>{card.formula}</p>
+              </details>
+              {profile && (
+                <RoastCardExport
+                  key={String(profile.balanceHidden)}
+                  card={card}
+                  profile={profile}
+                />
+              )}
+            </article>
+          ))}
+          {state.value.cards.length > 1 && playful && (
+            <Button variant="secondary" onClick={() => setSeed(nextSeed())}>
+              Другие реплики
+            </Button>
+          )}
+        </>
+      )}
+    </section>
+  );
+}

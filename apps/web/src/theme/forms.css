@@ -1,0 +1,84 @@
+.form-page {
+  display: grid;
+  gap: var(--space-4);
+  inline-size: min(100%, 30rem);
+  margin-inline: auto;
+}
+
+body > #root > .form-page {
+  padding: var(--space-6) var(--space-4);
+}
+
+.form-intro {
+  color: var(--color-muted);
+}
+
+.form-card {
+  display: grid;
+  gap: var(--space-4);
+  padding: clamp(var(--space-4), 5vw, var(--space-6));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.form-field {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  font-weight: 650;
+}
+
+.form-field :is(input, select, textarea) {
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: var(--control-height);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-background);
+  color: var(--color-text);
+  font-weight: 400;
+}
+
+.form-error {
+  color: var(--color-danger);
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--control-height);
+}
+
+.form-checkbox input {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.form-extra {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.form-extra summary {
+  min-block-size: var(--control-height);
+  padding-block: var(--space-2);
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.form-extra .form-field + .form-field {
+  margin-block-start: var(--space-3);
+}
+
+.form-cancel {
+  justify-self: center;
+  min-block-size: var(--control-height);
+  padding: var(--space-2);
+  font-weight: 650;
+}

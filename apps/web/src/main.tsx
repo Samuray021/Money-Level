@@ -1,0 +1,16 @@
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { App } from './app/app.js';
+import './theme/theme.css';
+import './theme/forms.css';
+
+const root = document.getElementById('root');
+if (!root) {
+  throw new Error('Money Level root element is missing.');
+}
+
+createRoot(root).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);

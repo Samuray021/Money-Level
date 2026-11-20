@@ -1,0 +1,6 @@
+packages:
+  - apps/*
+  - packages/*
+
+overrides:
+  'workbox-build@7.4.1>glob': 14.0.2

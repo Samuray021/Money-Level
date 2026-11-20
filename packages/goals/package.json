@@ -1,0 +1,14 @@
+{
+  "name": "@money-level/goals",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@money-level/contracts": "workspace:*",
+    "zod": "^4.6.7",
+    "@money-level/finance-core": "workspace:*"
+  }
+}

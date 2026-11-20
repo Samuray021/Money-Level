@@ -1,0 +1,19 @@
+{
+  "name": "@money-level/application",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@money-level/contracts": "workspace:*",
+    "@money-level/finance-core": "workspace:*",
+    "@money-level/goals": "workspace:*",
+    "@money-level/analytics": "workspace:*",
+    "@money-level/budgets": "workspace:*",
+    "zod": "^4.6.7",
+    "@money-level/meme-engine": "workspace:*",
+    "@money-level/gamification": "workspace:*"
+  }
+}

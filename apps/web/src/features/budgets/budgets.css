@@ -1,0 +1,70 @@
+.budgets-page,
+.budget-card,
+.budget-alerts,
+.goal-notice {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.budget-card,
+.budget-alerts,
+.goal-notice {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.budget-alerts ul {
+  margin: 0;
+  padding-inline-start: var(--space-4);
+}
+
+.budget-alerts,
+.goal-notice {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+@media (max-width: 25rem) {
+  .budget-alerts,
+  .goal-notice {
+    grid-template-columns: 1fr;
+  }
+}
+
+.budget-card dl {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.budget-card dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.budget-card dt {
+  color: var(--color-muted);
+}
+
+.budget-card dd {
+  margin: 0;
+  text-align: end;
+  overflow-wrap: anywhere;
+}
+
+.budget-progress {
+  block-size: var(--space-2);
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--color-surface-raised);
+}
+
+.budget-progress span {
+  display: block;
+  block-size: 100%;
+  background: var(--color-accent);
+}

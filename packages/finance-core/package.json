@@ -1,0 +1,13 @@
+{
+  "name": "@money-level/finance-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@money-level/contracts": "workspace:*",
+    "zod": "^4.6.7"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "money-level",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "check:boundaries": "node tools/check-workspace.mjs",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.browser.json",
+    "lint": "eslint . && pnpm check:boundaries",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "build": "pnpm --filter @money-level/web build",
+    "test:e2e": "pnpm --filter @money-level/web build && pnpm --filter @money-level/web exec playwright test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.10.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.73.0",
+    "vitest": "^4.1.12"
+  }
+}
