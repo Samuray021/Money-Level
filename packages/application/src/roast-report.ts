@@ -13,6 +13,7 @@ import {
 } from '@money-level/contracts';
 import type { Clock } from '@money-level/contracts';
 import { buildRoastCards } from '@money-level/meme-engine';
+import { resolveHumorPolicy } from './humor-settings.js';
 import type { UnitOfWork } from './journal-repository.js';
 
 export type RoastPeriod = 'week' | 'month';
@@ -41,6 +42,7 @@ export function getRoastReport(
     const category = leading
       ? await journal.categories.get(leading.categoryId)
       : undefined;
+    const { mode } = resolveHumorPolicy(profile);
     const cards = buildRoastCards(
       {
         expenseMinor,
@@ -55,12 +57,13 @@ export function getRoastReport(
             }
           : {}),
       },
-      profile.humorFrequency === 'off' ? 'off' : profile.humorMode,
+      mode,
       createSeededRandom(seed),
     );
     return {
       kind,
       seed,
+      mode,
       period: { from: period.from, to: shiftCalendarDate(period.until, -1) },
       cards,
     };

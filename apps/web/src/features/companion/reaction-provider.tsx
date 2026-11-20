@@ -1,4 +1,4 @@
-import { runMemeReactions } from '@money-level/application';
+import { resolveHumorPolicy, runMemeReactions } from '@money-level/application';
 import { createSeededRandom } from '@money-level/contracts';
 import type { MemeReaction } from '@money-level/meme-engine';
 import { Button } from '@money-level/ui-kit';
@@ -31,12 +31,23 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
   const [random] = useState(() =>
     createSeededRandom(crypto.getRandomValues(new Uint32Array(1))[0] ?? 0),
   );
-  const [reaction, setReaction] = useState<MemeReaction>();
-  const enabled =
-    !!profile?.onboardingCompleted &&
-    profile.companionEnabled &&
-    profile.humorMode !== 'off' &&
-    profile.humorFrequency !== 'off';
+  const [shown, setShown] = useState<{
+    reaction: MemeReaction;
+    mode: ReturnType<typeof resolveHumorPolicy>['mode'];
+  }>();
+  const {
+    mode,
+    profanity,
+    reactions: enabled,
+    motion,
+    playSound,
+    popups,
+  } = resolveHumorPolicy(profile);
+  const visible =
+    enabled && shown?.mode === mode && (profanity || !shown.reaction.profanity)
+      ? shown.reaction
+      : undefined;
+  const lastAudibleCandidate = useRef<MemeReaction | undefined>(undefined);
 
   const previousEnabled = useRef(enabled);
   const since = useRef(session.startedAt);
@@ -63,7 +74,7 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
-    if (!enabled) setReaction(undefined);
+    if (!enabled) setShown(undefined);
     else if (trigger)
       void runMemeReactions(
         commands.storage,
@@ -72,46 +83,44 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
         commands.clock,
       ).then(
         (queued) => {
-          if (active && queued[0]) setReaction(queued[0]);
+          if (active && queued[0]) setShown({ reaction: queued[0], mode });
         },
         () => undefined,
       );
     return () => {
       active = false;
     };
-  }, [commands, enabled, random, session, trigger]);
+  }, [commands, enabled, mode, profanity, random, session, trigger]);
 
   useEffect(() => {
-    if (!reaction) return;
+    if (!shown) return;
     const timer = window.setTimeout(
-      () => setReaction(undefined),
-      reaction.displayMs,
+      () => setShown(undefined),
+      shown.reaction.displayMs,
     );
     return () => window.clearTimeout(timer);
-  }, [reaction]);
+  }, [shown]);
 
   useEffect(() => {
-    if (profile?.motionEnabled === false)
-      document.documentElement.dataset.motion = 'off';
+    if (!motion) document.documentElement.dataset.motion = 'off';
     else delete document.documentElement.dataset.motion;
     return () => {
       delete document.documentElement.dataset.motion;
     };
-  }, [profile?.motionEnabled]);
+  }, [motion]);
 
   useEffect(() => {
-    if (!enabled || !reaction || !profile?.soundsEnabled || profile.quietMode)
-      return;
+    if (lastAudibleCandidate.current === visible) return;
+    lastAudibleCandidate.current = visible;
+    if (!visible || !playSound) return;
     const audio = new Audio('/audio/reaction.wav');
     void audio.play().catch(() => undefined);
     return () => audio.pause();
-  }, [enabled, profile?.quietMode, profile?.soundsEnabled, reaction]);
-
-  const visible = enabled ? reaction : undefined;
+  }, [playSound, visible]);
   return (
     <ReactionContext.Provider value={visible}>
       {children}
-      {visible && !profile?.quietMode && (
+      {visible && popups && (
         <aside
           className={'meme-toast meme-toast--' + visible.rarity}
           aria-label="Реакция компаньона"
@@ -120,7 +129,7 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
           <Button
             variant="secondary"
             aria-label="Закрыть реакцию"
-            onClick={() => setReaction(undefined)}
+            onClick={() => setShown(undefined)}
           >
             ×
           </Button>

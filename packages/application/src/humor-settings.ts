@@ -13,6 +13,31 @@ export type HumorSettings = Pick<
   | 'soundsEnabled'
 >;
 
+export function resolveHumorPolicy(
+  settings?: HumorSettings & Pick<ProfileSettings, 'onboardingCompleted'>,
+) {
+  const mode =
+    settings?.onboardingCompleted && settings.humorFrequency !== 'off'
+      ? settings.humorMode
+      : 'off';
+  const playful = mode === 'roast' || mode === 'chaos';
+  const companion = Boolean(
+    settings?.onboardingCompleted && settings.companionEnabled,
+  );
+  const reactions = companion && mode !== 'off';
+  const quiet = settings?.quietMode ?? false;
+  return {
+    mode,
+    playful,
+    profanity: playful && Boolean(settings?.profanityEnabled),
+    companion,
+    reactions,
+    popups: reactions && !quiet,
+    playSound: reactions && !quiet && Boolean(settings?.soundsEnabled),
+    motion: settings?.motionEnabled ?? true,
+  };
+}
+
 export function saveHumorSettings(
   storage: UnitOfWork,
   input: HumorSettings,

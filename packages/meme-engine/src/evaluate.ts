@@ -36,6 +36,7 @@ export interface MemeReaction {
   fallbackText: string;
   emotion: MemeRule['emotion'];
   rarity: MemeRule['rarity'];
+  profanity: boolean;
   displayMs: number;
   assetKey?: string;
 }
@@ -130,6 +131,7 @@ export function evaluateMeme(
     fallbackText: selected.fallbackText,
     emotion: selected.emotion,
     rarity: selected.rarity,
+    profanity: selected.profanity,
     displayMs: selected.displayMs,
     ...(selected.assetKey ? { assetKey: selected.assetKey } : {}),
   };

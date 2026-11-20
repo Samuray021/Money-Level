@@ -1,4 +1,4 @@
-import { getRoastReport } from '@money-level/application';
+import { getRoastReport, resolveHumorPolicy } from '@money-level/application';
 import type { RoastPeriod } from '@money-level/application';
 import type { RoastCard } from '@money-level/meme-engine';
 import { Button } from '@money-level/ui-kit';
@@ -8,6 +8,7 @@ import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
 import { MoneyAmount } from '../../components/money-amount.js';
 import { RoastCardExport } from './roast-card-export.js';
+import { roastReportTitle } from './roast-label.js';
 import './analytics.css';
 
 const date = new Intl.DateTimeFormat('ru-RU', {
@@ -50,8 +51,7 @@ function stat(card: RoastCard) {
 
 export function RoastReport() {
   const { commands, profile } = useJournal();
-  const humorEnabled =
-    profile?.humorFrequency !== 'off' && profile?.humorMode !== 'off';
+  const { mode, playful } = resolveHumorPolicy(profile);
   const [kind, setKind] = useState<RoastPeriod>('month');
   const [seed, setSeed] = useState(nextSeed);
   const read = useCallback(
@@ -63,11 +63,7 @@ export function RoastReport() {
   return (
     <section className="analytics-page">
       <Link to="/analytics">К аналитике</Link>
-      <h1>
-        {profile?.profanityEnabled && humorEnabled
-          ? 'Разъеби мои финансы'
-          : 'Разбор расходов'}
-      </h1>
+      <h1>{roastReportTitle(profile)}</h1>
       <label className="form-field analytics-month">
         Период
         <select
@@ -89,7 +85,8 @@ export function RoastReport() {
         </>
       ) : state.status === 'loading' ||
         state.value.kind !== kind ||
-        state.value.seed !== seed ? (
+        state.value.seed !== seed ||
+        state.value.mode !== mode ? (
         <p role="status">Собираем разбор…</p>
       ) : (
         <>
@@ -114,7 +111,7 @@ export function RoastReport() {
               )}
             </article>
           ))}
-          {state.value.cards.length > 1 && humorEnabled && (
+          {state.value.cards.length > 1 && playful && (
             <Button variant="secondary" onClick={() => setSeed(nextSeed())}>
               Другие реплики
             </Button>

@@ -6,6 +6,7 @@ import {
   memePackSchema,
 } from '@money-level/meme-engine';
 import type { MemeReaction } from '@money-level/meme-engine';
+import { resolveHumorPolicy } from './humor-settings.js';
 import type { UnitOfWork } from './journal-repository.js';
 import { consumeOutbox } from './outbox.js';
 
@@ -26,13 +27,13 @@ export async function runMemeReactions(
     filter: (event) => Date.parse(event.occurredAt) >= session.startedAt,
     async handle(event, journal) {
       const profile = await journal.settings.get('profile');
-      if (!profile?.onboardingCompleted || !profile.companionEnabled)
-        return undefined;
+      const policy = resolveHumorPolicy(profile);
+      if (!profile || !policy.reactions) return undefined;
       const reaction = evaluateMeme(pack, {
         event,
-        mode: profile.humorMode,
+        mode: policy.mode,
         frequency: profile.humorFrequency,
-        profanity: profile.profanityEnabled,
+        profanity: policy.profanity,
         locale: profile.locale,
         sessionId: session.id,
         random,

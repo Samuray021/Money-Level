@@ -1,3 +1,4 @@
+import { roastReportTitle } from './roast-label.js';
 import { Link } from 'react-router-dom';
 import { getAnalyticsReport } from '@money-level/application';
 import { localTransactionDate, systemClock } from '@money-level/contracts';
@@ -217,11 +218,7 @@ export function Analytics() {
       <h1>Аналитика</h1>
       <div className="analytics-links">
         <Link to="/analytics/budgets">Бюджеты</Link>
-        <Link to="/analytics/roast">
-          {profile?.profanityEnabled && profile.humorMode !== 'off'
-            ? 'Разъеби мои финансы'
-            : 'Разбор расходов'}
-        </Link>
+        <Link to="/analytics/roast">{roastReportTitle(profile)}</Link>
       </div>
       <label className="form-field analytics-month">
         Месяц
