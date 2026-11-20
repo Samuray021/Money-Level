@@ -17,12 +17,16 @@ const date = new Intl.DateTimeFormat('ru-RU', {
   timeZone: 'UTC',
 });
 const counts = new Intl.NumberFormat('ru-RU');
+const percentages = new Intl.NumberFormat('ru-RU', {
+  style: 'percent',
+  maximumFractionDigits: 2,
+});
 
 function nextSeed() {
   return crypto.getRandomValues(new Uint32Array(1))[0] ?? 0;
 }
 
-function stat(card: RoastCard) {
+function stat(card: RoastCard, hidden: boolean) {
   switch (card.kind) {
     case 'total':
       return (
@@ -34,8 +38,29 @@ function stat(card: RoastCard) {
       return <strong>{counts.format(card.count)}</strong>;
     case 'category':
       return (
+        <>
+          <p>
+            {card.category} · <MoneyAmount amount={card.amountMinor} />
+          </p>
+          {!hidden && card.shares.length > 0 && (
+            <details>
+              <summary>Доли категорий расходов</summary>
+              <dl className="roast-distribution">
+                {card.shares.map(({ name, hundredthsPercent }, index) => (
+                  <div key={name + ':' + index}>
+                    <dt>{name}</dt>
+                    <dd>{percentages.format(hundredthsPercent / 10_000)}</dd>
+                  </div>
+                ))}
+              </dl>
+            </details>
+          )}
+        </>
+      );
+    case 'most-frequent-category':
+      return (
         <p>
-          {card.category} · <MoneyAmount amount={card.amountMinor} />
+          {card.category} · {counts.format(card.count)}
         </p>
       );
     case 'comparison':
@@ -104,7 +129,7 @@ export function RoastReport() {
           {state.value.cards.map((card) => (
             <article className="analytics-card roast-card" key={card.kind}>
               <h2>{card.text}</h2>
-              {stat(card)}
+              {stat(card, profile?.balanceHidden === true)}
               <details>
                 <summary>Откуда цифры?</summary>
                 <p>{card.formula}</p>

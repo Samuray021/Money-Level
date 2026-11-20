@@ -2,6 +2,7 @@ import {
   addExpense,
   addIncome,
   claimBudgetNotices,
+  claimGoalCompletionNotices,
   createAccount,
   createGoal,
   exportBackup,
@@ -176,6 +177,15 @@ test('committed producers persist typed, private events and deduplicate on retry
     expect(JSON.stringify(events)).not.toContain(purchase.note);
     expect(JSON.stringify(events)).not.toContain(goal.title);
 
+    const notices = await Promise.all([
+      claimGoalCompletionNotices(context, session.startedAt),
+      claimGoalCompletionNotices(
+        { ...context, storage: restarted },
+        session.startedAt,
+      ),
+    ]);
+    expect(notices.reduce((total, count) => total + count, 0)).toBe(1);
+
     const random = { next: () => 0.5 };
     await runMemeReactions(context, session, random);
     expect(
@@ -194,6 +204,9 @@ test('committed producers persist typed, private events and deduplicate on retry
     await recordAppSession(recovery, session.id);
     await recordAnalyticsOpened(recovery, session.id, 'week', '2026-11-16');
     await claimBudgetNotices(recovery);
+    expect(await claimGoalCompletionNotices(recovery, session.startedAt)).toBe(
+      0,
+    );
     await reserveToGoal(recovery, reserve);
     await runAchievementRules(recovery);
     expect(await runMemeReactions(recovery, session, random)).toEqual([]);

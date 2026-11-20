@@ -7,6 +7,8 @@ import {
 } from '@money-level/contracts';
 import { z } from 'zod';
 
+export const goalIconSchema = z.enum(['target', 'reserve', 'gift']);
+
 export const goalSchema = z.strictObject({
   id: uuidSchema,
   title: z.string().trim().min(1).max(100),

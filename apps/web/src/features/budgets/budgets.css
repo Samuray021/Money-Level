@@ -1,12 +1,14 @@
 .budgets-page,
 .budget-card,
-.budget-alerts {
+.budget-alerts,
+.goal-notice {
   display: grid;
   gap: var(--space-4);
 }
 
 .budget-card,
-.budget-alerts {
+.budget-alerts,
+.goal-notice {
   padding: var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
@@ -18,14 +20,16 @@
   padding-inline-start: var(--space-4);
 }
 
-.budget-alerts {
+.budget-alerts,
+.goal-notice {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-2);
 }
 
 @media (max-width: 25rem) {
-  .budget-alerts {
+  .budget-alerts,
+  .goal-notice {
     grid-template-columns: 1fr;
   }
 }

@@ -114,3 +114,5 @@ export {
   runAchievementRules,
 } from './achievements.js';
 export { recordAnalyticsOpened, recordAppSession } from './usage-events.js';
+
+export { claimGoalCompletionNotices } from './goal-notices.js';

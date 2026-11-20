@@ -4,11 +4,18 @@ import type {
   RandomSource,
 } from '@money-level/contracts';
 
+interface CategoryShare {
+  name: string;
+  hundredthsPercent: number;
+}
+
 export interface RoastMetrics {
   expenseMinor: MinorUnits;
   priorExpenseMinor: MinorUnits;
   expenseCount: number;
   leadingCategory?: { name: string; amountMinor: MinorUnits };
+  categoryShares?: CategoryShare[];
+  mostFrequentCategory?: { name: string; count: number };
 }
 
 export type RoastCard =
@@ -20,6 +27,14 @@ export type RoastCard =
       formula: string;
       category: string;
       amountMinor: MinorUnits;
+      shares: CategoryShare[];
+    }
+  | {
+      kind: 'most-frequent-category';
+      text: string;
+      formula: string;
+      category: string;
+      count: number;
     }
   | {
       kind: 'comparison';
@@ -94,9 +109,27 @@ export function buildRoastCards(
           )
         : 'Крупнейшая категория расходов',
       formula:
-        'Суммы расходов группируются по категории. Показана наибольшая сумма.',
+        'Суммы расходов группируются по категории. Доля каждой категории равна её расходам, делённым на общие расходы периода.',
       category: metrics.leadingCategory.name,
       amountMinor: metrics.leadingCategory.amountMinor,
+      shares: metrics.categoryShares ?? [],
+    });
+  if (metrics.mostFrequentCategory)
+    cards.push({
+      kind: 'most-frequent-category',
+      text: playful
+        ? line(
+            [
+              'Эта категория чаще всех заглядывала в журнал.',
+              'У чеков нашёлся постоянный гость.',
+            ],
+            random,
+          )
+        : 'Самая частая категория расходов',
+      formula:
+        'Расходы сгруппированы по категориям. Показана категория с наибольшим числом записей.',
+      category: metrics.mostFrequentCategory.name,
+      count: metrics.mostFrequentCategory.count,
     });
   if (metrics.priorExpenseMinor === '0')
     cards.push({
@@ -114,7 +147,7 @@ export function buildRoastCards(
           )
         : 'Сравнение с предыдущим периодом',
       formula:
-        'Суммы расходов за выбранный период и за непосредственно предыдущий период той же длины.',
+        'Суммы расходов за выбранный период и за предыдущий календарный период того же вида.',
       currentMinor: metrics.expenseMinor,
       priorMinor: metrics.priorExpenseMinor,
     });

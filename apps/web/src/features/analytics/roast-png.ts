@@ -20,6 +20,12 @@ export function roastCardCaption(
       return showFigures
         ? card.category + ' · ' + formatMoney(card.amountMinor, currency)
         : 'Категория с наибольшими расходами';
+    case 'most-frequent-category':
+      return showFigures
+        ? card.category +
+            ' · ' +
+            new Intl.NumberFormat('ru-RU').format(card.count)
+        : 'Частота расходов по категориям';
     case 'comparison':
       return showFigures
         ? formatMoney(card.currentMinor, currency) +

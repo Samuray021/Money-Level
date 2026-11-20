@@ -7,7 +7,7 @@ import {
 } from '@money-level/application';
 import { sha256Checksum } from '@money-level/storage-indexeddb';
 import { Button } from '@money-level/ui-kit';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
@@ -19,6 +19,8 @@ function BackupDownloads() {
   const { commands } = useJournal();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [downloaded, setDownloaded] = useState(false);
+  const downloading = useRef(false);
   const read = useCallback(
     () =>
       commands.storage.read(async (journal) =>
@@ -29,9 +31,11 @@ function BackupDownloads() {
   const { state } = useJournalQuery(read);
 
   async function save(kind: 'json' | 'csv' | 'snapshot') {
-    if (busy) return;
+    if (downloading.current) return;
+    downloading.current = true;
     setBusy(true);
     setError('');
+    setDownloaded(false);
     try {
       if (kind === 'csv') {
         const csv = await exportTransactionsCsv(commands.storage);
@@ -59,6 +63,7 @@ function BackupDownloads() {
           ? 'money-level-before-replace.json'
           : 'money-level-backup.json',
       );
+      setDownloaded(true);
       if (kind === 'json') {
         try {
           await noteManualBackup(commands);
@@ -69,6 +74,7 @@ function BackupDownloads() {
     } catch {
       setError('Не удалось подготовить файл. Попробуйте ещё раз.');
     } finally {
+      downloading.current = false;
       setBusy(false);
     }
   }
@@ -103,6 +109,11 @@ function BackupDownloads() {
         )}
       </div>
       {busy && <p role="status">Готовим файл…</p>}
+      {downloaded && !busy && !error && (
+        <p role="status">
+          Резервная копия подготовлена. Проверьте папку загрузок.
+        </p>
+      )}
       {error && (
         <p role="alert" className="form-error">
           {error}

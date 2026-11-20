@@ -4,6 +4,7 @@ import {
   shiftCalendarDate,
   selectCategoryExpenses,
   selectExpenseCount,
+  selectMostFrequentExpenseCategory,
   selectPeriodTotals,
 } from '@money-level/analytics';
 import {
@@ -38,20 +39,42 @@ export function getRoastReport(
       transactions,
       previous,
     ).expenseMinor;
-    const leading = selectCategoryExpenses(transactions, period)[0];
-    const category = leading
-      ? await journal.categories.get(leading.categoryId)
-      : undefined;
+    const categories = new Map(
+      (await journal.categories.list()).map(({ id, name }) => [id, name]),
+    );
+    const nameOf = (id: string) => categories.get(id) ?? 'Категория недоступна';
+    const byAmount = selectCategoryExpenses(transactions, period);
+    const [leading] = byAmount;
+    const mostFrequent = selectMostFrequentExpenseCategory(
+      transactions,
+      period,
+    );
+    const total = BigInt(expenseMinor);
+    const categoryShares = byAmount.map(({ categoryId, amountMinor }) => ({
+      name: nameOf(categoryId),
+      hundredthsPercent: Number(
+        (BigInt(amountMinor) * 10_000n + total / 2n) / total,
+      ),
+    }));
     const { mode } = resolveHumorPolicy(profile);
     const cards = buildRoastCards(
       {
         expenseMinor,
         priorExpenseMinor,
         expenseCount: selectExpenseCount(transactions, period),
+        categoryShares,
+        ...(mostFrequent
+          ? {
+              mostFrequentCategory: {
+                name: nameOf(mostFrequent.categoryId),
+                count: mostFrequent.count,
+              },
+            }
+          : {}),
         ...(leading
           ? {
               leadingCategory: {
-                name: category?.name ?? 'Категория недоступна',
+                name: nameOf(leading.categoryId),
                 amountMinor: leading.amountMinor,
               },
             }

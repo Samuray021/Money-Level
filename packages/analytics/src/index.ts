@@ -148,6 +148,21 @@ export function selectExpenseCount(
   return expensesWithin(transactions, from, until).length;
 }
 
+export function selectMostFrequentExpenseCategory(
+  transactions: readonly Transaction[],
+  period: DatePeriod,
+): { categoryId: string; count: number } | undefined {
+  const { from, until } = validatedPeriod(period);
+  const counts = new Map<string, number>();
+  for (const { categoryId } of expensesWithin(transactions, from, until))
+    counts.set(categoryId, (counts.get(categoryId) ?? 0) + 1);
+  const [first] = [...counts].sort(
+    ([leftId, leftCount], [rightId, rightCount]) =>
+      rightCount - leftCount || leftId.localeCompare(rightId),
+  );
+  return first ? { categoryId: first[0], count: first[1] } : undefined;
+}
+
 export function shiftCalendarDate(date: ISODate, days: number): ISODate {
   const instant = new Date(isoDateSchema.parse(date) + 'T00:00:00.000Z');
   instant.setUTCDate(instant.getUTCDate() + days);

@@ -1,7 +1,11 @@
 import { systemClock } from '@money-level/contracts';
 import type { ISODate } from '@money-level/contracts';
 import { parseCurrencyAmount } from '@money-level/finance-core';
-import { goalSchema, selectGoalReserved } from '@money-level/goals';
+import {
+  goalIconSchema,
+  goalSchema,
+  selectGoalReserved,
+} from '@money-level/goals';
 import type { Goal } from '@money-level/goals';
 import type { JournalCommandContext } from './create-transaction.js';
 import type { UnitOfWork } from './journal-repository.js';
@@ -10,6 +14,7 @@ export interface NewGoalInput {
   title: string;
   target: string;
   targetDate?: ISODate;
+  icon?: (typeof goalIconSchema.options)[number];
 }
 
 export function createGoal(
@@ -29,7 +34,7 @@ export function createGoal(
         profile.baseCurrency,
       ),
       ...(input.targetDate ? { targetDate: input.targetDate } : {}),
-      icon: 'target',
+      icon: goalIconSchema.parse(input.icon ?? 'target'),
       status: 'active',
       createdAt: time,
       updatedAt: time,

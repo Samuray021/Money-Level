@@ -4,6 +4,7 @@ import {
   releaseFromGoal,
   reserveToGoal,
 } from '@money-level/application';
+import type { NewGoalInput } from '@money-level/application';
 import { parseCurrencyAmount } from '@money-level/finance-core';
 import { Button } from '@money-level/ui-kit';
 import { useCallback, useRef, useState } from 'react';
@@ -12,6 +13,19 @@ import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
 import { MoneyAmount } from '../../components/money-amount.js';
 import './goals.css';
+
+const goalIcons = {
+  target: { label: 'Цель', symbol: '◎' },
+  reserve: { label: 'Резерв', symbol: '◇' },
+  gift: { label: 'Подарок', symbol: '☆' },
+} as const satisfies Record<
+  NonNullable<NewGoalInput['icon']>,
+  { label: string; symbol: string }
+>;
+
+function knownIcon(icon: string): icon is keyof typeof goalIcons {
+  return Object.hasOwn(goalIcons, icon);
+}
 
 type GoalRow = Awaited<ReturnType<typeof getGoalOverview>>[number];
 const readableDate = new Intl.DateTimeFormat('ru-RU', {
@@ -24,6 +38,7 @@ function CreateForm({ close }: { close: () => void }) {
   const [title, setTitle] = useState('');
   const [target, setTarget] = useState('');
   const [date, setDate] = useState('');
+  const [icon, setIcon] = useState<keyof typeof goalIcons>('target');
   const [error, setError] = useState(false);
   const [saving, setSaving] = useState(false);
   const pending = useRef(false);
@@ -37,6 +52,7 @@ function CreateForm({ close }: { close: () => void }) {
       await createGoal(commands, {
         title,
         target,
+        icon,
         ...(date ? { targetDate: date } : {}),
       });
       close();
@@ -67,6 +83,22 @@ function CreateForm({ close }: { close: () => void }) {
           value={target}
           onChange={(event) => setTarget(event.target.value)}
         />
+      </label>
+      <label className="form-field">
+        Значок цели
+        <select
+          value={icon}
+          onChange={(event) => {
+            const value = event.target.value;
+            if (knownIcon(value)) setIcon(value);
+          }}
+        >
+          {Object.entries(goalIcons).map(([value, item]) => (
+            <option key={value} value={value}>
+              {item.label}
+            </option>
+          ))}
+        </select>
       </label>
       <label className="form-field">
         Целевая дата
@@ -174,7 +206,12 @@ function GoalCard({ row }: { row: GoalRow }) {
 
   return (
     <article className="goal-card">
-      <h2>{goal.title}</h2>
+      <h2>
+        <span aria-hidden="true">
+          {goalIcons[knownIcon(goal.icon) ? goal.icon : 'target'].symbol}
+        </span>{' '}
+        {goal.title}
+      </h2>
       {goal.status === 'completed' && (
         <p className="goal-completed">Цель достигнута</p>
       )}

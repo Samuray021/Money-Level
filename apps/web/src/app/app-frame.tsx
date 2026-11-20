@@ -1,3 +1,4 @@
+import { GoalAlerts } from '../features/goals/goal-alerts.js';
 import { BudgetAlerts } from '../features/budgets/budget-alerts.js';
 import { Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet } from 'react-router-dom';
@@ -51,7 +52,12 @@ export function AppFrame({
           Офлайн · изменения сохраняются на устройстве
         </p>
       )}
-      {showNavigation && <BudgetAlerts />}
+      {showNavigation && (
+        <>
+          <BudgetAlerts />
+          <GoalAlerts />
+        </>
+      )}
       <main className="app-main" id="main-content" tabIndex={-1}>
         <Suspense fallback={<p role="status">Загружаем раздел…</p>}>
           <Outlet />
