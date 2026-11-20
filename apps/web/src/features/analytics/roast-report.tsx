@@ -50,6 +50,8 @@ function stat(card: RoastCard) {
 
 export function RoastReport() {
   const { commands, profile } = useJournal();
+  const humorEnabled =
+    profile?.humorFrequency !== 'off' && profile?.humorMode !== 'off';
   const [kind, setKind] = useState<RoastPeriod>('month');
   const [seed, setSeed] = useState(nextSeed);
   const read = useCallback(
@@ -62,7 +64,7 @@ export function RoastReport() {
     <section className="analytics-page">
       <Link to="/analytics">К аналитике</Link>
       <h1>
-        {profile?.profanityEnabled && profile.humorMode !== 'off'
+        {profile?.profanityEnabled && humorEnabled
           ? 'Разъеби мои финансы'
           : 'Разбор расходов'}
       </h1>
@@ -112,7 +114,7 @@ export function RoastReport() {
               )}
             </article>
           ))}
-          {state.value.cards.length > 1 && profile?.humorMode !== 'off' && (
+          {state.value.cards.length > 1 && humorEnabled && (
             <Button variant="secondary" onClick={() => setSeed(nextSeed())}>
               Другие реплики
             </Button>

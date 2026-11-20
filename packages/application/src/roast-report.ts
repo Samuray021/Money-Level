@@ -55,7 +55,7 @@ export function getRoastReport(
             }
           : {}),
       },
-      profile.humorMode,
+      profile.humorFrequency === 'off' ? 'off' : profile.humorMode,
       createSeededRandom(seed),
     );
     return {

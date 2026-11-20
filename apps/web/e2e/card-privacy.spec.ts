@@ -32,6 +32,12 @@ test('expense card preview, PNG and system share hide financial figures by defau
   await record(page, 'Расход', '987,65', 'Еда');
   await page.goto('/analytics/roast');
   const card = page.locator('.roast-card').first();
+  await expect(
+    card.getByRole('heading', { name: 'Всего расходов' }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Другие реплики' }),
+  ).toHaveCount(0);
   const preview = card.locator('.roast-preview');
   await card.getByText('Экспорт карточки', { exact: true }).click();
   await expect(preview).not.toContainText(privateText);

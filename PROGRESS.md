@@ -2,8 +2,8 @@
 
 **Состояние:** разработка начата.
 
-**Текущее задание:** `ML-089`.
-**Подтверждённо завершено:** `88 / 100` задач.
+**Текущее задание:** `ML-090`.
+**Подтверждённо завершено:** `89 / 100` задач.
 **Рабочая ветка:** `work/money-level`.
 **Коммиты задач:** `git log --oneline --grep="^ML-"` в рабочей ветке.
 
@@ -105,7 +105,8 @@
 | ML-077 | DONE | PASS lint, format:check, typecheck, test (107), build | `c8d4b86` | 2026-11-19. web: системный share с активным жестом, fallback save и отмена. Chromium проверил все три ветви. |
 | ML-078 | DONE | PASS lint, format:check, typecheck, test (107), build | `61a427c` | 2026-11-19. Playwright 2/2. Включённое скрытие заменяет явный opt-in; проверены HTML/ARIA, PNG, системный share и повторное открытие. |
 | ML-085 | DONE | PASS lint, format:check, typecheck, test (107), build | `213724e` | 2026-11-19. web/application: JSON и CSV, проверка, merge, replace со скачиваемым снимком, два подтверждения очистки, восстановление из онбординга. Chromium проверил операции на синтетическом журнале. |
-| ML-088 | DONE | PASS lint, format:check, typecheck, test (107), build | ML-088 | 2026-11-19. Playwright 3/3. Две настоящие сборки на одном origin, активация нового worker, офлайн-перезапуск, прежняя версия БД, остаток и операция сохранены. |
+| ML-088 | DONE | PASS lint, format:check, typecheck, test (107), build | `e03cafb` | 2026-11-19. Playwright 3/3. Две настоящие сборки на одном origin, активация нового worker, офлайн-перезапуск, прежняя версия БД, остаток и операция сохранены. |
+| ML-089 | DONE | PASS lint, format:check, typecheck, test (107), build | ML-089 | 2026-11-20. Playwright 4/4. Настройка, доход, расход, отчёт, повреждённая копия, merge без дублей, очистка и восстановление офлайн. Разбор учитывает отключение шуток. |
 
 Задачи без записи имеют статус `TODO`; список и зависимости — в `docs/CLAUDE_ATOMIC_BACKLOG_v1_1.md`.
 
