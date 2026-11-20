@@ -42,7 +42,11 @@ export function EntryActions({ id }: { id: string }) {
         : undefined;
       void navigate('/history', {
         replace: true,
-        state: { historyFilters: previous?.historyFilters, undo },
+        state: {
+          historyFilters: previous?.historyFilters,
+          historyPage: previous?.historyPage,
+          undo,
+        },
       });
     } catch {
       setError(true);

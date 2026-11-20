@@ -163,6 +163,13 @@ export function Budgets() {
         <>
           {edited === null ? (
             <Button onClick={() => setEdited('new')}>Добавить бюджет</Button>
+          ) : edited !== 'new' && profile?.balanceHidden ? (
+            <div className="form-card">
+              <p>Чтобы изменить бюджет, покажите суммы в верхней панели.</p>
+              <Button variant="secondary" onClick={() => setEdited(null)}>
+                Отмена
+              </Button>
+            </div>
           ) : (
             <BudgetEditor
               key={edited === 'new' ? 'new' : edited.id}

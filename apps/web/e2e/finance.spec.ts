@@ -1,12 +1,13 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 
+import { testWithOrigin as test } from './build-origin.js';
 import { record, setupJournal } from './journal-fixture.js';
 
 test('first setup, income, expense and edit survive an offline restart', async ({
-  context,
+  buildOrigin,
   page,
 }) => {
-  await setupJournal(page);
+  await setupJournal(page, '1000', buildOrigin.url);
   await expect(page.getByTestId('total-balance')).toHaveText('1 000,00 ₽');
   await expect(page.getByTestId('income')).toHaveText('0,00 ₽');
   await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
@@ -23,7 +24,10 @@ test('first setup, income, expense and edit survive an offline restart', async (
   await page.getByRole('button', { name: 'Сохранить изменения' }).click();
   await expect(page.getByText('−275,50 ₽')).toBeVisible();
 
-  await context.setOffline(true);
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'onLine', { get: () => false });
+  });
+  buildOrigin.disconnect();
   await page.reload();
   await expect(
     page.getByText('Офлайн · изменения сохраняются на устройстве'),

@@ -36,12 +36,12 @@ export function AppFrame({
         К содержимому
       </a>
       <header className="app-header">
-        <Link className="wordmark" to="/" aria-label="Money Level, главная">
+        <Link className="wordmark" to="/">
           <span className="wordmark-icon" aria-hidden="true">
             M
           </span>
           <span>
-            MONEY<span className="wordmark-accent">LEVEL</span>
+            MONEY <span className="wordmark-accent">LEVEL</span>
           </span>
         </Link>
         {showNavigation && <PrivacyToggle />}

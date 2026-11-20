@@ -1,8 +1,12 @@
 import { getHistory, getHistoryDetail } from '@money-level/application';
-import type { HistoryEntry, HistoryFilters } from '@money-level/application';
+import type {
+  HistoryDay,
+  HistoryEntry,
+  HistoryFilters,
+} from '@money-level/application';
 import type { TransactionKind } from '@money-level/contracts';
 import { Button } from '@money-level/ui-kit';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
@@ -52,9 +56,11 @@ function TransactionAmount({ transaction }: Pick<HistoryEntry, 'transaction'>) {
 function HistoryRow({
   entry,
   filters,
+  pageNumber,
 }: {
   entry: HistoryEntry;
   filters: HistoryFilters;
+  pageNumber: number;
 }) {
   const { transaction, account, destination, category } = entry;
   const title = titles[transaction.kind];
@@ -68,7 +74,7 @@ function HistoryRow({
       <Link
         className="history-row"
         to={'/history/' + transaction.id}
-        state={{ historyFilters: filters }}
+        state={{ historyFilters: filters, historyPage: pageNumber }}
       >
         <span className="history-row-label">
           <strong>{category?.name ?? title}</strong>
@@ -83,6 +89,99 @@ function HistoryRow({
   );
 }
 
+const pageSize = 50;
+
+function HistoryPages({
+  days,
+  filters,
+  requestedPage,
+  setPage,
+}: {
+  days: HistoryDay[];
+  filters: HistoryFilters;
+  requestedPage: number;
+  setPage: (value: number) => void;
+}) {
+  const position = useRef<HTMLParagraphElement>(null);
+  const count = days.reduce((total, day) => total + day.entries.length, 0);
+  const lastPage = Math.ceil(count / pageSize) - 1;
+  const page = Math.min(requestedPage, lastPage);
+  const start = page * pageSize;
+  const end = Math.min(start + pageSize, count);
+  const visible: HistoryDay[] = [];
+  let offset = 0;
+  for (const day of days) {
+    const next = offset + day.entries.length;
+    if (offset >= end) break;
+    if (next > start) {
+      visible.push({
+        ...day,
+        entries: day.entries.slice(Math.max(0, start - offset), end - offset),
+      });
+    }
+    offset = next;
+  }
+
+  function move(value: number) {
+    setPage(value);
+    position.current?.focus();
+  }
+
+  return (
+    <>
+      {lastPage > 0 && (
+        <p
+          className="history-page-position"
+          ref={position}
+          role="status"
+          tabIndex={-1}
+        >
+          Операции {start + 1}–{end} из {count.toLocaleString('ru-RU')}
+        </p>
+      )}
+      {visible.map(({ date, totals, entries }) => (
+        <section className="history-day" key={date}>
+          <header className="history-day-header">
+            <h2>{formatDay(date)}</h2>
+            <p>
+              Доходы <MoneyAmount amount={totals.incomeMinor} /> · Расходы{' '}
+              <MoneyAmount amount={totals.expenseMinor} />
+            </p>
+          </header>
+          <ul className="history-list">
+            {entries.map((entry) => (
+              <HistoryRow
+                entry={entry}
+                key={entry.transaction.id}
+                filters={filters}
+                pageNumber={page}
+              />
+            ))}
+          </ul>
+        </section>
+      ))}
+      {lastPage > 0 && (
+        <nav className="history-actions" aria-label="Страницы истории">
+          <Button
+            variant="secondary"
+            disabled={page === 0}
+            onClick={() => move(page - 1)}
+          >
+            Предыдущая
+          </Button>
+          <Button
+            variant="secondary"
+            disabled={page === lastPage}
+            onClick={() => move(page + 1)}
+          >
+            Следующая
+          </Button>
+        </nav>
+      )}
+    </>
+  );
+}
+
 export function History() {
   const { commands } = useJournal();
   const location = useLocation();
@@ -90,8 +189,9 @@ export function History() {
   const [filters, setFilters] = useState<HistoryFilters>(
     previous?.historyFilters ?? {},
   );
+  const [page, setPage] = useState(previous?.historyPage ?? 0);
   const read = useCallback(
-    () => getHistory(commands.storage, filters),
+    async () => ({ ...(await getHistory(commands.storage, filters)), filters }),
     [commands.storage, filters],
   );
   const { state, retry } = useJournalQuery(read);
@@ -107,9 +207,13 @@ export function History() {
       <HistoryFilterForm
         filters={filters}
         options={state.status === 'ready' ? state.value : undefined}
-        onChange={setFilters}
+        onChange={(next) => {
+          setFilters(next);
+          setPage(0);
+        }}
       />
-      {state.status === 'loading' ? (
+      {state.status === 'loading' ||
+      (state.status === 'ready' && state.value.filters !== filters) ? (
         <p role="status">Загружаем операции…</p>
       ) : state.status === 'error' ? (
         <>
@@ -129,26 +233,12 @@ export function History() {
             : 'Пока нет доходов, расходов и переводов.'}
         </p>
       ) : (
-        state.value.days.map(({ date, totals, entries }) => (
-          <section className="history-day" key={date}>
-            <header className="history-day-header">
-              <h2>{formatDay(date)}</h2>
-              <p>
-                Доходы <MoneyAmount amount={totals.incomeMinor} /> · Расходы{' '}
-                <MoneyAmount amount={totals.expenseMinor} />
-              </p>
-            </header>
-            <ul className="history-list">
-              {entries.map((entry) => (
-                <HistoryRow
-                  entry={entry}
-                  key={entry.transaction.id}
-                  filters={filters}
-                />
-              ))}
-            </ul>
-          </section>
-        ))
+        <HistoryPages
+          days={state.value.days}
+          filters={filters}
+          requestedPage={page}
+          setPage={setPage}
+        />
       )}
     </section>
   );

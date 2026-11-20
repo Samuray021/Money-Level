@@ -1,14 +1,15 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { testWithOrigin as test } from './build-origin.js';
 import { record, setupJournal } from './journal-fixture.js';
 
 test('onboarding, journal, report and backup restore preserve the exact balance offline', async ({
-  context,
+  buildOrigin,
   page,
 }) => {
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await setupJournal(page);
+  await setupJournal(page, '1000', buildOrigin.url);
   await page.waitForFunction(() => Boolean(navigator.serviceWorker.controller));
   await record(page, 'Доход', '250,10', 'Зарплата');
   await record(page, 'Расход', '123,45', 'Еда');
@@ -79,7 +80,7 @@ test('onboarding, journal, report and backup restore preserve the exact balance 
     page.getByRole('heading', { name: 'Личные финансы' }),
   ).toBeVisible();
 
-  await context.setOffline(true);
+  buildOrigin.disconnect();
   await page.reload();
   await page
     .getByRole('link', { name: 'Восстановить из резервной копии' })

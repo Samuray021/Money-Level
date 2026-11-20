@@ -4,6 +4,7 @@ import type { Deletion } from './delete-entry.js';
 
 export type HistoryNavigationState = {
   historyFilters?: HistoryFilters;
+  historyPage?: number;
   undo?: Deletion;
 } | null;
 type Options = Pick<

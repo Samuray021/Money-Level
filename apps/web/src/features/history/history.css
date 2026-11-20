@@ -158,3 +158,8 @@
   border-radius: var(--radius-card);
   background: var(--color-surface);
 }
+
+.history-page-position {
+  scroll-margin-block-start: var(--space-6);
+  color: var(--color-muted);
+}
