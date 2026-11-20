@@ -19,6 +19,19 @@ test('XP counts each achievement source once and validates the XP grant', () => 
   expect(achievementSchema.safeParse({ ...first, xp: -10 }).success).toBe(
     false,
   );
+  expect(achievementSchema.safeParse({ ...first, xp: 100 }).success).toBe(
+    false,
+  );
+  expect(
+    achievementSchema.safeParse({ ...first, sourceKey: 'later' }).success,
+  ).toBe(false);
+  const weekly = { ...first, kind: 'weekly-journal', xp: 20 };
+  expect(
+    achievementSchema.safeParse({ ...weekly, sourceKey: '2026-11-16' }).success,
+  ).toBe(true);
+  expect(
+    achievementSchema.safeParse({ ...weekly, sourceKey: '2026-11-19' }).success,
+  ).toBe(false);
   expect(
     selectTotalXp([
       first,

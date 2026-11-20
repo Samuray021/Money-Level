@@ -6,6 +6,7 @@ import {
   isoDateSchema,
   isoDateTimeSchema,
   minorUnitsSchema,
+  profileSettingsSchema,
   transactionKindSchema,
   uuidSchema,
 } from './index.js';
@@ -66,5 +67,19 @@ describe('serialized finance values', () => {
     expect(categoryTypeSchema.safeParse('transfer').success).toBe(false);
     expect(transactionKindSchema.safeParse('adjustment').success).toBe(true);
     expect(transactionKindSchema.safeParse('refund').success).toBe(false);
+  });
+
+  test('old profiles with profanity enabled require fresh age confirmation', () => {
+    expect(
+      profileSettingsSchema.parse({
+        id: 'profile',
+        locale: 'ru-RU',
+        timeZone: 'Europe/Moscow',
+        baseCurrency: 'RUB',
+        firstAccountId: 'c0a19a94-cbd4-45da-a30d-0a4dfd25f779',
+        onboardingCompleted: true,
+        profanityEnabled: true,
+      }),
+    ).toMatchObject({ adultHumorConfirmed: false, profanityEnabled: true });
   });
 });

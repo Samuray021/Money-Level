@@ -118,6 +118,7 @@
   color: var(--color-text);
   transform: translateX(-50%);
   pointer-events: none;
+  animation: meme-enter var(--duration-fast) ease-out both;
 }
 
 .meme-toast--rare {
@@ -132,8 +133,14 @@
   pointer-events: auto;
 }
 
-.meme-toast {
-  animation: meme-enter var(--duration-fast) ease-out both;
+:root[data-motion='off'] .meme-toast {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meme-toast {
+    animation: none;
+  }
 }
 
 @keyframes meme-enter {

@@ -10,7 +10,10 @@ import { samplePack, sampleRule } from './fixtures.js';
 test('exports a JSON schema and rejects unsafe packs before evaluation', () => {
   expect(getMemePackJsonSchema()).toMatchObject({
     type: 'object',
-    properties: { rules: { type: 'array' } },
+    properties: {
+      rules: { type: 'array', maxItems: 200 },
+      disabledRuleIds: { type: 'array', maxItems: 200 },
+    },
   });
   expect(memePackSchema.parse(samplePack).rules[0]).toMatchObject({
     cooldownMs: 604_800_000,
@@ -21,6 +24,8 @@ test('exports a JSON schema and rejects unsafe packs before evaluation', () => {
     { ...sampleRule, text: { 'ru-RU': '<script>' } },
     { ...sampleRule, weight: 0 },
     { ...sampleRule, triggers: ['unknown'] },
+    { ...sampleRule, tags: Array<string>(17).fill('expense') },
+    { ...sampleRule, text: { 'ru-RU': 'а'.repeat(161) } },
   ]) {
     expect(
       memePackSchema.safeParse({ ...samplePack, rules: [rule] }).success,
@@ -30,6 +35,11 @@ test('exports a JSON schema and rejects unsafe packs before evaluation', () => {
     memePackSchema.safeParse({ ...samplePack, rules: [sampleRule, sampleRule] })
       .success,
   ).toBe(false);
+  for (const disabledRuleIds of [['missing'], [sampleRule.id, sampleRule.id]]) {
+    expect(
+      memePackSchema.safeParse({ ...samplePack, disabledRuleIds }).success,
+    ).toBe(false);
+  }
 });
 
 test('the bundled Russian pack includes original, tagged reactions and clean fallbacks', () => {

@@ -18,7 +18,8 @@ async function initial() {
   const { open } = journalFixture();
   const storage = open();
   let index = 100;
-  const clock = { now: () => new Date(instant) };
+  let recordedAt = instant;
+  const clock = { now: () => new Date(recordedAt) };
   const context = {
     storage,
     clock,
@@ -48,7 +49,15 @@ async function initial() {
       transactionDate: date,
       idempotencyKey: key,
     });
-  return { storage, open, context, expense };
+  return {
+    storage,
+    open,
+    context,
+    expense,
+    setRecordingTime(time: string) {
+      recordedAt = time;
+    },
+  };
 }
 
 test('TC-FIN-005 and TC-FIN-007: command replay and duplicate imports grant XP and debit only once', async () => {
@@ -93,13 +102,22 @@ test('TC-FIN-005 and TC-FIN-007: command replay and duplicate imports grant XP a
 });
 
 test('useful calendar activity, a first goal and a manual backup award bounded XP regardless of spend', async () => {
-  const { storage, context, expense } = await initial();
+  const { storage, context, expense, setRecordingTime } = await initial();
   try {
     await expect(expense('2026-11-16', '0', 'invalid')).rejects.toThrow();
     await runAchievementRules(context);
     expect((await getAchievementProgress(storage)).totalXp).toBe(0);
-    for (let day = 16; day <= 22; day += 1)
-      await expense('2026-11-' + day, day === 22 ? '900000' : '1');
+    for (let day = 16; day <= 22; day += 1) {
+      const date = '2026-11-' + day;
+      setRecordingTime(
+        day === 22 ? '2026-11-21T22:00:00Z' : date + 'T12:00:00Z',
+      );
+      await expense(date, day === 22 ? '900000' : '1');
+      await runAchievementRules(context);
+      expect((await getAchievementProgress(storage)).totalXp).toBe(
+        day === 22 ? 30 : 10,
+      );
+    }
     await createGoal(context, { title: 'Подушка', target: '500' });
     await createGoal(context, { title: 'Подарок', target: '100' });
     await noteManualBackup(context);
@@ -115,6 +133,24 @@ test('useful calendar activity, a first goal and a manual backup award bounded X
       'first-operation',
       'weekly-journal',
     ]);
+  } finally {
+    storage.close();
+  }
+});
+
+test('a full week filled on one day does not award weekly XP', async () => {
+  const { storage, context, expense } = await initial();
+  try {
+    for (let day = 16; day <= 22; day += 1)
+      await expense('2026-11-' + day, '1');
+    await runAchievementRules(context);
+    await expect(getAchievementProgress(storage)).resolves.toMatchObject({
+      totalXp: 10,
+      achievements: [{ kind: 'first-operation' }],
+    });
+    await expect(
+      getDashboardSummary(storage, context.clock),
+    ).resolves.toMatchObject({ expenseMinor: '7', totalMinor: '99993' });
   } finally {
     storage.close();
   }

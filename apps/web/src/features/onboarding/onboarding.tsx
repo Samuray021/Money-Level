@@ -11,6 +11,7 @@ function OpeningSetup({ profile }: { profile: ProfileSettings }) {
   const { commands, setProfile } = useJournal();
   const [amount, setAmount] = useState('0');
   const [frequency, setFrequency] = useState<HumorFrequency>('usual');
+  const [adult, setAdult] = useState(false);
   const [profanity, setProfanity] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -25,6 +26,7 @@ function OpeningSetup({ profile }: { profile: ProfileSettings }) {
         await finishOnboarding(commands, {
           openingAmount: amount.trim(),
           humorFrequency: frequency,
+          adultHumorConfirmed: adult,
           profanityEnabled: profanity,
         }),
       );
@@ -74,8 +76,19 @@ function OpeningSetup({ profile }: { profile: ProfileSettings }) {
         <label className="form-checkbox">
           <input
             type="checkbox"
-            checked={profanity && frequency !== 'off'}
-            disabled={frequency === 'off'}
+            checked={adult}
+            onChange={(event) => {
+              setAdult(event.target.checked);
+              if (!event.target.checked) setProfanity(false);
+            }}
+          />
+          Мне 18 лет или больше
+        </label>
+        <label className="form-checkbox">
+          <input
+            type="checkbox"
+            checked={profanity && adult && frequency !== 'off'}
+            disabled={!adult || frequency === 'off'}
             onChange={(event) => setProfanity(event.target.checked)}
           />
           Разрешить мат в шутках

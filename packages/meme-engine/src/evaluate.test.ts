@@ -90,6 +90,31 @@ test('honors global and per-rule cooldowns with an injected clock', () => {
   expect(evaluateMeme(pack, { ...input, frequency: 'off' })).toBeUndefined();
 });
 
+test('a rule disabled in the pack is absent from both weighted and rare selection', () => {
+  const active = memePackSchema.parse({
+    ...samplePack,
+    rules: [
+      ...pack.rules,
+      { ...sampleRule, id: 'retired-rare', rarity: 'rare' },
+    ],
+    disabledRuleIds: ['selected', 'retired-rare'],
+  });
+  expect(
+    evaluateMeme(active, {
+      ...base,
+      sessionId: 'test-session',
+      random: { next: () => 0 },
+    })?.ruleId,
+  ).toBe('expense-small');
+  expect(
+    evaluateMeme(active, {
+      ...base,
+      sessionId: 'test-session',
+      random: { next: () => 0.9 },
+    })?.ruleId,
+  ).toBe('expense-small');
+});
+
 test('a rare scene uses the 1% boundary and can be selected at most once per session', () => {
   const scenes = memePackSchema.parse({
     ...samplePack,

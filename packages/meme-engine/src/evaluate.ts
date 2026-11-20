@@ -92,8 +92,10 @@ export function evaluateMeme(
   if (history.some((item) => now - Date.parse(item.shownAt) < globalDelay))
     return undefined;
 
+  const disabled = new Set(pack.disabledRuleIds);
   const eligible = pack.rules.filter(
     (rule) =>
+      !disabled.has(rule.id) &&
       matches(rule, input) &&
       !history.some(
         (item) =>

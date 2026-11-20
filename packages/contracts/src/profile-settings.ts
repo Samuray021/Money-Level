@@ -26,6 +26,7 @@ export const profileSettingsSchema = z.strictObject({
   starterCategoriesReady: z.boolean().default(false),
   humorMode: z.enum(['off', 'neutral', 'roast', 'chaos']).default('roast'),
   humorFrequency: humorFrequencySchema.default('usual'),
+  adultHumorConfirmed: z.boolean().default(false),
   profanityEnabled: z.boolean().default(false),
   companionEnabled: z.boolean().default(true),
   quietMode: z.boolean().default(false),

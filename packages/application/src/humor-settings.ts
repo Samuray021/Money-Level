@@ -6,6 +6,7 @@ export type HumorSettings = Pick<
   ProfileSettings,
   | 'humorMode'
   | 'humorFrequency'
+  | 'adultHumorConfirmed'
   | 'profanityEnabled'
   | 'companionEnabled'
   | 'quietMode'
@@ -29,7 +30,9 @@ export function resolveHumorPolicy(
   return {
     mode,
     playful,
-    profanity: playful && Boolean(settings?.profanityEnabled),
+    profanity:
+      playful &&
+      Boolean(settings?.adultHumorConfirmed && settings.profanityEnabled),
     companion,
     reactions,
     popups: reactions && !quiet,
@@ -50,7 +53,8 @@ export function saveHumorSettings(
       ...profile,
       humorMode: input.humorMode,
       humorFrequency: input.humorFrequency,
-      profanityEnabled: input.profanityEnabled,
+      adultHumorConfirmed: input.adultHumorConfirmed,
+      profanityEnabled: input.adultHumorConfirmed && input.profanityEnabled,
       companionEnabled: input.companionEnabled,
       quietMode: input.quietMode,
       motionEnabled: input.motionEnabled,

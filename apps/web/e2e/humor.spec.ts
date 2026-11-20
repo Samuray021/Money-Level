@@ -17,8 +17,13 @@ test('report titles and cards honor the saved humor and profanity choices after 
   await page.goto('/profile/humor');
   await page.getByLabel('Режим юмора').selectOption('roast');
   await page.getByLabel('Частота реакций').selectOption('usual');
+  await expect(page.getByLabel('Разрешить мат в шутках')).toBeDisabled();
+  await page.getByLabel('Мне 18 лет или больше').check();
   await page.getByLabel('Разрешить мат в шутках').check();
   await savePreferences(page);
+  await page.reload();
+  await expect(page.getByLabel('Мне 18 лет или больше')).toBeChecked();
+  await expect(page.getByLabel('Разрешить мат в шутках')).toBeChecked();
   await page.goto('/analytics');
   await page.getByRole('link', { name: 'Разъеби мои финансы' }).click();
   await expect(
@@ -47,6 +52,32 @@ test('report titles and cards honor the saved humor and profanity choices after 
   ).toBeVisible();
   await expect(page.getByText('Другие реплики')).toHaveCount(0);
   await expect(page.getByText('Разъеби мои финансы')).toHaveCount(0);
+
+  await page.goto('/profile/humor');
+  await page.getByLabel('Частота реакций').selectOption('usual');
+  await page.getByLabel('Мне 18 лет или больше').uncheck();
+  await savePreferences(page);
+  await page.reload();
+  await expect(page.getByLabel('Разрешить мат в шутках')).toBeDisabled();
+  await page.getByLabel('Мне 18 лет или больше').check();
+  await expect(page.getByLabel('Разрешить мат в шутках')).not.toBeChecked();
+});
+
+test('the opening setup keeps profanity optional and requires age confirmation', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Начать' }).click();
+  await page.getByRole('button', { name: 'Далее' }).click();
+  const profanity = page.getByLabel('Разрешить мат в шутках');
+  await expect(profanity).toBeDisabled();
+  await page.getByLabel('Мне 18 лет или больше').check();
+  await profanity.check();
+  await page.getByRole('button', { name: 'К учёту' }).click();
+  await expect(page.getByTestId('total-balance')).toBeVisible();
+  await page.goto('/profile/humor');
+  await expect(page.getByLabel('Мне 18 лет или больше')).toBeChecked();
+  await expect(profanity).toBeChecked();
 });
 
 test('quiet reactions stay silent and finance works with the companion and animation off', async ({

@@ -1,5 +1,6 @@
 import {
   achievementKindSchema,
+  isoDateSchema,
   isoDateTimeSchema,
   uuidSchema,
 } from '@money-level/contracts';
@@ -8,13 +9,40 @@ import { z } from 'zod';
 export { achievementKindSchema };
 export type AchievementKind = z.infer<typeof achievementKindSchema>;
 
-export const achievementSchema = z.strictObject({
-  id: uuidSchema,
-  kind: achievementKindSchema,
-  sourceKey: z.string().regex(/^[a-z0-9:-]{1,80}$/),
-  earnedAt: isoDateTimeSchema,
-  xp: z.int().positive().max(10_000),
-});
+export const achievementXp: Readonly<Record<AchievementKind, number>> = {
+  'first-operation': 10,
+  'weekly-journal': 20,
+  'first-goal': 15,
+  'first-backup': 20,
+};
+
+export const achievementSchema = z
+  .strictObject({
+    id: uuidSchema,
+    kind: achievementKindSchema,
+    sourceKey: z.string(),
+    earnedAt: isoDateTimeSchema,
+    xp: z.int(),
+  })
+  .superRefine(({ kind, sourceKey, xp }, context) => {
+    if (xp !== achievementXp[kind])
+      context.addIssue({
+        code: 'custom',
+        path: ['xp'],
+        message: 'Unexpected XP for this achievement.',
+      });
+    const validSource =
+      kind === 'weekly-journal'
+        ? isoDateSchema.safeParse(sourceKey).success &&
+          new Date(sourceKey).getUTCDay() === 1
+        : sourceKey === 'once';
+    if (!validSource)
+      context.addIssue({
+        code: 'custom',
+        path: ['sourceKey'],
+        message: 'Unexpected source for this achievement.',
+      });
+  });
 export type Achievement = z.infer<typeof achievementSchema>;
 
 export function achievementKey(

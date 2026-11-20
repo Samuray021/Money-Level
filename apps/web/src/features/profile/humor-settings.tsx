@@ -74,7 +74,24 @@ function HumorForm({ defaults }: { defaults: HumorSettings }) {
       <label className="form-checkbox">
         <input
           type="checkbox"
-          checked={settings.profanityEnabled}
+          checked={settings.adultHumorConfirmed}
+          onChange={(event) => {
+            const checked = event.target.checked;
+            setStatus(undefined);
+            setSettings((current) => ({
+              ...current,
+              adultHumorConfirmed: checked,
+              profanityEnabled: false,
+            }));
+          }}
+        />{' '}
+        Мне 18 лет или больше
+      </label>
+      <label className="form-checkbox">
+        <input
+          type="checkbox"
+          checked={settings.adultHumorConfirmed && settings.profanityEnabled}
+          disabled={!settings.adultHumorConfirmed}
           onChange={(event) => field('profanityEnabled', event.target.checked)}
         />{' '}
         Разрешить мат в шутках

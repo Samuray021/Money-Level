@@ -22,17 +22,23 @@ export const memeEmotionSchema = z.enum([
 
 const ruleSchema = z.strictObject({
   id: slug,
-  triggers: z.array(domainEventTypeSchema).min(1),
-  tags: z.array(slug).min(1),
+  triggers: z
+    .array(domainEventTypeSchema)
+    .min(1)
+    .max(domainEventTypeSchema.options.length),
+  tags: z.array(slug).min(1).max(16),
   predicates: z
     .strictObject({
-      categoryIds: z.array(uuidSchema).min(1).optional(),
+      categoryIds: z.array(uuidSchema).min(1).max(100).optional(),
       amountBand: z.enum(['small', 'medium', 'large']).optional(),
     })
     .optional(),
   text: z.strictObject({ 'ru-RU': message, 'en-US': message.optional() }),
   fallbackText: message,
-  modes: z.array(z.enum(['neutral', 'roast', 'chaos'])).min(1),
+  modes: z
+    .array(z.enum(['neutral', 'roast', 'chaos']))
+    .min(1)
+    .max(3),
   profanity: z.boolean(),
   weight: z.int().min(1).max(1000),
   rarity: z.enum(['normal', 'rare']),
@@ -47,11 +53,13 @@ export const memePackSchema = z
     id: slug,
     version: z
       .string()
+      .max(40)
       .regex(/^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)$/),
     locale: z.literal('ru-RU'),
     rules: z.array(ruleSchema).min(1).max(200),
+    disabledRuleIds: z.array(slug).max(200).default([]),
   })
-  .superRefine(({ rules }, context) => {
+  .superRefine(({ rules, disabledRuleIds }, context) => {
     const ids = new Set<string>();
     for (const [index, rule] of rules.entries()) {
       if (ids.has(rule.id))
@@ -61,6 +69,16 @@ export const memePackSchema = z
           path: ['rules', index, 'id'],
         });
       ids.add(rule.id);
+    }
+    const disabled = new Set<string>();
+    for (const [index, id] of disabledRuleIds.entries()) {
+      if (!ids.has(id) || disabled.has(id))
+        context.addIssue({
+          code: 'custom',
+          message: 'Use a unique ID of an existing rule.',
+          path: ['disabledRuleIds', index],
+        });
+      disabled.add(id);
     }
   });
 

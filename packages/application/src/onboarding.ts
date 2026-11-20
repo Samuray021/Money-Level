@@ -75,6 +75,7 @@ export function initializeProfile(
 export interface FinishOnboardingInput {
   openingAmount: string;
   humorFrequency: HumorFrequency;
+  adultHumorConfirmed?: boolean;
   profanityEnabled: boolean;
 }
 
@@ -120,8 +121,11 @@ export function finishOnboarding(
       onboardingCompleted: true,
       starterCategoriesReady: true,
       humorFrequency: input.humorFrequency,
+      adultHumorConfirmed: input.adultHumorConfirmed ?? false,
       profanityEnabled:
-        input.humorFrequency !== 'off' && input.profanityEnabled,
+        input.adultHumorConfirmed === true &&
+        input.humorFrequency !== 'off' &&
+        input.profanityEnabled,
     });
 
     await journal.transactions.put(opening);

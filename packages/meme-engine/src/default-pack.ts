@@ -216,6 +216,7 @@ export const defaultMemePack = memePackSchema.parse({
   id: 'default',
   version: '1.0.0',
   locale: 'ru-RU',
+  disabledRuleIds: [],
   rules: lines.map(([id, event, emotion, text, tone, flag]) => {
     const triggers = typeof event === 'string' ? [event] : event;
     return {
