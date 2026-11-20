@@ -4,8 +4,19 @@
   min-inline-size: 0;
 }
 
+.analytics-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: var(--space-3);
+}
+
 .analytics-month {
   max-inline-size: 14rem;
+}
+
+.analytics-filters input,
+.analytics-filters select {
+  min-inline-size: 0;
 }
 
 .analytics-totals {

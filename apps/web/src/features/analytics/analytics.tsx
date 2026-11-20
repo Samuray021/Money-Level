@@ -110,7 +110,13 @@ function ExpenseTrend({ daily }: { daily: Report['daily'] }) {
   );
 }
 
-function AnalyticsResults({ report }: { report: Report }) {
+function AnalyticsResults({
+  report,
+  inProgress,
+}: {
+  report: Report;
+  inProgress: boolean;
+}) {
   const { profile } = useJournal();
   const { totals, previousTotals, byCategory } = report;
   if (totals.incomeMinor === '0' && totals.expenseMinor === '0') {
@@ -139,6 +145,7 @@ function AnalyticsResults({ report }: { report: Report }) {
           {change
             ? change + ' к расходам прошлого месяца'
             : 'Нет базы для сравнения расходов с прошлым месяцем.'}
+          {change && inProgress && ' Текущий месяц ещё не завершён.'}
         </p>
       )}
       {byCategory.length > 0 ? (
@@ -203,23 +210,23 @@ function AnalyticsResults({ report }: { report: Report }) {
 
 export function Analytics() {
   const { commands, profile } = useJournal();
-  const [month, setMonth] = useState(() =>
-    localTransactionDate(
-      (commands.clock ?? systemClock).now(),
-      profile?.timeZone ?? 'UTC',
-    ).slice(0, 7),
-  );
+  const currentMonth = localTransactionDate(
+    (commands.clock ?? systemClock).now(),
+    profile?.timeZone ?? 'UTC',
+  ).slice(0, 7);
+  const [month, setMonth] = useState(currentMonth);
+  const [accountId, setAccountId] = useState('');
   const read = useCallback(
-    () => getAnalyticsReport(commands.storage, month),
-    [commands.storage, month],
+    () => getAnalyticsReport(commands.storage, month, accountId || undefined),
+    [commands.storage, month, accountId],
   );
   const { state, retry } = useJournalQuery(read);
-  useReportOpened(
-    'month',
-    state.status === 'ready' && state.value.month === month
-      ? state.value.period.from
-      : undefined,
-  );
+  const ready =
+    state.status === 'ready' &&
+    state.value.month === month &&
+    state.value.accountId === (accountId || undefined);
+  const accounts = state.status === 'ready' ? state.value.accounts : [];
+  useReportOpened('month', ready ? state.value.period.from : undefined);
   return (
     <section className="analytics-page">
       <h1>Аналитика</h1>
@@ -227,17 +234,37 @@ export function Analytics() {
         <Link to="/analytics/budgets">Бюджеты</Link>
         <Link to="/analytics/roast">{roastReportTitle(profile)}</Link>
       </div>
-      <label className="form-field analytics-month">
-        Месяц
-        <input
-          type="month"
-          value={month}
-          onChange={(event) => {
-            if (/^\d{4}-(?:0[1-9]|1[0-2])$/.test(event.target.value))
-              setMonth(event.target.value);
-          }}
-        />
-      </label>
+      <div className="analytics-filters">
+        <label className="form-field analytics-month">
+          Месяц
+          <input
+            type="month"
+            value={month}
+            onChange={(event) => {
+              if (/^\d{4}-(?:0[1-9]|1[0-2])$/.test(event.target.value))
+                setMonth(event.target.value);
+            }}
+          />
+        </label>
+        <label className="form-field">
+          Счёт
+          <select
+            value={accountId}
+            onChange={(event) => setAccountId(event.target.value)}
+          >
+            <option value="">Все счета</option>
+            {accountId &&
+              !accounts.some((account) => account.id === accountId) && (
+                <option value={accountId}>Счёт недоступен</option>
+              )}
+            {accounts.map(({ id, name, archived }) => (
+              <option key={id} value={id}>
+                {archived ? name + ' (архив)' : name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       {state.status === 'error' ? (
         <>
           <p role="alert">Не удалось загрузить отчёт.</p>
@@ -245,10 +272,13 @@ export function Analytics() {
             Повторить
           </Button>
         </>
-      ) : state.status === 'loading' || state.value.month !== month ? (
+      ) : !ready ? (
         <p role="status">Загружаем отчёт…</p>
       ) : (
-        <AnalyticsResults report={state.value} />
+        <AnalyticsResults
+          report={state.value}
+          inProgress={month === currentMonth}
+        />
       )}
     </section>
   );

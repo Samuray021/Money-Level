@@ -3,23 +3,43 @@ import {
   selectCategoryExpenses,
   selectExpenseSeries,
   selectPeriodTotals,
+  shiftCalendarDate,
 } from '@money-level/analytics';
+import { uuidSchema } from '@money-level/contracts';
+import type { UUID } from '@money-level/contracts';
 import type { UnitOfWork } from './journal-repository.js';
 
-export function getAnalyticsReport(storage: UnitOfWork, month: string) {
+export function getAnalyticsReport(
+  storage: UnitOfWork,
+  month: string,
+  account?: UUID,
+) {
+  const accountId =
+    account === undefined ? undefined : uuidSchema.parse(account);
+  const period = calendarMonthPeriod(month + '-01');
+  const previousPeriod = calendarMonthPeriod(
+    shiftCalendarDate(period.from, -1),
+  );
   return storage.read(async (journal) => {
-    const period = calendarMonthPeriod(month + '-01');
-    const previousMonth = new Date(period.from + 'T00:00:00.000Z');
-    previousMonth.setUTCMonth(previousMonth.getUTCMonth() - 1);
-    const previousPeriod = calendarMonthPeriod(
-      previousMonth.toISOString().slice(0, 10),
-    );
-    const transactions = await journal.transactions.list();
+    const entries = await journal.transactions.list();
+    const transactions = accountId
+      ? entries.filter((entry) => entry.accountId === accountId)
+      : entries;
+    const accounts = (await journal.accounts.list())
+      .filter((item) => !item.deletedAt)
+      .sort(
+        (left, right) =>
+          Number(left.archived) - Number(right.archived) ||
+          left.sortOrder - right.sortOrder,
+      )
+      .map(({ id, name, archived }) => ({ id, name, archived }));
     const categories = new Map(
       (await journal.categories.list()).map((item) => [item.id, item.name]),
     );
     return {
       month,
+      accountId,
+      accounts,
       period,
       totals: selectPeriodTotals(transactions, period),
       previousTotals: selectPeriodTotals(transactions, previousPeriod),
