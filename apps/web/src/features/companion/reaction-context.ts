@@ -1,7 +1,7 @@
-import type { MemeReaction } from '@money-level/meme-engine';
+import type { DeliveredReaction } from '@money-level/application';
 import { createContext, useContext } from 'react';
 
-export const ReactionContext = createContext<MemeReaction | undefined>(
+export const ReactionContext = createContext<DeliveredReaction | undefined>(
   undefined,
 );
 

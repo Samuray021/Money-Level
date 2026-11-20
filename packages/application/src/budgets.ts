@@ -130,17 +130,15 @@ export function getBudgetOverview(
   return storage.read((journal) => readBudgets(journal, clock));
 }
 
-export function claimBudgetNotices(
-  storage: UnitOfWork,
-  clock: Clock = systemClock,
-) {
-  return storage.write(async (journal) => {
-    const overview = await readBudgets(journal, clock);
+export function claimBudgetNotices(context: JournalCommandContext) {
+  const now = (context.clock ?? systemClock).now();
+  return context.storage.write(async (journal) => {
+    const overview = await readBudgets(journal, { now: () => now });
     if (!overview.enabled) return [];
 
     const claimed: { id: string; label: string; threshold: BudgetThreshold }[] =
       [];
-    const createdAt = clock.now().toISOString();
+    const createdAt = now.toISOString();
     for (const { budget, name, newThresholds } of overview.rows) {
       for (const threshold of newThresholds) {
         await journal.budgetNotices.put({
@@ -149,6 +147,17 @@ export function claimBudgetNotices(
           monthStart: overview.period.from,
           threshold,
           createdAt,
+        });
+        await journal.outbox.add({
+          eventId: context.createId(),
+          type: 'budget.threshold.reached',
+          version: 1,
+          sourceEntityId: budget.id,
+          occurredAt: createdAt,
+          payload: {
+            budgetThreshold: threshold,
+            monthStart: overview.period.from,
+          },
         });
       }
       const highest = newThresholds.at(-1);

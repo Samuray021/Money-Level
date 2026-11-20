@@ -31,7 +31,7 @@ export function BudgetAlerts() {
 
   useEffect(() => {
     if (due)
-      void claimBudgetNotices(commands.storage, commands.clock).then(
+      void claimBudgetNotices(commands).then(
         (current) => {
           if (current.length > 0) setNotices(current);
         },

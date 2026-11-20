@@ -9,6 +9,7 @@ import { useJournalQuery } from '../../app/use-journal-query.js';
 import { MoneyAmount } from '../../components/money-amount.js';
 import { RoastCardExport } from './roast-card-export.js';
 import { roastReportTitle } from './roast-label.js';
+import { useReportOpened } from './use-report-opened.js';
 import './analytics.css';
 
 const date = new Intl.DateTimeFormat('ru-RU', {
@@ -59,6 +60,12 @@ export function RoastReport() {
     [commands, kind, seed],
   );
   const { state, retry } = useJournalQuery(read);
+  useReportOpened(
+    kind,
+    state.status === 'ready' && state.value.kind === kind
+      ? state.value.period.from
+      : undefined,
+  );
 
   return (
     <section className="analytics-page">

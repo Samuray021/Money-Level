@@ -5,7 +5,7 @@ import type { MemeEmotion } from './pack.js';
 type Tone = 'neutral' | 'roast' | 'chaos';
 type Line = readonly [
   id: string,
-  event: DomainEventType,
+  event: DomainEventType | readonly [DomainEventType, ...DomainEventType[]],
   emotion: MemeEmotion,
   text: string,
   tone?: Tone,
@@ -171,6 +171,13 @@ const lines: readonly Line[] = [
     'Семь дней поместились в одном отчёте.',
     'roast',
   ],
+  ['session-ready', 'app.session.started', 'idle', 'Журнал готов к работе.'],
+  [
+    'journal-milestone',
+    ['achievement.unlocked', 'backup.exported'],
+    'happy',
+    'Ещё один полезный шаг учёта.',
+  ],
   [
     'rare-parade',
     'transaction.income.created',
@@ -201,23 +208,30 @@ function fallback(event: DomainEventType): string {
   if (event.startsWith('transaction.')) return 'Операция сохранена.';
   if (event.startsWith('goal.')) return 'Цель обновлена.';
   if (event === 'budget.threshold.reached') return 'Порог бюджета достигнут.';
-  return 'Отчёт открыт.';
+  if (event.startsWith('analytics.')) return 'Отчёт открыт.';
+  return 'Журнал готов.';
 }
 
 export const defaultMemePack = memePackSchema.parse({
   id: 'default',
   version: '1.0.0',
   locale: 'ru-RU',
-  rules: lines.map(([id, event, emotion, text, tone, flag]) => ({
-    id,
-    triggers: [event],
-    tags: [event.split('.')[0], ...(flag === 'rare' ? ['rare'] : [])],
-    text: { 'ru-RU': text },
-    fallbackText: fallback(event),
-    modes: tone ? [tone] : ['neutral', 'roast', 'chaos'],
-    profanity: flag === 'profanity',
-    rarity: flag === 'rare' ? 'rare' : 'normal',
-    weight: tone ? 2 : 3,
-    emotion,
-  })),
+  rules: lines.map(([id, event, emotion, text, tone, flag]) => {
+    const triggers = typeof event === 'string' ? [event] : event;
+    return {
+      id,
+      triggers,
+      tags: [
+        triggers[0]?.split('.')[0] ?? 'journal',
+        ...(flag === 'rare' ? ['rare'] : []),
+      ],
+      text: { 'ru-RU': text },
+      fallbackText: fallback(triggers[0] ?? 'app.session.started'),
+      modes: tone ? [tone] : ['neutral', 'roast', 'chaos'],
+      profanity: flag === 'profanity',
+      rarity: flag === 'rare' ? 'rare' : 'normal',
+      weight: tone ? 2 : 3,
+      emotion,
+    };
+  }),
 });

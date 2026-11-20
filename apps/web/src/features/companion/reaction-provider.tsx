@@ -1,38 +1,27 @@
-import { resolveHumorPolicy, runMemeReactions } from '@money-level/application';
+import {
+  recordAppSession,
+  resolveHumorPolicy,
+  runMemeReactions,
+} from '@money-level/application';
 import { createSeededRandom } from '@money-level/contracts';
-import type { MemeReaction } from '@money-level/meme-engine';
+import type { DeliveredReaction } from '@money-level/application';
 import { Button } from '@money-level/ui-kit';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
+import { appSession } from '../../app/app-session.js';
 import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
 import { ReactionContext } from './reaction-context.js';
 import './companion.css';
 
-function tabSession() {
-  const next = { id: crypto.randomUUID(), startedAt: Date.now() };
-  try {
-    const raw = sessionStorage.getItem('money-level-meme-session');
-    if (raw) {
-      const stored = JSON.parse(raw) as Partial<typeof next>;
-      if (typeof stored.id === 'string' && typeof stored.startedAt === 'number')
-        return { id: stored.id, startedAt: stored.startedAt };
-    }
-    sessionStorage.setItem('money-level-meme-session', JSON.stringify(next));
-  } catch {
-    // A private browser can keep a session in memory.
-  }
-  return next;
-}
-
 export function ReactionProvider({ children }: { children: ReactNode }) {
   const { commands, profile } = useJournal();
-  const [session] = useState(tabSession);
+  const [session] = useState(appSession);
   const [random] = useState(() =>
     createSeededRandom(crypto.getRandomValues(new Uint32Array(1))[0] ?? 0),
   );
   const [shown, setShown] = useState<{
-    reaction: MemeReaction;
+    reaction: DeliveredReaction;
     mode: ReturnType<typeof resolveHumorPolicy>['mode'];
   }>();
   const {
@@ -47,7 +36,13 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
     enabled && shown?.mode === mode && (profanity || !shown.reaction.profanity)
       ? shown.reaction
       : undefined;
-  const lastAudibleCandidate = useRef<MemeReaction | undefined>(undefined);
+  const lastAudibleCandidate = useRef<DeliveredReaction | undefined>(undefined);
+
+  const available = profile?.onboardingCompleted === true;
+  useEffect(() => {
+    if (available)
+      void recordAppSession(commands, session.id).catch(() => undefined);
+  }, [available, commands, session.id]);
 
   const previousEnabled = useRef(enabled);
   const since = useRef(session.startedAt);
@@ -72,25 +67,39 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
   const { state } = useJournalQuery(read);
   const trigger = state.status === 'ready' ? state.value : '';
 
+  const policyKey = enabled
+    ? [mode, profile?.humorFrequency, profanity].join(':')
+    : '';
+  const activePolicy = useRef('');
   useEffect(() => {
-    let active = true;
-    if (!enabled) setShown(undefined);
-    else if (trigger)
-      void runMemeReactions(
-        commands.storage,
-        { ...session, startedAt: since.current },
-        random,
-        commands.clock,
-      ).then(
-        (queued) => {
-          if (active && queued[0]) setShown({ reaction: queued[0], mode });
-        },
-        () => undefined,
-      );
+    activePolicy.current = policyKey;
+    if (!policyKey) setShown(undefined);
     return () => {
-      active = false;
+      activePolicy.current = '';
     };
-  }, [commands, enabled, mode, profanity, random, session, trigger]);
+  }, [policyKey]);
+
+  useEffect(() => {
+    if (!policyKey || !trigger) return;
+    void runMemeReactions(
+      commands,
+      { ...session, startedAt: since.current },
+      random,
+    ).then(
+      (queued) => {
+        if (activePolicy.current !== policyKey) return;
+        const reaction =
+          queued.find((candidate) => !candidate.ambient) ?? queued[0];
+        if (!reaction) return;
+        setShown((previous) =>
+          reaction.ambient && previous && !previous.reaction.ambient
+            ? previous
+            : { reaction, mode },
+        );
+      },
+      () => undefined,
+    );
+  }, [commands, mode, policyKey, random, session, trigger]);
 
   useEffect(() => {
     if (!shown) return;
@@ -112,7 +121,7 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (lastAudibleCandidate.current === visible) return;
     lastAudibleCandidate.current = visible;
-    if (!visible || !playSound) return;
+    if (!visible || visible.ambient || !playSound) return;
     const audio = new Audio('/audio/reaction.wav');
     void audio.play().catch(() => undefined);
     return () => audio.pause();
@@ -120,7 +129,7 @@ export function ReactionProvider({ children }: { children: ReactNode }) {
   return (
     <ReactionContext.Provider value={visible}>
       {children}
-      {visible && popups && (
+      {visible && !visible.ambient && popups && (
         <aside
           className={'meme-toast meme-toast--' + visible.rarity}
           aria-label="Реакция компаньона"

@@ -100,7 +100,9 @@ export function Dashboard() {
       {profile?.companionEnabled && (
         <Companion
           emotion={reaction?.emotion ?? 'idle'}
-          {...(profile.quietMode && reaction ? { message: reaction.text } : {})}
+          {...(reaction && (profile.quietMode || reaction.ambient)
+            ? { message: reaction.text }
+            : {})}
         />
       )}
       <div className="dashboard-actions">

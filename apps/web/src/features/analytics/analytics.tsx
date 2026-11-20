@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useJournal } from '../../app/journal-context.js';
 import { useJournalQuery } from '../../app/use-journal-query.js';
 import { MoneyAmount } from '../../components/money-amount.js';
+import { useReportOpened } from './use-report-opened.js';
 import './analytics.css';
 
 type Report = Awaited<ReturnType<typeof getAnalyticsReport>>;
@@ -213,6 +214,12 @@ export function Analytics() {
     [commands.storage, month],
   );
   const { state, retry } = useJournalQuery(read);
+  useReportOpened(
+    'month',
+    state.status === 'ready' && state.value.month === month
+      ? state.value.period.from
+      : undefined,
+  );
   return (
     <section className="analytics-page">
       <h1>Аналитика</h1>

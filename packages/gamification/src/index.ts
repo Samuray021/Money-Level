@@ -1,12 +1,11 @@
-import { isoDateTimeSchema, uuidSchema } from '@money-level/contracts';
+import {
+  achievementKindSchema,
+  isoDateTimeSchema,
+  uuidSchema,
+} from '@money-level/contracts';
 import { z } from 'zod';
 
-export const achievementKindSchema = z.enum([
-  'first-operation',
-  'weekly-journal',
-  'first-goal',
-  'first-backup',
-]);
+export { achievementKindSchema };
 export type AchievementKind = z.infer<typeof achievementKindSchema>;
 
 export const achievementSchema = z.strictObject({

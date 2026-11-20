@@ -105,6 +105,9 @@ function ReservationForm({
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const pending = useRef(false);
+  const submitted = useRef<
+    { amountMinor: string; allocationId: string } | undefined
+  >(undefined);
   const reserving = action === 'reserve';
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -118,7 +121,9 @@ function ReservationForm({
         profile.baseCurrency,
       );
       const run = reserving ? reserveToGoal : releaseFromGoal;
-      await run(commands, { goalId: id, amountMinor });
+      if (submitted.current?.amountMinor !== amountMinor)
+        submitted.current = { amountMinor, allocationId: commands.createId() };
+      await run(commands, { goalId: id, ...submitted.current });
       close();
     } catch {
       setError(

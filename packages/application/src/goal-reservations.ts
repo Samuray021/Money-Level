@@ -22,6 +22,7 @@ import type { JournalCommandContext } from './create-transaction.js';
 export interface GoalReservationInput {
   goalId: UUID;
   amountMinor: MinorUnits;
+  allocationId?: UUID;
 }
 
 async function changeReservation(
@@ -31,6 +32,11 @@ async function changeReservation(
 ): Promise<GoalAllocation> {
   const amount = positiveMinorUnitsSchema.parse(input.amountMinor);
   const id = uuidSchema.parse(input.goalId);
+  const delta = action === 'reserve' ? amount : subtractMinorUnits('0', amount);
+  const allocationId =
+    input.allocationId === undefined
+      ? undefined
+      : uuidSchema.parse(input.allocationId);
   return context.storage.write(async (journal) => {
     const profile = await journal.settings.get('profile');
     const goal = await journal.goals.get(id);
@@ -43,10 +49,18 @@ async function changeReservation(
       throw new RangeError('This goal is unavailable.');
     }
 
+    const existing =
+      allocationId && (await journal.goalAllocations.get(allocationId));
+    if (existing) {
+      if (existing.goalId !== id || existing.deltaMinor !== delta)
+        throw new RangeError(
+          'This reservation key belongs to a different change.',
+        );
+      return existing;
+    }
+
     const allocations = await journal.goalAllocations.list();
     const reserved = selectGoalReserved(allocations, id);
-    const delta =
-      action === 'reserve' ? amount : subtractMinorUnits('0', amount);
     const next = addMinorUnits(reserved, delta);
     if (
       compareMinorUnits(next, '0') < 0 ||
@@ -76,7 +90,7 @@ async function changeReservation(
     const now = (context.clock ?? systemClock).now();
     const time = now.toISOString();
     const allocation = goalAllocationSchema.parse({
-      id: context.createId(),
+      id: allocationId ?? context.createId(),
       goalId: id,
       deltaMinor: delta,
       transactionDate: localTransactionDate(now, profile.timeZone),
@@ -89,8 +103,26 @@ async function changeReservation(
     await journal.goalAllocations.put(allocation);
     const status =
       compareMinorUnits(next, goal.targetMinor) === 0 ? 'completed' : 'active';
-    if (goal.status !== status)
+    await journal.outbox.add({
+      eventId: allocation.id,
+      type: 'goal.progress.updated',
+      version: 1,
+      sourceEntityId: goal.id,
+      occurredAt: time,
+      payload: { action },
+    });
+    if (goal.status !== status) {
       await journal.goals.put({ ...goal, status, updatedAt: time });
+      if (status === 'completed')
+        await journal.outbox.add({
+          eventId: context.createId(),
+          type: 'goal.completed',
+          version: 1,
+          sourceEntityId: goal.id,
+          occurredAt: time,
+          payload: {},
+        });
+    }
     return allocation;
   });
 }

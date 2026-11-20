@@ -43,7 +43,12 @@ async function setup(frequency: 'off' | 'usual') {
   });
   const session = { id: exampleId(1), startedAt: Date.parse(instant) };
   const evaluate = (db = storage, input?: unknown) =>
-    runMemeReactions(db, session, { next: () => 0.5 }, clock, input);
+    runMemeReactions(
+      { ...context, storage: db, clock },
+      session,
+      { next: () => 0.5 },
+      input,
+    );
   const finance = () =>
     storage.read(async (journal) => {
       const transactions = await journal.transactions.list();

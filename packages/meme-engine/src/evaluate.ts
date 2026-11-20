@@ -51,13 +51,13 @@ function matches(rule: MemeRule, input: Evaluation): boolean {
     return false;
   if (rule.profanity && !profanity) return false;
   const { categoryIds, amountBand } = rule.predicates ?? {};
-  if (
-    categoryIds &&
-    (!event.payload.categoryId ||
-      !categoryIds.includes(event.payload.categoryId))
-  )
+  const category =
+    'categoryId' in event.payload ? event.payload.categoryId : undefined;
+  const band =
+    'amountBand' in event.payload ? event.payload.amountBand : undefined;
+  if (categoryIds && (!category || !categoryIds.includes(category)))
     return false;
-  return !amountBand || amountBand === event.payload.amountBand;
+  return !amountBand || amountBand === band;
 }
 
 function draw(random: RandomSource): number {

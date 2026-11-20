@@ -94,6 +94,14 @@ export function runAchievementRules(context: JournalCommandContext) {
         if (await journal.achievements.get(achievement.id))
           throw new RangeError('The achievement identifier is already in use.');
         await journal.achievements.put(achievement);
+        await journal.outbox.add({
+          eventId: context.createId(),
+          type: 'achievement.unlocked',
+          version: 1,
+          sourceEntityId: achievement.id,
+          occurredAt: achievement.earnedAt,
+          payload: { achievementKind: achievement.kind },
+        });
         earned.add(key);
       }
     },
@@ -102,11 +110,11 @@ export function runAchievementRules(context: JournalCommandContext) {
 
 export function noteManualBackup(
   context: JournalCommandContext,
+  id = context.createId(),
 ): Promise<void> {
   return context.storage.write(async (journal) => {
     const profile = await journal.settings.get('profile');
-    if (!profile?.onboardingCompleted) return;
-    const id = context.createId();
+    if (!profile?.onboardingCompleted || (await journal.outbox.get(id))) return;
     await journal.outbox.add({
       eventId: id,
       sourceEntityId: id,

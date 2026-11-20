@@ -45,7 +45,12 @@ export type { HumorFrequency, ProfileSettings } from './profile-settings.js';
 
 export { localTransactionDate } from './date.js';
 
-export { domainEventSchema, domainEventTypeSchema } from './domain-event.js';
+export {
+  achievementKindSchema,
+  budgetThresholdSchema,
+  domainEventSchema,
+  domainEventTypeSchema,
+} from './domain-event.js';
 export type { DomainEvent, DomainEventType } from './domain-event.js';
 
 export { eventReceiptSchema } from './domain-event.js';
